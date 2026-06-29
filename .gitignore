@@ -25,6 +25,8 @@ render.experimental.xml
 
 # Keystore files
 *.jks
+*.keystore
+keystore.properties
 app/keystores/
 .env.release
 

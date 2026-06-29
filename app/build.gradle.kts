@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidApplication)
@@ -6,6 +7,17 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+}
+
+// Upload-key signing config for the Play Store. Reads from keystore.properties
+// at the repo root (gitignored) so the keystore password never lands in version
+// control. If the file is missing the release config is left unsigned and
+// :app:bundleRelease will fail loudly — that is the desired behavior locally
+// (forces the developer to set up signing) and is fine in CI when secrets are
+// injected via env vars instead.
+val keystorePropsFile = rootProject.file("keystore.properties")
+val keystoreProps = Properties().apply {
+    if (keystorePropsFile.exists()) keystorePropsFile.inputStream().use { load(it) }
 }
 
 android {
@@ -30,6 +42,23 @@ android {
         targetCompatibility = JavaVersion.toVersion(libs.versions.android.jvm.get().toInt())
     }
 
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("${project.rootDir}/app/debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+        if (keystorePropsFile.exists()) {
+            create("release") {
+                storeFile = rootProject.file(keystoreProps["RELEASE_STORE_FILE"] as String)
+                storePassword = keystoreProps["RELEASE_STORE_PASSWORD"] as String
+                keyAlias = keystoreProps["RELEASE_KEY_ALIAS"] as String
+                keyPassword = keystoreProps["RELEASE_KEY_PASSWORD"] as String
+            }
+        }
+    }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
@@ -38,6 +67,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            if (keystorePropsFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
 
         getByName("debug") {
@@ -50,15 +82,6 @@ android {
             signingConfig = signingConfigs.getByName("debug")
             applicationIdSuffix = ".release"
             matchingFallbacks.add("release")
-        }
-    }
-
-    signingConfigs {
-        getByName("debug") {
-            storeFile = file("${project.rootDir}/app/debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
         }
     }
 
