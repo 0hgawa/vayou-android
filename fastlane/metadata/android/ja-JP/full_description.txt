@@ -1,0 +1,27 @@
+Vayou は Kotlin と Jetpack Compose で書かれたネイティブの動画プレーヤーです。Android デバイスで動画を再生するためのシンプルでモダンなインターフェースを提供します。
+
+このプロジェクトは活発に開発中であり、バグが含まれる可能性があります。
+
+対応フォーマット:
+
+ * 音声: Vorbis, Opus, FLAC, ALAC, PCM/WAVE (μ-law, A-law), MP1, MP2, MP3, AMR (NB, WB), AAC (LC, ELD, HE; Android 9 以降は xHE), AC-3, E-AC-3, DTS, DTS-HD, TrueHD
+ * 映像: H.263, H.264 AVC (Baseline Profile; Android 6 以降は Main Profile), H.265 HEVC, MPEG-4 SP, VP8, VP9, AV1
+ * ストリーミング: DASH, HLS, RTSP
+ * 字幕: SRT, SSA, ASS, TTML, VTT
+
+主な機能:
+
+ * シンプルで使いやすいインターフェースのネイティブ Android アプリ
+ * 完全無料・オープンソース、広告や過剰な権限要求なし
+ * Material 3 (You) 対応
+ * 音声・字幕トラックの選択
+ * 縦スワイプで明るさ（左）／音量（右）の変更
+ * 横スワイプでシーク
+ * ツリー・フォルダー・ファイル表示のメディアピッカー
+ * 再生速度の調整
+ * ピンチでズーム
+ * 表示サイズ変更（フィット／ストレッチ／クロップ／100%）
+ * 音量ブースト
+ * 外部字幕サポート（字幕アイコンを長押し）
+ * 操作のロック
+ * ピクチャー・イン・ピクチャー

@@ -1,0 +1,7 @@
+- Prima versione su Google Play
+- Design Material 3 con colore dinamico e tema scuro
+- Riproduzione con accelerazione hardware (H.264, HEVC, VP9, AV1)
+- Controlli gestuali: scorri per cercare, cambia luminosità e volume
+- Supporto sottotitoli esterni e selezione tracce audio/sottotitoli
+- Picture-in-picture, controllo velocità, pizzica per zoomare
+- Disponibile in 12 lingue

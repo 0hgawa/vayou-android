@@ -1,0 +1,7 @@
+- Première version sur Google Play
+- Design Material 3 avec couleur dynamique et thème sombre
+- Lecture accélérée matériellement (H.264, HEVC, VP9, AV1)
+- Contrôles gestuels : glisser pour avancer, changer luminosité et volume
+- Sous-titres externes et sélection des pistes audio/sous-titres
+- Picture-in-picture, vitesse de lecture, pincer pour zoomer
+- Disponible en 12 langues

@@ -1,0 +1,27 @@
+Vayou 是一款使用 Kotlin 和 Jetpack Compose 开发的原生视频播放器。为 Android 设备提供简洁、现代的视频播放界面。
+
+项目正在积极开发中，可能存在缺陷。
+
+支持的格式：
+
+ * 音频：Vorbis、Opus、FLAC、ALAC、PCM/WAVE（μ-law、A-law）、MP1、MP2、MP3、AMR（NB、WB）、AAC（LC、ELD、HE；Android 9+ 支持 xHE）、AC-3、E-AC-3、DTS、DTS-HD、TrueHD
+ * 视频：H.263、H.264 AVC（Baseline Profile；Android 6+ 支持 Main Profile）、H.265 HEVC、MPEG-4 SP、VP8、VP9、AV1
+ * 流媒体：DASH、HLS、RTSP
+ * 字幕：SRT、SSA、ASS、TTML、VTT
+
+主要功能：
+
+ * 原生 Android 应用，界面简洁易用
+ * 完全免费开源，无广告，无多余权限
+ * 支持 Material 3 (You)
+ * 音频/字幕轨道选择
+ * 竖向滑动调整亮度（左）/ 音量（右）
+ * 横向滑动进行快进/快退
+ * 媒体选择器支持树形、文件夹和文件视图
+ * 播放速度控制
+ * 双指捏合缩放
+ * 画面缩放模式（适应/拉伸/裁剪/100%）
+ * 音量增强
+ * 支持外挂字幕（长按字幕图标）
+ * 控件锁定
+ * 画中画模式

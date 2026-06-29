@@ -1,0 +1,7 @@
+- First release on Google Play
+- Material 3 design with dynamic color and dark theme
+- Hardware-accelerated playback (H.264, HEVC, VP9, AV1)
+- Gesture controls: swipe to seek, change brightness and volume
+- External subtitle support and audio/subtitle track selection
+- Picture-in-picture, playback speed, pinch to zoom
+- Available in 12 languages

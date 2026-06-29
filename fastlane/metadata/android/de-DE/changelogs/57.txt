@@ -1,0 +1,7 @@
+- Erste Veröffentlichung im Google Play Store
+- Material-3-Design mit dynamischer Farbe und dunklem Modus
+- Hardwarebeschleunigte Wiedergabe (H.264, HEVC, VP9, AV1)
+- Gestensteuerung: Wischen zum Spulen, Helligkeit und Lautstärke ändern
+- Externe Untertitel sowie Audio- und Untertitelauswahl
+- Bild-in-Bild, Wiedergabegeschwindigkeit, Pinch-to-Zoom
+- Verfügbar in 12 Sprachen
