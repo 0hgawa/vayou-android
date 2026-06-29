@@ -18,6 +18,17 @@ import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonArray
 
+/**
+ * Translates subtitle text via Google Translate's unofficial endpoints.
+ *
+ * Primary path is the `batchexecute` RPC (up to [MAX_BATCH_SIZE] strings per
+ * request), which keeps request volume — and therefore the chance of being
+ * rate-limited — low. Because that endpoint is unofficial it can still answer
+ * 429/403 or time out, so two safety nets are layered on top:
+ *  - the batch call retries with backoff on rate-limit ([RETRY_DELAYS]);
+ *  - anything the batch still couldn't translate falls back to the per-text
+ *    `gtx` endpoint, so a single failing endpoint never silently drops a line.
+ */
 object RealtimeTranslator {
 
     private val cache = ConcurrentHashMap<Pair<String, String>, String>()
@@ -38,9 +49,21 @@ object RealtimeTranslator {
         }
 
         pending.chunked(MAX_BATCH_SIZE).forEach { chunk ->
-            val translated = callBatchExecute(chunk.map { it.value }, targetLanguage) ?: return@forEach
+            val batch = callBatchWithRetry(chunk.map { it.value }, targetLanguage)
+            val stillPending = mutableListOf<IndexedValue<String>>()
             chunk.forEachIndexed { batchIdx, indexed ->
-                translated.getOrNull(batchIdx)?.let { tr ->
+                val tr = batch?.getOrNull(batchIdx)
+                if (tr != null) {
+                    cache[indexed.value to targetLanguage] = tr
+                    results[indexed.index] = tr
+                } else {
+                    stillPending += indexed
+                }
+            }
+            // Fallback: per-text gtx for whatever the batch endpoint missed
+            // (whole-batch failure or individual gaps in an otherwise-OK batch).
+            stillPending.forEach { indexed ->
+                translateOneGtx(indexed.value, targetLanguage)?.let { tr ->
                     cache[indexed.value to targetLanguage] = tr
                     results[indexed.index] = tr
                 }
@@ -50,12 +73,22 @@ object RealtimeTranslator {
         return results.toList()
     }
 
-    private suspend fun callBatchExecute(texts: List<String>, targetLang: String): List<String?>? = withContext(Dispatchers.IO) {
-        rateMutex.withLock {
-            val wait = MIN_REQUEST_INTERVAL_MS - (System.currentTimeMillis() - lastCallMs)
-            if (wait > 0) delay(wait)
-            lastCallMs = System.currentTimeMillis()
+    // ---- Primary endpoint: batchexecute, retried with backoff on rate-limit ----
+
+    private suspend fun callBatchWithRetry(texts: List<String>, targetLang: String): List<String?>? {
+        for (delayMs in RETRY_DELAYS) {
+            if (delayMs > 0) delay(delayMs)
+            when (val result = callBatchOnce(texts, targetLang)) {
+                is BatchResult.Ok -> return result.translations
+                BatchResult.RateLimited -> continue
+                BatchResult.Failed -> return null
+            }
         }
+        return null
+    }
+
+    private suspend fun callBatchOnce(texts: List<String>, targetLang: String): BatchResult = withContext(Dispatchers.IO) {
+        throttle()
         try {
             val payload = "f.req=" + URLEncoder.encode(buildFreq(texts, targetLang), "UTF-8")
             val connection = (URL(BATCH_URL).openConnection() as HttpURLConnection).apply {
@@ -69,15 +102,25 @@ object RealtimeTranslator {
             }
             try {
                 connection.outputStream.use { it.write(payload.toByteArray(Charsets.UTF_8)) }
-                if (connection.responseCode !in 200..299) return@withContext null
+                val code = connection.responseCode
+                if (code == HTTP_TOO_MANY_REQUESTS || code == HttpURLConnection.HTTP_FORBIDDEN) {
+                    return@withContext BatchResult.RateLimited
+                }
+                if (code !in 200..299) return@withContext BatchResult.Failed
                 val body = connection.inputStream.use { it.readBytes() }
-                parseBatchResponse(body, texts.size)
+                parseBatchResponse(body, texts.size)?.let { BatchResult.Ok(it) } ?: BatchResult.Failed
             } finally {
                 connection.disconnect()
             }
         } catch (_: Exception) {
-            null
+            BatchResult.Failed
         }
+    }
+
+    private sealed interface BatchResult {
+        data class Ok(val translations: List<String?>) : BatchResult
+        data object RateLimited : BatchResult
+        data object Failed : BatchResult
     }
 
     private fun buildFreq(texts: List<String>, targetLang: String): String {
@@ -152,12 +195,88 @@ object RealtimeTranslator {
         return text.ifBlank { null }
     }
 
+    // ---- Fallback endpoint: gtx, one text per request, retried on rate-limit ----
+
+    private suspend fun translateOneGtx(text: String, targetLang: String): String? {
+        for (delayMs in RETRY_DELAYS) {
+            if (delayMs > 0) delay(delayMs)
+            when (val result = gtxOnce(text, targetLang)) {
+                is GtxResult.Ok -> return result.text
+                GtxResult.RateLimited -> continue
+                GtxResult.Failed -> return null
+            }
+        }
+        return null
+    }
+
+    private suspend fun gtxOnce(text: String, targetLang: String): GtxResult = withContext(Dispatchers.IO) {
+        throttle()
+        try {
+            val query = URLEncoder.encode(text, "UTF-8")
+            val url = "$GTX_URL?client=gtx&sl=auto&tl=$targetLang&dt=t&q=$query"
+            val connection = (URL(url).openConnection() as HttpURLConnection).apply {
+                requestMethod = "GET"
+                setRequestProperty("User-Agent", USER_AGENT)
+                setRequestProperty("Accept-Language", "en-US,en;q=0.9")
+                connectTimeout = TIMEOUT
+                readTimeout = TIMEOUT
+            }
+            try {
+                val code = connection.responseCode
+                if (code == HTTP_TOO_MANY_REQUESTS || code == HttpURLConnection.HTTP_FORBIDDEN) {
+                    return@withContext GtxResult.RateLimited
+                }
+                if (code !in 200..299) return@withContext GtxResult.Failed
+                val body = connection.inputStream.use { it.readBytes() }.toString(Charsets.UTF_8)
+                parseGtx(body)?.let { GtxResult.Ok(it) } ?: GtxResult.Failed
+            } finally {
+                connection.disconnect()
+            }
+        } catch (_: Exception) {
+            GtxResult.Failed
+        }
+    }
+
+    private sealed interface GtxResult {
+        data class Ok(val text: String) : GtxResult
+        data object RateLimited : GtxResult
+        data object Failed : GtxResult
+    }
+
+    /**
+     * gtx returns `[[["translated","source",…], …], …]`: the first element is
+     * the list of translated sentence segments; concatenate `[0][*][0]`.
+     */
+    private fun parseGtx(body: String): String? {
+        val arr = runCatching { json.parseToJsonElement(body).jsonArray }.getOrNull() ?: return null
+        val segments = arr.getOrNull(0) as? JsonArray ?: return null
+        val builder = StringBuilder()
+        for (segment in segments) {
+            val piece = (segment as? JsonArray)?.getOrNull(0) as? JsonPrimitive ?: continue
+            piece.contentOrNull?.let { builder.append(it) }
+        }
+        return builder.toString().ifBlank { null }
+    }
+
+    // ---- Shared rate limiter (both endpoints share the same budget) ----
+
+    private suspend fun throttle() {
+        rateMutex.withLock {
+            val wait = MIN_REQUEST_INTERVAL_MS - (System.currentTimeMillis() - lastCallMs)
+            if (wait > 0) delay(wait)
+            lastCallMs = System.currentTimeMillis()
+        }
+    }
+
     private const val BATCH_URL =
         "https://translate.google.com/_/TranslateWebserverUi/data/batchexecute?rpcids=MkEWBc&rt=c"
+    private const val GTX_URL = "https://translate.googleapis.com/translate_a/single"
     private const val USER_AGENT =
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     private const val TIMEOUT = 5_000
     private const val MIN_REQUEST_INTERVAL_MS = 100L
     private const val MAX_BATCH_SIZE = 50
+    private const val HTTP_TOO_MANY_REQUESTS = 429
     private const val NEWLINE: Byte = 0x0A
+    private val RETRY_DELAYS = longArrayOf(0L, 800L, 1600L)
 }
