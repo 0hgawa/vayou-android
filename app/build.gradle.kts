@@ -28,8 +28,8 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         applicationId = "dev.vayou"
-        versionCode = 57
-        versionName = "0.1"
+        versionCode = 58
+        versionName = "0.1.1"
     }
 
     buildFeatures {
