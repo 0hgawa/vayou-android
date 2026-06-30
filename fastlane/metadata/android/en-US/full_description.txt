@@ -1,27 +1,35 @@
-Vayou is a native video player written in Kotlin and Jetpack Compose. It provides a simple, modern interface for playing videos on Android devices.
+Vayou is a fast, free and ad-free video player for Android. It plays the videos stored on your device and on your local network, with full control over audio tracks, subtitles, playback speed and screen gestures — all in a clean Material You interface.
 
-This project is under active development and is expected to have bugs.
+Whether you are watching movies, series or your own recordings, Vayou is built to handle almost any file you throw at it, with hardware-accelerated playback and wide format support.
 
-Supported formats:
+PLAY ANY VIDEO
+ * Plays local files from your device storage
+ * Built-in media picker with tree, folder and file views
+ * Open videos from a URL or stream
+ * Hardware-accelerated playback with software decoder fallback
 
- * Audio: Vorbis, Opus, FLAC, ALAC, PCM/WAVE (μ-law, A-law), MP1, MP2, MP3, AMR (NB, WB), AAC (LC, ELD, HE; xHE on Android 9+), AC-3, E-AC-3, DTS, DTS-HD, TrueHD
- * Video: H.263, H.264 AVC (Baseline Profile; Main Profile on Android 6+), H.265 HEVC, MPEG-4 SP, VP8, VP9, AV1
+SUBTITLES
+ * Built-in and external subtitle support (SRT, SSA, ASS, TTML, VTT)
+ * Search and download subtitles from OpenSubtitles
+ * Automatic subtitle translation while you watch
+ * Audio and subtitle track selection
+
+NETWORK & LIVE TV
+ * Play videos from network shares (SMB)
+ * Add and watch IPTV / live TV playlists
+ * Organize content with playlists and favorites
+
+GESTURES & CONTROLS
+ * Swipe vertically to change brightness (left) or volume (right)
+ * Swipe horizontally to seek
+ * Pinch to zoom, resize modes (fit / stretch / crop / 100%)
+ * Playback speed control and volume boost
+ * Controls lock and picture-in-picture mode
+
+SUPPORTED FORMATS
+ * Video: H.263, H.264 AVC, H.265 HEVC, MPEG-4 SP, VP8, VP9, AV1
+ * Audio: Vorbis, Opus, FLAC, ALAC, PCM/WAVE, MP1, MP2, MP3, AMR, AAC, AC-3, E-AC-3, DTS, DTS-HD, TrueHD
  * Streaming: DASH, HLS, RTSP
  * Subtitles: SRT, SSA, ASS, TTML, VTT
 
-Key features:
-
- * Native Android app with a simple, easy-to-use interface
- * Completely free and open source, no ads, no excessive permissions
- * Material 3 (You) support
- * Audio/subtitle track selection
- * Vertical swipe to change brightness (left) / volume (right)
- * Horizontal swipe to seek
- * Media picker with tree, folder and file view modes
- * Playback speed control
- * Pinch to zoom in and out
- * Resize (fit/stretch/crop/100%)
- * Volume boost
- * External subtitle support (long press the subtitle icon)
- * Controls lock
- * Picture-in-picture mode
+Vayou is completely free, open source, contains no ads and requests no unnecessary permissions.
