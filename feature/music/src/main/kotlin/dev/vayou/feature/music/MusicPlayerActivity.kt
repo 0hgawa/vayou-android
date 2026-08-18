@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,7 +17,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import dagger.hilt.android.AndroidEntryPoint
+import dev.vayou.core.media.Song
 import dev.vayou.core.player.ui.musicMediaItem
 import dev.vayou.core.player.ui.rememberMusicController
 import dev.vayou.core.ui.theme.VayouTheme
@@ -75,11 +79,47 @@ class MusicPlayerActivity : ComponentActivity() {
                 }
 
                 val preferences by viewModel.preferences.collectAsStateWithLifecycle()
+
+                // Which track the menu is about. Followed from the session rather than passed in
+                // with the intent: the queue moves on by itself, and a menu still pointing at the
+                // track before this one would edit the wrong file.
+                var playingUri by remember { mutableStateOf<String?>(null) }
+                DisposableEffect(player) {
+                    val controller = player ?: return@DisposableEffect onDispose {}
+                    playingUri = controller.currentMediaItem?.mediaId
+                    val listener = object : Player.Listener {
+                        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                            playingUri = mediaItem?.mediaId
+                        }
+                    }
+                    controller.addListener(listener)
+                    onDispose { controller.removeListener(listener) }
+                }
+                // Null for a track from a share, which the library has never seen: there is nothing
+                // to tag, star or delete, so the key is not drawn at all.
+                var playingSong by remember { mutableStateOf<Song?>(null) }
+                LaunchedEffect(playingUri) {
+                    playingSong = playingUri?.let { viewModel.resolve(listOf(it)).firstOrNull() }
+                }
+                val library: MusicViewModel = hiltViewModel()
+                // Read once for the two things below: the star asks what is starred and
+                // the menu asks what lists exist, and two subscriptions to one flow is one
+                // too many.
+                val playlists by library.playlists.collectAsStateWithLifecycle()
+
                 NowPlayingScreen(
                     player = player,
                     preferences = preferences,
                     onSavePreferences = viewModel::updatePreferences,
                     onBack = ::finish,
+                    menu = {
+                        playingSong?.let { NowPlayingMenu(song = it, viewModel = library, playlists = playlists) }
+                    },
+                    favourite = {
+                        playingSong?.let {
+                            NowPlayingStar(song = it, viewModel = library, favouriteUris = playlists.favouriteUris)
+                        }
+                    },
                 )
             }
         }

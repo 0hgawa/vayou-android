@@ -31,7 +31,7 @@ data class Sort(val by: By, val order: Order) {
 
             // If both chunks contain numeric characters, sort them numerically.
             val result: Int
-            if (thisChunk[0].isDigit() && thatChunk[0].isDigit()) {
+            if (thisChunk[0].isAsciiDigit() && thatChunk[0].isAsciiDigit()) {
                 // Simple chunk comparison by length.
                 val thisChunkLength = thisChunk.length
                 val lengthDiff = thisChunkLength - thatChunk.length
@@ -117,16 +117,27 @@ data class Sort(val by: By, val order: Order) {
         }
     }
 
+    /**
+     * Only ASCII digits are ordered as numbers.
+     *
+     * [Char.isDigit] also accepts other scripts' digits, and those broke the ordering contract:
+     * numeric chunks are compared by length and code point, which disagrees with the plain text
+     * comparison every other chunk gets. A name carrying Arabic-Indic digits could then make the
+     * sort throw "Comparison method violates its general contract" -- a crash the published build
+     * reported from a real device. They sort as text instead.
+     */
+    private fun Char.isAsciiDigit(): Boolean = this in '0'..'9'
+
     private fun getChunk(string: String, length: Int, marker: Int): String {
         var current = marker
         val chunk = StringBuilder()
         var c = string[current]
         chunk.append(c)
         current++
-        if (c.isDigit()) {
+        if (c.isAsciiDigit()) {
             while (current < length) {
                 c = string[current]
-                if (!c.isDigit()) {
+                if (!c.isAsciiDigit()) {
                     break
                 }
                 chunk.append(c)
@@ -135,7 +146,7 @@ data class Sort(val by: By, val order: Order) {
         } else {
             while (current < length) {
                 c = string[current]
-                if (c.isDigit()) {
+                if (c.isAsciiDigit()) {
                     break
                 }
                 chunk.append(c)

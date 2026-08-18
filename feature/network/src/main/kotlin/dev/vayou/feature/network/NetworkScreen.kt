@@ -2,7 +2,6 @@ package dev.vayou.feature.network
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -22,12 +21,10 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.vayou.core.smb.FavoriteFolder
@@ -38,13 +35,11 @@ import dev.vayou.core.smb.SmbFileItem
 import dev.vayou.core.smb.mergeNetworkServers
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.VayouBackButton
-import dev.vayou.core.ui.designsystem.components.VayouCircularProgress
 import dev.vayou.core.ui.designsystem.components.VayouIconButton
 import dev.vayou.core.ui.designsystem.components.VayouPillRow
 import dev.vayou.core.ui.designsystem.components.VayouSearchField
 import dev.vayou.core.ui.designsystem.components.VayouSelectionTopBar
 import dev.vayou.core.ui.designsystem.components.VayouTopAppBar
-import dev.vayou.core.ui.designsystem.components.VayouTopAppBarDefaults
 import dev.vayou.core.ui.theme.VayouTheme
 import kotlinx.coroutines.launch
 
@@ -242,7 +237,6 @@ fun NetworkScreen(
                     } else {
                         Text(
                             text = uiState.title(),
-                            style = VayouTopAppBarDefaults.titleStyle,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -279,34 +273,6 @@ fun NetworkScreen(
                             Icon(
                                 imageVector = if (isSearchOpen) VayouIcons.Close else VayouIcons.Search,
                                 contentDescription = stringResource(R.string.search),
-                            )
-                        }
-                    }
-
-                    // The same corner the library adds from, doing the same job: whatever this list
-                    // holds, this is where one more of it comes from.
-                    if (uiState.screen == NetworkScreen.ServerList) {
-                        if (tab == ServersTab) {
-                            if (uiState.isLoading) {
-                                Box(modifier = Modifier.size(ScanSlot), contentAlignment = Alignment.Center) {
-                                    VayouCircularProgress(size = ScanSpinner, strokeWidth = ThinStroke)
-                                }
-                            } else {
-                                VayouIconButton(onClick = { viewModel.scan(force = true) }) {
-                                    Icon(VayouIcons.Update, stringResource(R.string.scan))
-                                }
-                            }
-                        }
-                        VayouIconButton(
-                            onClick = {
-                                if (tab == ServersTab) isAddServerOpen = true else isAddPlaylistOpen = true
-                            },
-                        ) {
-                            Icon(
-                                imageVector = VayouIcons.Add,
-                                contentDescription = stringResource(
-                                    if (tab == ServersTab) R.string.connect_to_server else R.string.add_playlist,
-                                ),
                             )
                         }
                     }
@@ -423,6 +389,7 @@ fun NetworkScreen(
                         onOpenFavourites = viewModel::openChannelFavourites,
                         onRename = { renamingPlaylist = it },
                         onRemove = { viewModel.removePlaylist(it.url) },
+                        onAdd = { isAddPlaylistOpen = true },
                     )
                 } else {
                     ServerList(
@@ -436,6 +403,8 @@ fun NetworkScreen(
                         onEditServer = { viewModel.editServer(it.host, it.displayName) },
                         onForgetServer = { viewModel.forgetServer(it.host) },
                         onOpenFolderFavourites = viewModel::openFolderFavourites,
+                        onAdd = { isAddServerOpen = true },
+                        onScan = { viewModel.scan(force = true) },
                     )
                 }
             }
@@ -593,13 +562,6 @@ private const val StreamsTab = 1
 private const val TabCount = 2
 
 private const val CountryCodeLength = 2
-
-/** Holds the scan button's place while the scan runs, so the bar does not shuffle. */
-private val ScanSlot = 48.dp
-
-private val ScanSpinner = 20.dp
-
-private val ThinStroke = 2.dp
 
 /** Saves the channel selection across a rotation. Addresses, as everywhere else a selection is kept. */
 private val SelectedUrlsSaver = Saver<MutableState<Set<String>>, List<String>>(

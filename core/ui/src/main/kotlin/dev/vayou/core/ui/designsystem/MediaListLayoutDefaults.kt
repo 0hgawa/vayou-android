@@ -3,6 +3,7 @@ package dev.vayou.core.ui.designsystem
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.vayou.core.ui.designsystem.components.VayouSheetDefaults
@@ -69,6 +70,28 @@ object MediaListLayoutDefaults {
      * paddings plus [ItemSpacing], which the container lays between cells on both axes -- and that
      * last couple of dp is what keeps two picked plates from meeting.
      */
+    /**
+     * What a cell's picture measures: the width the cell leaves it, whatever the grid's shape.
+     *
+     * Read from the columns rather than fixed, because the two libraries no longer lay out the
+     * same -- films are wide and go two to a line, covers are square and go three -- and a number
+     * that fitted one left the other's picture adrift in a cell built for something bigger.
+     */
+    @Composable
+    @ReadOnlyComposable
+    fun gridCoverSize(columns: Int): Dp {
+        val screen = LocalConfiguration.current.screenWidthDp.dp
+        val betweenCells = ItemSpacing * (columns - 1)
+        return (screen - GridOuterInset * 2 - betweenCells) / columns - VayouTheme.spacing.sm * 2
+    }
+
+    /**
+     * Between a cell's picture and the words under it. Four, not eight: the name belongs to the
+     * picture above it, and at eight it starts to read as a line of its own -- which is how the
+     * film folders came to sit further from their names than the music ones.
+     */
+    val CardTextGap: Dp = 4.dp
+
     val GridItemPadding: PaddingValues
         @Composable
         @ReadOnlyComposable

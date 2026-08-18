@@ -29,12 +29,14 @@ import androidx.compose.ui.unit.dp
 import dev.vayou.core.smb.FavoriteFolder
 import dev.vayou.core.smb.NetworkServerEntry
 import dev.vayou.core.smb.SmbShare
+import dev.vayou.core.ui.designsystem.MediaListLayoutDefaults
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.VayouCircularProgress
 import dev.vayou.core.ui.designsystem.components.VayouConfirmButton
 import dev.vayou.core.ui.designsystem.components.VayouEmptyState
 import dev.vayou.core.ui.designsystem.components.VayouFolderTile
 import dev.vayou.core.ui.designsystem.components.VayouListHeader
+import dev.vayou.core.ui.designsystem.components.VayouListHeaderAction
 import dev.vayou.core.ui.designsystem.components.VayouTextField
 import dev.vayou.core.ui.theme.VayouTheme
 
@@ -49,11 +51,47 @@ internal fun ServerList(
     onEditServer: (NetworkServerEntry) -> Unit,
     onForgetServer: (NetworkServerEntry) -> Unit,
     onOpenFolderFavourites: () -> Unit,
+    onAdd: () -> Unit,
+    onScan: () -> Unit,
 ) {
     val online = stringResource(R.string.online)
     val offline = stringResource(R.string.offline)
 
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(MediaListLayoutDefaults.ItemSpacing),
+    ) {
+        // Naming the list and offering the two things that can be done to it, in the corner every
+        // other section uses for exactly that. Looking again sits beside adding by hand because
+        // they answer the same question -- what is on this network -- one by searching and one by
+        // being told.
+        item {
+            VayouListHeader(
+                label = stringResource(R.string.servers),
+                trailing = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (isLoading) {
+                            // In the button's own box, so the row does not shorten by one key
+                            // while the search runs and shift the other along.
+                            Box(modifier = Modifier.size(ScanSlot), contentAlignment = Alignment.Center) {
+                                VayouCircularProgress(size = ScanSpinner, strokeWidth = ThinStroke)
+                            }
+                        } else {
+                            VayouListHeaderAction(
+                                icon = VayouIcons.Update,
+                                contentDescription = stringResource(R.string.scan),
+                                onClick = onScan,
+                            )
+                        }
+                        VayouListHeaderAction(
+                            icon = VayouIcons.Add,
+                            contentDescription = stringResource(R.string.connect_to_server),
+                            onClick = onAdd,
+                        )
+                    }
+                },
+            )
+        }
         if (error != null) {
             item { InlineError(error) }
         }
@@ -125,7 +163,10 @@ internal fun ShareList(
         isLoading -> Waiting()
         error != null -> ErrorState(error)
         shares.isEmpty() -> VayouEmptyState(VayouIcons.Folder, stringResource(R.string.no_shares_found))
-        else -> LazyColumn(modifier = Modifier.fillMaxSize()) {
+        else -> LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(MediaListLayoutDefaults.ItemSpacing),
+        ) {
             item { VayouListHeader(label = host) }
             items(shares, key = { it.name }) { share ->
                 NetworkRow(
@@ -165,7 +206,10 @@ internal fun FolderFavourites(
         VayouEmptyState(VayouIcons.Pin, stringResource(R.string.no_pinned_folders))
         return
     }
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(MediaListLayoutDefaults.ItemSpacing),
+    ) {
         if (error != null) {
             item { InlineError(error) }
         }
@@ -321,5 +365,9 @@ internal const val Separator = " · "
 private const val OfflineAlpha = 0.5f
 
 private val SpinnerInButton = 18.dp
+
+private val ScanSlot = 48.dp
+
+private val ScanSpinner = 20.dp
 
 private val ThinStroke = 2.dp

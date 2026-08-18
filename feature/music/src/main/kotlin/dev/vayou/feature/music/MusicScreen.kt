@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -39,6 +40,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -217,8 +219,10 @@ fun MusicScreen(onPlaySong: (Song, List<Song>) -> Unit, viewModel: MusicViewMode
             onShare = { song ->
                 context.startActivity(Intent.createChooser(viewModel.shareIntent(listOf(song)), null))
             },
-            onToggleFavourite = viewModel::toggleFavourite,
-            isFavourite = { it.uriString in playlists.favouriteUris },
+            favourite = FavouriteAction(
+                isFavourite = { it.uriString in playlists.favouriteUris },
+                toggle = viewModel::toggleFavourite,
+            ),
             onAddToPlaylist = { addingToPlaylist = listOf(it) },
             // Not inside starred: there is no list to take the track out of, and the star above
             // this row already does the only thing that means anything there.
@@ -394,8 +398,10 @@ fun MusicScreen(onPlaySong: (Song, List<Song>) -> Unit, viewModel: MusicViewMode
                             focusRequester = searchFocus,
                         )
                     } else {
-                        androidx.compose.material3.Text(
+                        Text(
                             text = openGroup?.label ?: stringResource(R.string.audio),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 },
@@ -419,11 +425,6 @@ fun MusicScreen(onPlaySong: (Song, List<Song>) -> Unit, viewModel: MusicViewMode
                         openGroup != null && tab == MusicTab.Playlists ->
                             VayouIconButton(onClick = { isAddingTracks = true }) {
                                 Icon(VayouIcons.Add, stringResource(R.string.add_tracks))
-                            }
-
-                        openGroup == null && tab == MusicTab.Playlists ->
-                            VayouIconButton(onClick = { isCreatingPlaylist = true }) {
-                                Icon(VayouIcons.Add, stringResource(R.string.new_playlist))
                             }
                     }
                 },
@@ -490,65 +491,87 @@ fun MusicScreen(onPlaySong: (Song, List<Song>) -> Unit, viewModel: MusicViewMode
                         )
                     }
 
-                    else -> GroupList(
-                        uiState = uiState,
-                        groups = remember(
-                            allSongs,
-                            pageTab,
-                            unknown,
-                            query,
-                            musicPlaylists,
-                            favouriteSongs,
-                            isAscending,
-                        ) {
-                            val all = if (pageTab == MusicTab.Playlists) {
-                                playlistGroups(musicPlaylists, allSongs)
-                            } else {
-                                groupSongs(allSongs, pageTab, unknown)
-                            }
-                            val shown = all.filter { query == null || it.label.contains(query, true) }
-                            val ordered = if (isAscending) shown else shown.reversed()
-                            // Starred stays at the head whichever way the rest runs: it is not one
-                            // of the made lists and does not take its turn among them.
-                            if (pageTab == MusicTab.Playlists && query == null) {
-                                listOf(favouritesGroup(favouriteSongs, favouritesLabel)) + ordered
-                            } else {
-                                ordered
-                            }
-                        },
-                        emptyTitle = stringResource(
-                            if (pageTab == MusicTab.Playlists) R.string.no_playlists else R.string.no_music_found,
-                        ),
-                        isSearching = query != null,
-                        isGrid = isGrid,
-                        header = {
-                            // The same row the track list carries, so the switch is in one corner
-                            // throughout. A group list is ordered by name and nothing else, so the
-                            // label says so and the tap flips the direction rather than opening a
-                            // sheet of axes that would not apply.
-                            VayouListHeader(
-                                label = stringResource(R.string.sort_by_name),
-                                isAscending = isAscending,
-                                onClick = viewModel::toggleAscending,
-                                outerInset = MediaListLayoutDefaults.headerInset(isGrid),
-                                trailing = {
-                                    VayouListHeaderAction(
-                                        icon = if (isGrid) VayouIcons.ListView else VayouIcons.GridView,
-                                        contentDescription = stringResource(
-                                            if (isGrid) R.string.show_as_list else R.string.show_as_grid,
-                                        ),
-                                        onClick = viewModel::toggleLayoutMode,
-                                    )
-                                },
-                            )
-                        },
-                        tab = pageTab,
-                        selectedKeys = selectedGroups,
-                        onToggleSelection = toggleGroupSelection,
-                        ownerActions = playlistActions,
-                        onOpenGroup = { openGroupKey = it.key },
-                        actions = groupActions,
-                    )
+                    else -> {
+                        val pageIsGrid = isGrid && pageTab != MusicTab.Playlists
+                        GroupList(
+                            uiState = uiState,
+                            groups = remember(
+                                allSongs,
+                                pageTab,
+                                unknown,
+                                query,
+                                musicPlaylists,
+                                favouriteSongs,
+                                isAscending,
+                            ) {
+                                val all = if (pageTab == MusicTab.Playlists) {
+                                    playlistGroups(musicPlaylists, allSongs)
+                                } else {
+                                    groupSongs(allSongs, pageTab, unknown)
+                                }
+                                val shown = all.filter { query == null || it.label.contains(query, true) }
+                                val ordered = if (isAscending) shown else shown.reversed()
+                                // Starred stays at the head whichever way the rest runs: it is not one
+                                // of the made lists and does not take its turn among them.
+                                if (pageTab == MusicTab.Playlists && query == null) {
+                                    listOf(favouritesGroup(favouriteSongs, favouritesLabel)) + ordered
+                                } else {
+                                    ordered
+                                }
+                            },
+                            emptyTitle = stringResource(
+                                if (pageTab == MusicTab.Playlists) R.string.no_playlists else R.string.no_music_found,
+                            ),
+                            isSearching = query != null,
+                            // Playlists are the one group list with nothing to look at: a made list
+                            // carries no cover, so a grid of them is three identical marks to a row
+                            // where a list would be three names. The film library does not offer the
+                            // switch there either, and a shared setting must not make one section
+                            // answer it and the other ignore it.
+                            isGrid = pageIsGrid,
+                            header = {
+                                // The same row the track list carries, so the switch is in one corner
+                                // throughout. A group list is ordered by name and nothing else, so the
+                                // label says so and the tap flips the direction rather than opening a
+                                // sheet of axes that would not apply.
+                                val pageIsGrid = isGrid && pageTab != MusicTab.Playlists
+                                VayouListHeader(
+                                    label = stringResource(R.string.sort_by_name),
+                                    isAscending = isAscending,
+                                    onClick = viewModel::toggleAscending,
+                                    outerInset = MediaListLayoutDefaults.headerInset(pageIsGrid),
+                                    // Making a list belongs beside the list it joins, not up in the
+                                    // bar: the bar is what this screen is, and the row underneath is
+                                    // what the screen is showing. Every other tab spends the same
+                                    // corner on the layout switch, which a list of playlists has no
+                                    // use for.
+                                    trailing = {
+                                        if (pageTab == MusicTab.Playlists) {
+                                            VayouListHeaderAction(
+                                                icon = VayouIcons.Add,
+                                                contentDescription = stringResource(R.string.new_playlist),
+                                                onClick = { isCreatingPlaylist = true },
+                                            )
+                                        } else {
+                                            VayouListHeaderAction(
+                                                icon = if (pageIsGrid) VayouIcons.ListView else VayouIcons.GridView,
+                                                contentDescription = stringResource(
+                                                    if (pageIsGrid) R.string.show_as_list else R.string.show_as_grid,
+                                                ),
+                                                onClick = viewModel::toggleLayoutMode,
+                                            )
+                                        }
+                                    },
+                                )
+                            },
+                            tab = pageTab,
+                            selectedKeys = selectedGroups,
+                            onToggleSelection = toggleGroupSelection,
+                            ownerActions = playlistActions,
+                            onOpenGroup = { openGroupKey = it.key },
+                            actions = groupActions,
+                        )
+                    }
                 }
             }
         }
@@ -838,7 +861,7 @@ private fun GroupList(
 }
 
 /** Three across, as the video grid is: the same phone and the same size of thing to look at. */
-private const val GridColumns = 3
+internal const val GridColumns = 3
 
 /** Draws the waiting and the empty states, and says whether the caller still has work to do. */
 @Composable

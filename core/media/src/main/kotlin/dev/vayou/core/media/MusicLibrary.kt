@@ -2,16 +2,26 @@ package dev.vayou.core.media
 
 import android.content.ContentUris
 import android.content.Context
+import android.database.ContentObserver
 import android.database.Cursor
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.vayou.core.common.Dispatcher
 import dev.vayou.core.common.VayouDispatchers
+import dev.vayou.core.common.di.ApplicationScope
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.withContext
 
 /**
@@ -26,7 +36,29 @@ import kotlinx.coroutines.withContext
 class MusicLibrary @Inject constructor(
     @param:ApplicationContext private val context: Context,
     @param:Dispatcher(VayouDispatchers.IO) private val dispatcher: CoroutineDispatcher,
+    @param:ApplicationScope private val scope: CoroutineScope,
 ) {
+
+    /**
+     * A tick whenever the store's audio changes.
+     *
+     * Here and not in a view model: the observer is one registration for the whole app, and a
+     * second screen that also watches used to mean a second observer and a second scan of the
+     * library for every change. Shared while anyone is listening and let go when nobody is.
+     */
+    val changes: Flow<Unit> = callbackFlow {
+        val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
+            override fun onChange(selfChange: Boolean) {
+                trySend(Unit)
+            }
+        }
+        context.contentResolver.registerContentObserver(
+            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+            true,
+            observer,
+        )
+        awaitClose { context.contentResolver.unregisterContentObserver(observer) }
+    }.shareIn(scope, SharingStarted.WhileSubscribed(), replay = 0)
 
     /** Every track on the device, unordered -- callers sort by whatever they are showing. */
     suspend fun all(): List<Song> = query(selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0")

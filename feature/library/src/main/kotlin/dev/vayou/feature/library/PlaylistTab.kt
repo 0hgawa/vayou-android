@@ -24,6 +24,8 @@ import dev.vayou.core.ui.designsystem.components.VayouActionSheet
 import dev.vayou.core.ui.designsystem.components.VayouActionSheetItem
 import dev.vayou.core.ui.designsystem.components.VayouArtwork
 import dev.vayou.core.ui.designsystem.components.VayouEmptyState
+import dev.vayou.core.ui.designsystem.components.VayouListHeader
+import dev.vayou.core.ui.designsystem.components.VayouListHeaderAction
 import dev.vayou.core.ui.designsystem.components.VayouOverflowButton
 import dev.vayou.core.ui.designsystem.components.VayouSegmentedListItem
 import dev.vayou.core.ui.theme.VayouTheme
@@ -48,11 +50,27 @@ internal fun PlaylistList(
     onOpen: (MediaPlaylist) -> Unit,
     onRename: (MediaPlaylist) -> Unit,
     onDelete: (MediaPlaylist) -> Unit,
+    onNew: () -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(MediaListLayoutDefaults.ItemSpacing),
     ) {
+        // Making a list belongs beside the lists it joins, not up in the bar: every section
+        // spends this corner on what the list under it can do.
+        item {
+            VayouListHeader(
+                label = stringResource(R.string.playlists),
+                trailing = {
+                    VayouListHeaderAction(
+                        icon = VayouIcons.Add,
+                        contentDescription = stringResource(R.string.new_playlist),
+                        onClick = onNew,
+                    )
+                },
+            )
+        }
+
         item(key = SmartPlaylist.Favourites) {
             PlaylistRow(
                 icon = VayouIcons.StarFilled,

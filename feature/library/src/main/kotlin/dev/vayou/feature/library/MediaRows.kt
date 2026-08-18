@@ -205,17 +205,26 @@ internal fun FolderCard(
                 // name -- and pinned to the start of a cell it does not fill, which is what put
                 // four folders at four different distances from their own left edges.
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(CardTextGap),
+                verticalArrangement = Arrangement.spacedBy(MediaListLayoutDefaults.CardTextGap),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 VayouSelectionMark(selected = isSelecting && isSelected) {
-                    VayouFolderGraphic(width = CardFolderWidth)
+                    VayouFolderGraphic(width = MediaListLayoutDefaults.gridCoverSize(FolderColumns))
                 }
                 Text(
                     text = folder.name,
+                    style = VayouTheme.typography.bodyMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center,
+                )
+                // What the row says under the name, said here too: a folder is worth opening or not
+                // by how much is in it, and the grid was the one place that did not answer.
+                Text(
+                    text = pluralStringResource(R.plurals.n_videos, folder.mediaList.size, folder.mediaList.size),
+                    style = VayouTheme.typography.bodySmall,
+                    color = VayouTheme.colors.onSurfaceVariant,
+                    maxLines = 1,
                 )
             }
         },
@@ -230,14 +239,23 @@ internal fun FolderCard(
  * rather than a screen of it -- what is under it is still the library.
  */
 @Composable
-internal fun RecentVideosRow(videos: List<Video>, onPlay: (Video) -> Unit) {
+internal fun RecentVideosRow(videos: List<Video>, isGrid: Boolean, onPlay: (Video) -> Unit) {
     Column {
         // The same line the sort row uses, not a heavier one: this introduces a strip that is not
         // the point of the screen, and at title weight the quietest thing above the list would be
         // the loudest.
-        VayouListHeader(label = stringResource(R.string.recently_played))
+        //
+        // Both of these give back what the grid's container already inset, for the same reason the
+        // sort row does: this strip spans the whole width and sees the container's margin, so on a
+        // fixed inset it moved sideways every time the switch was pressed.
+        VayouListHeader(
+            label = stringResource(R.string.recently_played),
+            outerInset = MediaListLayoutDefaults.headerInset(isGrid),
+        )
         LazyRow(
-            contentPadding = PaddingValues(horizontal = VayouTheme.spacing.lg),
+            contentPadding = PaddingValues(
+                horizontal = VayouTheme.spacing.lg - if (isGrid) MediaListLayoutDefaults.GridOuterInset else 0.dp,
+            ),
             horizontalArrangement = Arrangement.spacedBy(VayouTheme.spacing.sm),
         ) {
             items(videos, key = { it.uriString }) { video ->
@@ -256,10 +274,6 @@ internal fun RecentVideosRow(videos: List<Video>, onPlay: (Video) -> Unit) {
         }
     }
 }
-
-private val CardTextGap = 8.dp
-
-private val CardFolderWidth = 72.dp
 
 /** Wide enough that the frame reads at a glance, narrow enough that a third card peeks in. */
 private val RecentCardWidth = 140.dp

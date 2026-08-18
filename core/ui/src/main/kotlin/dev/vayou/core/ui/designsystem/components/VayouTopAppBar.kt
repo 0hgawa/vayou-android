@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
@@ -43,7 +44,10 @@ fun VayouTopAppBar(
     // the folder's name in the middle of the bar, then a settings page in the middle again. One
     // column for every title, the same one every row beneath it starts on, and nothing jumps.
     TopAppBar(
-        title = title,
+        // The slot gets the same style the string overload gives: Material would otherwise hand a
+        // composable title its own titleLarge, two points larger, and a bar with a search field in
+        // it would wear a bigger name than the bar beside it.
+        title = { ProvideTextStyle(VayouTopAppBarDefaults.titleStyle, title) },
         navigationIcon = navigationIcon,
         actions = actions,
         colors = colors,

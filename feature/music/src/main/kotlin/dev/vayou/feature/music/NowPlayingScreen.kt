@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -44,6 +45,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -66,6 +68,7 @@ import dev.vayou.core.ui.theme.VayouTheme
 import dev.vayou.feature.player.EqualizerSheet
 import dev.vayou.feature.player.PlayerButtonSize
 import dev.vayou.feature.player.SleepTimerSheet
+import dev.vayou.feature.player.rememberCastRouteName
 import dev.vayou.feature.player.rememberEqualizerState
 import dev.vayou.feature.player.rememberSleepTimerState
 import kotlinx.coroutines.delay
@@ -84,6 +87,10 @@ fun NowPlayingScreen(
     preferences: PlayerPreferences,
     onSavePreferences: (PlayerPreferences.() -> PlayerPreferences) -> Unit,
     onBack: () -> Unit,
+    /** Everything that can be done to the track playing, behind the key opposite the chevron. */
+    menu: @Composable () -> Unit = {},
+    /** The star, at the far end of the title's line -- the one action here that gets repeated. */
+    favourite: @Composable () -> Unit = {},
 ) {
     // The screen is dressed by whatever is playing. It reads the cover the content decided to show
     // rather than resolving the artwork twice -- the metadata listeners live one level down.
@@ -119,6 +126,8 @@ fun NowPlayingScreen(
                     tint = VayouTheme.colors.onSurface,
                 )
             }
+            Spacer(modifier = Modifier.weight(1f))
+            menu()
         }
 
         if (player == null) {
@@ -133,6 +142,7 @@ fun NowPlayingScreen(
             preferences = preferences,
             onSavePreferences = onSavePreferences,
             onArtworkChange = { artwork = it },
+            favourite = favourite,
         )
     }
 }
@@ -143,6 +153,7 @@ private fun NowPlaying(
     preferences: PlayerPreferences,
     onSavePreferences: (PlayerPreferences.() -> PlayerPreferences) -> Unit,
     onArtworkChange: (Any?) -> Unit,
+    favourite: @Composable () -> Unit,
 ) {
     var isPlaying by remember { mutableStateOf(player.isPlaying) }
     var isShuffled by remember { mutableStateOf(player.shuffleModeEnabled) }
@@ -268,7 +279,7 @@ private fun NowPlaying(
                 // would be taller than the window and lose its bottom.
                 Cover(face.cover, Modifier.fillMaxHeight())
                 Column(modifier = Modifier.weight(1f)) {
-                    SlidingTrack(face, slidesForward) { TrackInfo(it.title, it.artist) }
+                    TrackLine(face, slidesForward, favourite)
                     // Stripped to what a glance needs. The two times are dropped rather than
                     // squeezed -- a wide window is short, and the handle already says where the
                     // track is.
@@ -288,6 +299,11 @@ private fun NowPlaying(
                         .weight(1f)
                         .padding(horizontal = ContentPadding),
                 ) {
+                    // Off the top of the screen, and by a share of what is spare rather than a
+                    // fixed gap: pinned under the chevron the square sat against the bar on a tall
+                    // phone and in the middle of a short one. A third above and two thirds below
+                    // keeps it high enough to be the subject and low enough not to touch the bar.
+                    Spacer(modifier = Modifier.weight(CoverHeadroom))
                     // Just inside the full width, and centred on it. Edge to edge the square is the
                     // tallest thing on the screen by a distance, and a margin of its own parts it
                     // from the text that starts on the column's.
@@ -298,7 +314,7 @@ private fun NowPlaying(
                             .align(Alignment.CenterHorizontally),
                     )
                     Spacer(modifier = Modifier.weight(1f))
-                    SlidingTrack(face, slidesForward) { TrackInfo(it.title, it.artist) }
+                    TrackLine(face, slidesForward, favourite)
                     Progress(shownMs, durationMs, showTimes = true, onSeek = {
                         isDragging = true
                         draggedMs = it
@@ -336,6 +352,15 @@ private fun NowPlaying(
  */
 @Composable
 private fun Cover(artwork: Any?, modifier: Modifier = Modifier) {
+    // The square says where the sound is when the sound is not here. It is the one part of this
+    // screen that stops being true on a speaker in another room -- the words and the transport
+    // still describe what is playing -- and it is the part the video player replaces for the same
+    // reason: there is nothing to look at on this device.
+    val room = rememberCastRouteName()
+    if (room != null) {
+        CastCover(room, modifier)
+        return
+    }
     VayouArtwork(
         model = artwork,
         iconTint = VayouTheme.colors.onSurfaceVariant,
@@ -345,12 +370,61 @@ private fun Cover(artwork: Any?, modifier: Modifier = Modifier) {
     )
 }
 
+/** The cover's place while a television or a speaker has the track: what has it, and its name. */
+@Composable
+private fun CastCover(room: String, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .aspectRatio(1f)
+            .clip(VayouTheme.shapes.largeIncreased)
+            .background(VayouTheme.colors.surfaceContainer)
+            .padding(ContentPadding),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Icon(
+            imageVector = VayouIcons.CastConnected,
+            contentDescription = null,
+            tint = VayouTheme.colors.onSurfaceVariant,
+            modifier = Modifier.size(CastGlyphSize),
+        )
+        Spacer(modifier = Modifier.height(VayouTheme.spacing.md))
+        Text(
+            text = room,
+            style = VayouTheme.typography.titleMedium,
+            color = VayouTheme.colors.onSurface,
+            textAlign = TextAlign.Center,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
 /**
  * Everything on the screen that belongs to the track rather than to the playing of it.
  *
  * One value rather than three arguments, because the panes that slide have to keep showing what
  * they were showing while they leave.
  */
+/**
+ * The star and the words, on one line.
+ *
+ * Written once and used by both layouts: the pane that slides is the same in each, and a second
+ * copy of this arrangement is where the two of them would start to drift apart.
+ */
+@Composable
+private fun TrackLine(face: TrackFace, slidesForward: Boolean, favourite: @Composable () -> Unit) {
+    // Bottom, so the star lands on the artist's line rather than between the two: the name is the
+    // subject and the star is a remark about it, and level with the quieter line it stops competing
+    // with the title for the eye.
+    Row(verticalAlignment = Alignment.Bottom) {
+        Box(modifier = Modifier.weight(1f)) {
+            SlidingTrack(face, slidesForward) { TrackInfo(it.title, it.artist) }
+        }
+        favourite()
+    }
+}
+
 @Immutable
 private data class TrackFace(val id: String?, val cover: Any?, val title: String, val artist: String)
 
@@ -637,3 +711,8 @@ private val ButtonRowPadding = 12.dp
 private val WideGap = 32.dp
 
 private val PlayGlyph = 32.dp
+
+private val CastGlyphSize = 56.dp
+
+/** What is left over above the cover, against the one below it. */
+private const val CoverHeadroom = 0.5f

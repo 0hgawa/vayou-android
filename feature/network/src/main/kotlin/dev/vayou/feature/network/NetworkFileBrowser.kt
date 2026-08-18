@@ -2,6 +2,7 @@ package dev.vayou.feature.network
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +24,7 @@ import dev.vayou.core.smb.BrowserSort
 import dev.vayou.core.smb.BrowserSortBy
 import dev.vayou.core.smb.SmbFileItem
 import dev.vayou.core.smb.sortedBy
+import dev.vayou.core.ui.designsystem.MediaListLayoutDefaults
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.VayouEmptyState
 import dev.vayou.core.ui.designsystem.components.VayouListHeader
@@ -74,7 +76,10 @@ internal fun FileBrowser(
         return
     }
 
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(MediaListLayoutDefaults.ItemSpacing),
+    ) {
         if (share.isNotEmpty()) {
             item { Breadcrumb(share = share, path = path, onSegmentClick = onOpenAncestor) }
         }

@@ -40,12 +40,12 @@ data class PlayerPreferences(
     /**
      * Whether the bars either side of the film take its colour.
      *
-     * On, as the old player had it -- it draws this and offers no way to stop it. The switch is the
-     * addition, not the effect: it is a taste, it is the only thing on screen that is not the film
-     * or a control over it, and someone who wants a black surround should not have to want the
-     * rest of the player less.
+     * Off by default: it is the only thing on screen that is neither the film nor a control over
+     * it, and a black surround is what a viewer expects of a player until they ask for something
+     * else. It also costs a copy off the GPU every few seconds, which nothing else here does. The
+     * switch is one tap away for whoever wants the frame tinted.
      */
-    val useAmbientGlow: Boolean = true,
+    val useAmbientGlow: Boolean = false,
 
     // What a touch on the picture does.
     val useSeekControls: Boolean = true,

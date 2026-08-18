@@ -1,5 +1,6 @@
 package dev.vayou.feature.network
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,9 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import dev.vayou.core.smb.PlaylistChannel
 import dev.vayou.core.smb.SavedPlaylist
+import dev.vayou.core.ui.designsystem.MediaListLayoutDefaults
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.VayouEmptyState
 import dev.vayou.core.ui.designsystem.components.VayouListHeader
+import dev.vayou.core.ui.designsystem.components.VayouListHeaderAction
 import dev.vayou.core.ui.designsystem.components.VayouSortOption
 import dev.vayou.core.ui.designsystem.components.VayouSortSheet
 
@@ -28,9 +31,26 @@ internal fun PlaylistList(
     onOpenFavourites: () -> Unit,
     onRename: (SavedPlaylist) -> Unit,
     onRemove: (SavedPlaylist) -> Unit,
+    onAdd: () -> Unit,
 ) {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        item { VayouListHeader(label = stringResource(R.string.saved_playlists)) }
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(MediaListLayoutDefaults.ItemSpacing),
+    ) {
+        // Adding a list sits at the end of the line that names them, the same corner the library
+        // spends on the same thing.
+        item {
+            VayouListHeader(
+                label = stringResource(R.string.saved_playlists),
+                trailing = {
+                    VayouListHeaderAction(
+                        icon = VayouIcons.Add,
+                        contentDescription = stringResource(R.string.add_playlist),
+                        onClick = onAdd,
+                    )
+                },
+            )
+        }
 
         item(key = "channel_favourites") {
             NetworkRow(
@@ -82,7 +102,10 @@ internal fun ChannelFavourites(
         VayouEmptyState(VayouIcons.Search, stringResource(R.string.no_results_found))
         return
     }
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(MediaListLayoutDefaults.ItemSpacing),
+    ) {
         items(shown, key = { it.url }) { channel ->
             ChannelRow(
                 channel = channel,
@@ -172,7 +195,10 @@ internal fun PlaylistDetail(
         // Flattened in the order the groups are drawn, not the order they arrived: this is what
         // the player steps through, and "next" has to mean the row below the one just left.
         val listed = remember(grouped) { grouped.values.flatten() }
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(MediaListLayoutDefaults.ItemSpacing),
+        ) {
             item { header() }
             grouped.forEach { (group, inGroup) ->
                 if (group.isNotEmpty()) {
@@ -223,7 +249,10 @@ internal fun PlaylistDetail(
         }
     }
 
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(MediaListLayoutDefaults.ItemSpacing),
+    ) {
         item { header() }
         itemsIndexed(shown, key = { index, channel -> "${channel.url}_$index" }) { _, channel ->
             ChannelRow(

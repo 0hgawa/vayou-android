@@ -40,11 +40,18 @@ import dev.vayou.core.ui.theme.VayouTheme
  * into it without losing what is playing is the thing this menu exists for.
  */
 internal data class SongActions(
-    val onPlayNext: (Song) -> Unit,
-    val onAddToQueue: (Song) -> Unit,
+    /**
+     * Null on the player's own menu, where both would act on the track already playing: slipping it
+     * in after itself, or adding a second copy of it to the end.
+     */
+    val onPlayNext: ((Song) -> Unit)?,
+    val onAddToQueue: ((Song) -> Unit)?,
     val onShare: (Song) -> Unit,
-    val onToggleFavourite: (Song) -> Unit,
-    val isFavourite: (Song) -> Boolean,
+    /**
+     * Starring, where the menu is the only place to do it. Null on the player, which has the star
+     * beside the title: one action, offered once.
+     */
+    val favourite: FavouriteAction?,
     val onAddToPlaylist: (Song) -> Unit,
     /** Non-null only inside a list the listener owns, where taking a track out means something. */
     val onRemoveFromPlaylist: ((Song) -> Unit)?,
@@ -52,12 +59,25 @@ internal data class SongActions(
     val onEditTags: (Song) -> Unit,
 )
 
+/** Whether a track is starred, and the way to change that. */
+internal data class FavouriteAction(val isFavourite: (Song) -> Boolean, val toggle: (Song) -> Unit)
+
 @Composable
-internal fun SongMenuButton(song: Song, actions: SongActions) {
+internal fun SongMenuButton(
+    song: Song,
+    actions: SongActions,
+    /**
+     * The key that opens it. A row gets the narrow overflow, which sits closer to the edge than a
+     * full button would; the player gets a round one on the chevron's own box, because there the
+     * two keys are a pair at opposite ends of the same bar and an oval ripple beside a circular one
+     * reads as a mistake.
+     */
+    button: @Composable (onClick: () -> Unit) -> Unit = { onClick -> VayouOverflowButton(onClick = onClick) },
+) {
     var isOpen by remember { mutableStateOf(false) }
     var isShowingDetails by remember { mutableStateOf(false) }
 
-    VayouOverflowButton(onClick = { isOpen = true })
+    button { isOpen = true }
 
     if (isOpen) {
         val close = { isOpen = false }
@@ -74,25 +94,31 @@ internal fun SongMenuButton(song: Song, actions: SongActions) {
                 )
             },
         ) {
-            VayouActionSheetItem(stringResource(R.string.play_next), VayouIcons.PlayNext) {
-                close()
-                actions.onPlayNext(song)
+            actions.onPlayNext?.let { playNext ->
+                VayouActionSheetItem(stringResource(R.string.play_next), VayouIcons.PlayNext) {
+                    close()
+                    playNext(song)
+                }
             }
-            VayouActionSheetItem(stringResource(R.string.add_to_queue), VayouIcons.ListPlus) {
-                close()
-                actions.onAddToQueue(song)
+            actions.onAddToQueue?.let { addToQueue ->
+                VayouActionSheetItem(stringResource(R.string.add_to_queue), VayouIcons.ListPlus) {
+                    close()
+                    addToQueue(song)
+                }
             }
             VayouActionSheetItem(stringResource(R.string.share), VayouIcons.Share) {
                 close()
                 actions.onShare(song)
             }
-            val isFavourite = actions.isFavourite(song)
-            VayouActionSheetItem(
-                text = stringResource(if (isFavourite) R.string.unfavourite else R.string.favourite),
-                icon = if (isFavourite) VayouIcons.StarFilled else VayouIcons.StarOutlined,
-            ) {
-                close()
-                actions.onToggleFavourite(song)
+            actions.favourite?.let { favourite ->
+                val isFavourite = favourite.isFavourite(song)
+                VayouActionSheetItem(
+                    text = stringResource(if (isFavourite) R.string.unfavourite else R.string.favourite),
+                    icon = if (isFavourite) VayouIcons.StarFilled else VayouIcons.StarOutlined,
+                ) {
+                    close()
+                    favourite.toggle(song)
+                }
             }
             VayouActionSheetItem(stringResource(R.string.add_to_playlist), VayouIcons.Add) {
                 close()

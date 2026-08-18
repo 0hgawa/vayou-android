@@ -16,8 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import dev.vayou.core.ui.R
 import dev.vayou.core.ui.designsystem.VayouIcons
 
 /**
@@ -83,7 +85,8 @@ private const val DisabledAlpha = 0.38f
 fun VayouOverflowButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    contentDescription: String? = null,
+    /** Named by default: a reader that reaches three dots has nothing else to go on. */
+    contentDescription: String? = stringResource(R.string.more_options),
     tint: Color? = null,
 ) {
     VayouIconButton(onClick = onClick, modifier = modifier.width(OverflowButtonWidth)) {

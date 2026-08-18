@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="library">Biblioteca</string>
+    <string name="video">Vídeo</string>
     <string name="folders">Pastas</string>
     <string name="videos">Vídeos</string>
     <string name="no_folders">Nenhuma pasta ainda</string>

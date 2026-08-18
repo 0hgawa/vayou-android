@@ -269,7 +269,7 @@ private fun LibraryContent(
                     isInFavourites -> stringResource(R.string.favourites)
                     isInPrivate -> stringResource(R.string.private_videos)
                     openFolder != null -> openFolder.name
-                    else -> stringResource(R.string.library)
+                    else -> stringResource(R.string.video)
                 },
                 navigationIcon = {
                     when {
@@ -292,11 +292,6 @@ private fun LibraryContent(
                         openPlaylist != null -> VayouIconButton(onClick = { isAddingVideos = true }) {
                             Icon(VayouIcons.Add, stringResource(R.string.add_videos))
                         }
-
-                        openPlaylistId == null && ready?.viewMode == MediaViewMode.PLAYLISTS ->
-                            VayouIconButton(onClick = { isNaming = true }) {
-                                Icon(VayouIcons.Add, stringResource(R.string.new_playlist))
-                            }
                     }
                 },
             )
@@ -429,7 +424,7 @@ private fun LibraryContent(
                         isGrid = isGrid,
                         header = {
                             if (recents.isNotEmpty()) {
-                                RecentVideosRow(recents) {
+                                RecentVideosRow(recents, isGrid) {
                                     onPlayVideo(it.uriString, it.displayName)
                                 }
                             }
@@ -444,7 +439,7 @@ private fun LibraryContent(
                         isGrid = isGrid,
                         header = {
                             if (recents.isNotEmpty()) {
-                                RecentVideosRow(recents) {
+                                RecentVideosRow(recents, isGrid) {
                                     onPlayVideo(it.uriString, it.displayName)
                                 }
                             }
@@ -464,6 +459,7 @@ private fun LibraryContent(
                         onOpen = { openPlaylistId = it.id },
                         onRename = { renaming = it },
                         onDelete = { viewModel.deletePlaylist(it.id) },
+                        onNew = { isNaming = true },
                     )
                 }
             }
@@ -638,7 +634,7 @@ private fun FolderList(
     isGrid: Boolean,
     header: @Composable () -> Unit,
 ) {
-    MediaGrid(isGrid = isGrid, header = header, isEmpty = folders.isEmpty(), empty = {
+    MediaGrid(isGrid = isGrid, columns = FolderColumns, header = header, isEmpty = folders.isEmpty(), empty = {
         VayouEmptyState(icon = VayouIcons.Folder, title = stringResource(R.string.no_folders))
     }) {
         items(folders, key = { it.path }) { folder ->
@@ -678,13 +674,14 @@ private fun FolderList(
 @Composable
 private fun MediaGrid(
     isGrid: Boolean,
+    columns: Int,
     header: @Composable () -> Unit,
     isEmpty: Boolean,
     empty: @Composable () -> Unit,
     content: LazyGridScope.() -> Unit,
 ) {
     LazyVerticalGrid(
-        columns = if (isGrid) GridCells.Fixed(GridColumns) else GridCells.Fixed(1),
+        columns = GridCells.Fixed(if (isGrid) columns else 1),
         modifier = Modifier.fillMaxSize(),
         // Half the margin here and half on each cell, so a card lands on the same line a row did.
         contentPadding = PaddingValues(horizontal = if (isGrid) MediaListLayoutDefaults.GridOuterInset else 0.dp),
@@ -714,7 +711,7 @@ private fun VideoList(
     header: (@Composable () -> Unit)? = null,
     emptyMessage: String? = null,
 ) {
-    MediaGrid(isGrid = isGrid, header = header ?: {}, isEmpty = videos.isEmpty(), empty = {
+    MediaGrid(isGrid = isGrid, columns = VideoColumns, header = header ?: {}, isEmpty = videos.isEmpty(), empty = {
         VayouEmptyState(VayouIcons.Video, emptyMessage ?: stringResource(R.string.no_videos))
     }) {
         items(videos, key = { it.uriString }) { video ->
@@ -753,6 +750,14 @@ private val MediaViewMode.label: Int
         MediaViewMode.PLAYLISTS -> R.string.playlists
     }
 
-/** Three across on a phone: two leaves cards as wide as the list rows they replaced, four makes the
- *  name under each one unreadable. */
-private const val GridColumns = 3
+/**
+ * Two across for films, three for folders.
+ *
+ * A thumbnail is the thing itself, and at a third of the width it was smaller than the folder icon
+ * in the list beside it. A folder is a mark standing for what is inside, and blown up to half the
+ * screen it says nothing more than it did small -- it only fits fewer of them. Three is also what
+ * the music library uses for the same kind of list, which is why the two now agree there.
+ */
+internal const val VideoColumns = 2
+
+internal const val FolderColumns = 3

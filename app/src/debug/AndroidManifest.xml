@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  No backup on a development build.
+
+  A reinstall would otherwise restore yesterday's data over today's, which is how a server deleted
+  an hour ago comes back: the last snapshot Android took predates the deletion. Testing wants a
+  fresh install to be fresh.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <application
+        android:allowBackup="false"
+        tools:replace="android:allowBackup" />
+</manifest>

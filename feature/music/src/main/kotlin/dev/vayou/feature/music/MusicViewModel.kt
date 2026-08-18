@@ -3,11 +3,7 @@ package dev.vayou.feature.music
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
-import android.database.ContentObserver
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
-import android.provider.MediaStore
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -31,10 +27,8 @@ import dev.vayou.core.model.MediaLibrary
 import dev.vayou.core.model.MediaPlaylists
 import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -283,24 +277,9 @@ class MusicViewModel @Inject constructor(
      * A media scan reports one change per file, so importing an album fires dozens of these.
      * Collapsing them means one re-query rather than one per track.
      */
-    private val mediaChanges = MutableSharedFlow<Unit>(
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST,
-    )
-
-    private val mediaObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
-        override fun onChange(selfChange: Boolean) {
-            mediaChanges.tryEmit(Unit)
-        }
-    }
 
     init {
-        context.contentResolver.registerContentObserver(
-            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-            true,
-            mediaObserver,
-        )
-        mediaChanges
+        library.changes
             .debounce(ScanSettleMs)
             // Only once a first scan has landed: before the permission is granted a query returns
             // nothing, and reacting to that would flip the screen to its empty state.
@@ -326,10 +305,6 @@ class MusicViewModel @Inject constructor(
             _sort.value = sort
             _isAscending.value = true
         }
-    }
-
-    override fun onCleared() {
-        context.contentResolver.unregisterContentObserver(mediaObserver)
     }
 
     private suspend fun refresh() {

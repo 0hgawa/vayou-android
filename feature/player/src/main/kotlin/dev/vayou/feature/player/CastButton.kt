@@ -46,6 +46,15 @@ import kotlinx.coroutines.delay
  * It reads the route directly rather than a session object of our own. What is casting is a fact
  * the framework already holds, and a second copy of it is a second thing to keep true.
  */
+/**
+ * The name of the receiver the sound is going to, or null while it is coming out of the phone.
+ *
+ * The route stays in here: what another screen needs is the name to print, not a handle on the
+ * framework's routing.
+ */
+@Composable
+fun rememberCastRouteName(): String? = rememberSelectedRoute()?.name
+
 @Composable
 fun CastButton(modifier: Modifier = Modifier, onVideo: Boolean = false) {
     val route = rememberSelectedRoute()

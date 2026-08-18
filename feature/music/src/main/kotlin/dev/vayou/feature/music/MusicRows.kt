@@ -173,17 +173,17 @@ internal fun GroupCard(
                 // Fills the cell, or the block is only as wide as its longest child and every card
                 // sits a different distance from its own left edge.
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(CardTextGap),
+                verticalArrangement = Arrangement.spacedBy(MediaListLayoutDefaults.CardTextGap),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 VayouSelectionMark(selected = isSelecting && isSelected) {
                     if (tab == MusicTab.Folders) {
-                        VayouFolderGraphic(width = CardCoverSize)
+                        VayouFolderGraphic(width = MediaListLayoutDefaults.gridCoverSize(GridColumns))
                     } else {
                         VayouArtwork(
                             model = group.artworkUri.takeIf { tab == MusicTab.Albums },
                             initial = group.label.initial().takeIf { tab == MusicTab.Artists },
-                            modifier = Modifier.size(CardCoverSize),
+                            modifier = Modifier.size(MediaListLayoutDefaults.gridCoverSize(GridColumns)),
                             icon = tab.groupMark,
                             role = VayouArtworkRole.Hero,
                             shape = if (tab == MusicTab.Artists) CircleShape else VayouTheme.shapes.medium,
@@ -222,11 +222,6 @@ private val GroupLeadingSize = VayouSheetDefaults.LeadingSize
 
 /** A track is one of many inside a group, and sits a step smaller than the group's own cover. */
 private val SongLeadingSize = 48.dp
-
-/** As tall as a cell is wide, less its padding: a cover in a grid is the cell. */
-private val CardCoverSize = 96.dp
-
-private val CardTextGap = 4.dp
 
 /**
  * The letter a name is filed under, or null when it has none.

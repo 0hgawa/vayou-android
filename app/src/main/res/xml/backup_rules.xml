@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  What Android's automatic backup may take, on Android 11 and below.
+
+  Everything except the saved servers. That file holds the username and password of every share,
+  and a backup is a copy of them on someone else's disk; a share is also a thing of one house, so
+  restoring it onto a phone somewhere else names a machine that is not there.
+
+  The rest is worth carrying to a new phone: playlists, favourites, and how the lists are sorted.
+-->
+<full-backup-content>
+    <exclude domain="file" path="datastore/smb_servers.preferences_pb" />
+</full-backup-content>

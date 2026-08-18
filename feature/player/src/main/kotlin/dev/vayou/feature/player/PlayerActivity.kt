@@ -1,5 +1,6 @@
 package dev.vayou.feature.player
 
+import android.app.PictureInPictureParams
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -155,10 +156,26 @@ class PlayerActivity : ComponentActivity() {
     }
 
     /** Shrinking into the corner when the viewer leaves, for those who asked for that. */
+    /**
+     * Asks for the floating window, and stays put if the system refuses.
+     *
+     * The window manager can fail this call from inside itself -- it has thrown while dismissing a
+     * previous floating window -- and the exception arrives here across the binder. The published
+     * build died of exactly that on a real device. A refused shrink is a button that did nothing,
+     * not a reason to close the film.
+     */
+    private fun enterPipOrStay(params: PictureInPictureParams) {
+        try {
+            enterPictureInPictureMode(params)
+        } catch (_: RuntimeException) {
+            // Nothing to undo: the player is still on screen, which is where it was.
+        }
+    }
+
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
         if (preferences.autoPip && PictureInPicture.isSupported && player?.isPlaying == true) {
-            enterPictureInPictureMode(PictureInPicture.paramsFor(requireNotNull(player), this, true))
+            enterPipOrStay(PictureInPicture.paramsFor(requireNotNull(player), this, true))
         }
     }
 
@@ -173,7 +190,7 @@ class PlayerActivity : ComponentActivity() {
     private fun enterPictureInPictureNow() {
         val current = player ?: return
         if (!PictureInPicture.isSupported) return
-        enterPictureInPictureMode(PictureInPicture.paramsFor(current, this, current.isPlaying))
+        enterPipOrStay(PictureInPicture.paramsFor(current, this, current.isPlaying))
     }
 
     private fun updatePipParams() {
