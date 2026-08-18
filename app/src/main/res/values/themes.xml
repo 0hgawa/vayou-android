@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Compose paints everything; this exists so the window has something before it does.
+
+      The background matters, and it was wrong: the parent was the platform's dark Material theme,
+      whose window is a mid grey, and it was the theme in both modes. Every launch opened on that
+      grey and then cut to the app - white or near-black - which reads as a flash of another app.
+
+      Light and dark follow the system here rather than the app's own setting, because this is drawn
+      before a line of the app has run and nothing has been read from disc yet. A viewer who forces
+      the app dark against a light system still gets one white frame; a fraction of the wrongness of
+      grey for everybody.
+    -->
+    <style name="Theme.Vayou" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/window_background</item>
+    </style>
+</resources>

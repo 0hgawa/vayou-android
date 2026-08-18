@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Black behind the frame from the first moment, so opening a film does not flash a pale
+         window before the surface has anything on it. -->
+    <style name="Theme.VayouPlayer" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+</resources>

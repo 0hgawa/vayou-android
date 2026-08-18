@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="library">Library</string>
+    <string name="folders">Folders</string>
+    <string name="videos">Videos</string>
+    <string name="no_folders">No folders yet</string>
+    <string name="no_videos">No videos yet</string>
+    <string name="sort">Sort</string>
+    <string name="sort_by_title">Name</string>
+    <string name="sort_by_date">Date added</string>
+    <string name="sort_by_length">Length</string>
+    <string name="sort_by_size">Size</string>
+    <string name="sort_by_path">Location</string>
+    <string name="playlists">Playlists</string>
+    <string name="favourites">Favourites</string>
+    <string name="new_playlist">New playlist</string>
+    <string name="playlist_name">Name</string>
+    <string name="add_videos">Add videos</string>
+    <string name="rename">Rename</string>
+    <string name="delete_playlist">Delete list</string>
+    <string name="no_playlists">No playlists yet</string>
+    <string name="playlist_empty">Nothing in this list yet</string>
+    <string name="no_favourites">Nothing in favourites yet</string>
+    <string name="remove_from_playlist">Remove from list</string>
+    <string name="add_to_playlist">Add to a list</string>
+    <string name="favourite">Favourite</string>
+    <string name="unfavourite">Remove from favourites</string>
+    <plurals name="n_videos">
+        <item quantity="one">%d video</item>
+        <item quantity="other">%d videos</item>
+    </plurals>
+
+    <string name="private_videos">Private</string>
+    <string name="no_private_videos">Nothing hidden away</string>
+    <string name="move_to_private">Move to Private</string>
+    <string name="restore_from_private">Take out of Private</string>
+
+    <string name="name">Name</string>
+    <string name="play">Play</string>
+    <string name="share">Share</string>
+    <string name="info">Details</string>
+    <string name="delete">Delete</string>
+    <string name="delete_video_confirmation">%1$s will be removed from this phone. This cannot be undone.</string>
+    <string name="info_file">File</string>
+    <string name="info_location">Location</string>
+    <string name="info_size">Size</string>
+    <string name="info_duration">Length</string>
+    <string name="info_resolution">Resolution</string>
+    <string name="info_format">Format</string>
+    <string name="info_video_codec">Video codec</string>
+    <string name="info_audio_codec">Audio codec #%1$d</string>
+
+    <string name="search">Search</string>
+    <string name="search_placeholder">Search videos and folders</string>
+    <string name="clear_query">Clear</string>
+    <string name="nothing_found">Nothing matches “%1$s”</string>
+    <string name="recent_searches">Recent searches</string>
+    <string name="clear_history">Clear</string>
+    <string name="forget_search">Forget this search</string>
+    <string name="select_all">Select all</string>
+    <string name="deselect_all">Deselect all</string>
+    <string name="delete_videos_confirmation">%1$d videos will be removed from this phone. This cannot be undone.</string>
+
+    <string name="recently_played">Recently played</string>
+    <string name="show_as_grid">Show as a grid</string>
+    <string name="show_as_list">Show as a list</string>
+    <string name="play_all">Play all</string>
+    <string name="play_from_start">Play from the start</string>
+    <string name="added_to_playlist_message">Added to %1$s</string>
+    <string name="removed_from_playlist_message">Removed from %1$s</string>
+    <string name="moved_to_private_message">Moved to Private</string>
+    <string name="move_to_private_failed">Could not move it to Private</string>
+    <string name="delete_failed">Could not delete</string>
+</resources>

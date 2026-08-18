@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings">Settings</string>
+    <string name="settings_general">General</string>
+    <string name="settings_reset">Reset</string>
+    <string name="settings_percent">%1$d%%</string>
+
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_appearance_description">Theme and colour</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_system">Follow the system</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_black">Black</string>
+    <string name="settings_dynamic_colour">Colour from the wallpaper</string>
+    <string name="settings_dynamic_colour_description">Take the accent from what is behind your home screen</string>
+
+    <string name="settings_media_library">Media library</string>
+    <string name="settings_media_library_description">What is scanned, and how it is shown</string>
+    <string name="settings_mark_watched">Mark what has been watched</string>
+    <string name="settings_mark_watched_description">A bar under the thumbnail showing how far in you got</string>
+    <string name="settings_recent">Recently played</string>
+    <string name="settings_recent_description">A row of what you last opened, above the library</string>
+
+    <string name="settings_scan">Scan</string>
+    <string name="settings_manage_folders">Manage folders</string>
+    <string name="settings_manage_folders_description">Leave folders out of the library</string>
+    <string name="settings_rescan">Rescan the library</string>
+    <string name="settings_rescan_description">Look again for what has been added or removed</string>
+
+    <string name="settings_thumbnails">Thumbnails</string>
+    <string name="settings_thumbnail_generation">Which frame to show</string>
+    <string name="settings_thumbnail_strategy">Strategy</string>
+    <string name="settings_frame_first">The first frame</string>
+    <string name="settings_frame_first_description">Fastest, and often black</string>
+    <string name="settings_frame_at">A frame further in</string>
+    <string name="settings_frame_at_description">Past the titles, where there is usually a picture</string>
+    <string name="settings_frame_hybrid">Further in, falling back</string>
+    <string name="settings_frame_hybrid_description">Takes the first frame when the one further in is a flat colour</string>
+    <string name="settings_frame_position">How far in</string>
+    <string name="settings_position">Position</string>
+
+    <string name="settings_subtitles">Subtitles</string>
+    <string name="settings_subtitles_description">How subtitles look</string>
+    <string name="settings_style">Style</string>
+    <string name="settings_system_captions">Use the system caption settings</string>
+    <string name="settings_system_captions_description">Whatever Android is set to. Tap to open those settings</string>
+    <string name="settings_subtitle_bold">Bold</string>
+    <string name="settings_subtitle_bold_description">Heavier text, easier to read over a bright picture</string>
+    <string name="settings_subtitle_size">Text size</string>
+    <string name="settings_subtitle_background">Background</string>
+    <string name="settings_subtitle_background_description">A plate behind the text</string>
+    <string name="settings_embedded_styles">Honour styling from the file</string>
+    <string name="settings_embedded_styles_description">Let a subtitle keep the fonts and colours it was written with</string>
+
+    <string name="settings_player">Player</string>
+    <string name="settings_player_description">How a film opens and behaves</string>
+    <string name="settings_gestures">Gestures</string>
+    <string name="settings_gestures_description">What a touch on the picture does</string>
+    <string name="settings_decoder">Decoder</string>
+    <string name="settings_decoder_description">Which decoder opens a file</string>
+    <string name="settings_audio">Audio</string>
+    <string name="settings_audio_description">Who else on the phone gets a say in the sound</string>
+    <string name="settings_general_description">Cached data, and putting everything back</string>
+    <string name="settings_about">About</string>
+    <string name="settings_about_description">Which version is installed</string>
+    <string name="settings_version">Vayou</string>
+
+    <string name="settings_controls">Controls</string>
+    <string name="settings_playback">Playback</string>
+    <string name="settings_seconds">%1$d s</string>
+    <string name="settings_speed">%1$.1f×</string>
+    <string name="settings_controller_timeout">Hide the controls after</string>
+
+    <string name="settings_resume">Resume</string>
+    <string name="settings_resume_yes">Where it was left</string>
+    <string name="settings_resume_no">From the start</string>
+    <string name="settings_orientation">Screen orientation</string>
+    <string name="settings_orientation_automatic">Turn with the phone</string>
+    <string name="settings_orientation_landscape">Landscape</string>
+    <string name="settings_orientation_landscape_reverse">Landscape, reversed</string>
+    <string name="settings_orientation_landscape_auto">Landscape, either way round</string>
+    <string name="settings_orientation_portrait">Portrait</string>
+    <string name="settings_orientation_video">Match the film</string>
+    <string name="settings_default_speed">Playback speed</string>
+    <string name="settings_autoplay">Autoplay</string>
+    <string name="settings_autoplay_description">Play the next video in the folder automatically</string>
+    <string name="settings_pip">Shrink into the corner</string>
+    <string name="settings_pip_description">Keep the picture in a small window when you leave</string>
+    <string name="settings_background_play">Carry on in the background</string>
+    <string name="settings_background_play_description">Keep the sound going once the player is closed</string>
+    <string name="settings_remember_brightness">Remember the brightness</string>
+    <string name="settings_remember_brightness_description">Open the next film at the level you left this one</string>
+
+    <string name="settings_swipe">Swipe</string>
+    <string name="settings_tap">Tap</string>
+    <string name="settings_sensitivity">Sensitivity</string>
+    <string name="settings_seek_gesture">Swipe sideways to seek</string>
+    <string name="settings_seek_gesture_description">Drag across the picture to move through the film</string>
+    <string name="settings_brightness_gesture">Swipe the left side for brightness</string>
+    <string name="settings_brightness_gesture_description">Up is brighter, down is dimmer</string>
+    <string name="settings_volume_gesture">Swipe the right side for volume</string>
+    <string name="settings_volume_gesture_description">Up is louder, down is quieter</string>
+    <string name="settings_ambient_glow">Ambient glow</string>
+    <string name="settings_ambient_glow_description">Tint the bars either side of the film with its own colour</string>
+    <string name="settings_volume_boost">Volume boost</string>
+    <string name="settings_volume_boost_description">Let the volume gesture go to twice what this phone gives. Quiet films become audible; loud ones distort.</string>
+    <string name="settings_zoom_gesture">Pinch to zoom</string>
+    <string name="settings_zoom_gesture_description">Two fingers to fill the screen with the picture</string>
+    <string name="settings_double_tap">Double tap</string>
+    <string name="settings_double_tap_seek">Skip back and forward</string>
+    <string name="settings_double_tap_play">Play or pause</string>
+    <string name="settings_double_tap_both">Skip at the edges, play in the middle</string>
+    <string name="settings_double_tap_none">Nothing</string>
+    <string name="settings_seek_increment">How far a skip moves</string>
+
+    <string name="settings_decoder_priority">Which decoder first</string>
+    <string name="settings_decoder_device">The phone’s own</string>
+    <string name="settings_decoder_device_description">Coolest and fastest, falling back when a file will not open</string>
+    <string name="settings_decoder_app">The bundled one</string>
+    <string name="settings_decoder_app_description">For formats the phone opens badly rather than not at all</string>
+    <string name="settings_decoder_device_only">The phone’s own, and nothing else</string>
+    <string name="settings_decoder_device_only_description">No fallback, for finding out which of the two is at fault</string>
+
+    <string name="settings_audio_focus">Give way to other apps</string>
+    <string name="settings_audio_focus_description">Pause for a call and quieten for a notification. Takes effect on the next film</string>
+    <string name="settings_headset">Pause when the headphones come out</string>
+    <string name="settings_headset_description">Rather than playing the film to the room. Takes effect on the next film</string>
+
+    <string name="settings_stored_data">Stored data</string>
+    <string name="settings_delete">Delete</string>
+    <string name="settings_clear_thumbnails">Clear the thumbnails</string>
+    <string name="settings_clear_thumbnails_description">Throw away the frames the library has saved</string>
+    <string name="settings_clear_thumbnails_confirmation">They will be made again as you scroll. Nothing is removed from your phone.</string>
+    <string name="settings_reset_all">Reset every setting</string>
+    <string name="settings_reset_all_description">Put everything back to how it shipped</string>
+    <string name="settings_reset_all_confirmation">Every setting goes back to its default. Your videos, playlists and positions are untouched.</string>
+
+    <string name="settings_material_you">Discs behind the controls</string>
+    <string name="settings_material_you_description">A translucent circle under each button, so a white glyph stays legible over a bright scene</string>
+</resources>

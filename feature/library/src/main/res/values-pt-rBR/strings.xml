@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="library">Biblioteca</string>
+    <string name="folders">Pastas</string>
+    <string name="videos">Vídeos</string>
+    <string name="no_folders">Nenhuma pasta ainda</string>
+    <string name="no_videos">Nenhum vídeo ainda</string>
+    <string name="playlists">Listas</string>
+    <string name="favourites">Favoritos</string>
+    <string name="new_playlist">Nova lista</string>
+    <string name="playlist_name">Nome</string>
+    <string name="add_videos">Adicionar vídeos</string>
+    <string name="rename">Renomear</string>
+    <string name="delete_playlist">Excluir lista</string>
+    <string name="no_playlists">Ainda sem listas</string>
+    <string name="playlist_empty">Nada nesta lista ainda</string>
+    <string name="no_favourites">Nada nos favoritos ainda</string>
+    <string name="remove_from_playlist">Remover da lista</string>
+    <string name="add_to_playlist">Adicionar a uma lista</string>
+    <string name="favourite">Favoritar</string>
+    <string name="unfavourite">Tirar dos favoritos</string>
+    <plurals name="n_videos">
+        <item quantity="one">%d vídeo</item>
+        <item quantity="other">%d vídeos</item>
+    </plurals>
+
+    <string name="private_videos">Privadas</string>
+    <string name="no_private_videos">Nada guardado aqui</string>
+    <string name="move_to_private">Mover para Privadas</string>
+    <string name="restore_from_private">Tirar de Privadas</string>
+
+    <string name="name">Nome</string>
+    <string name="play">Reproduzir</string>
+    <string name="share">Compartilhar</string>
+    <string name="info">Detalhes</string>
+    <string name="delete">Excluir</string>
+    <string name="delete_video_confirmation">%1$s será removido deste telefone. Não dá para desfazer.</string>
+    <string name="info_file">Arquivo</string>
+    <string name="info_location">Local</string>
+    <string name="info_size">Tamanho</string>
+    <string name="info_duration">Duração</string>
+    <string name="info_resolution">Resolução</string>
+    <string name="info_format">Formato</string>
+    <string name="info_video_codec">Codec de vídeo</string>
+    <string name="info_audio_codec">Codec de áudio #%1$d</string>
+
+    <string name="search">Buscar</string>
+    <string name="search_placeholder">Buscar vídeos e pastas</string>
+    <string name="clear_query">Limpar</string>
+    <string name="nothing_found">Nada corresponde a “%1$s”</string>
+    <string name="recent_searches">Buscas recentes</string>
+    <string name="clear_history">Limpar</string>
+    <string name="forget_search">Esquecer esta busca</string>
+    <string name="select_all">Selecionar tudo</string>
+    <string name="deselect_all">Limpar seleção</string>
+    <string name="delete_videos_confirmation">%1$d vídeos serão removidos deste telefone. Não dá para desfazer.</string>
+
+    <string name="recently_played">Vistos recentemente</string>
+    <string name="show_as_grid">Mostrar em grade</string>
+    <string name="show_as_list">Mostrar em lista</string>
+    <string name="play_all">Reproduzir tudo</string>
+    <string name="play_from_start">Reproduzir do início</string>
+    <string name="added_to_playlist_message">Adicionado a %1$s</string>
+    <string name="removed_from_playlist_message">Removido de %1$s</string>
+    <string name="moved_to_private_message">Movido para Privado</string>
+    <string name="move_to_private_failed">Não foi possível mover para Privado</string>
+    <string name="delete_failed">Não foi possível excluir</string>
+</resources>

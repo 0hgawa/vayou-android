@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      From Android 12 the system shows a splash whether an app asks for one or not: the launcher
+      icon on a colour it works out for itself. Said here rather than left to it, so the colour is
+      the app's own background and the icon lands on the screen the app is about to draw, instead of
+      on a guess. No time is added to the launch, because nothing here waits for anything.
+    -->
+    <style name="Theme.Vayou" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/window_background</item>
+        <item name="android:windowSplashScreenBackground">@color/window_background</item>
+    </style>
+</resources>

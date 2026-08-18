@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Compose paints everything; this exists so the window has something before it does. Black,
+         which is what a television app is and what the platform's own default is not. -->
+    <style name="Theme.Vayou.Tv" parent="android:Theme.NoTitleBar">
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+</resources>

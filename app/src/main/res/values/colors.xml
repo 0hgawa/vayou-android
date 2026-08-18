@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The field the mark sits on, so the amber belongs to the mark and not the square. -->
+    <color name="ic_launcher_background">#FFFFFF</color>
+    <!-- The palette's own background, so the window and the first frame are one colour. -->
+    <color name="window_background">#FFFFFFFF</color>
+</resources>

@@ -1,0 +1,17 @@
+<!-- The front of the folder: the whole silhouette below the tab, drawn as a rounded rectangle on
+     exactly the lines the back panel already follows. Its top-right corner is generated from the
+     same radius, so the two meet without a seam however that radius changes.
+
+     What is left showing of the panel behind is the tab, and a sliver down the left where this
+     one’s top corner rounds away and the back’s edge carries straight on. Both are the panel
+     behind rather than a shape of their own: the folder is one outline in two colours, not two
+     stacked outlines. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="17dp"
+    android:viewportWidth="20"
+    android:viewportHeight="17">
+  <path
+      android:pathData="M2.747,2.511 H17.253 c1.491,0 2.7,1.209 2.7,2.7 V13.753 c0,1.491 -1.209,2.7 -2.7,2.7 H2.747 c-1.491,0 -2.7,-1.209 -2.7,-2.7 V5.211 c0,-1.491 1.209,-2.7 2.7,-2.7 Z"
+      android:fillColor="#ffffff"/>
+</vector>

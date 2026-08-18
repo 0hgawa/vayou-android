@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigate_up">Voltar</string>
+    <string name="done">Pronto</string>
+    <string name="cancel">Cancelar</string>
+    <string name="stop_selecting">Parar de selecionar</string>
+    <string name="n_of_m_selected">%1$d de %2$d</string>
+    <string name="add_to_playlist">Adicionar a uma lista</string>
+    <string name="new_playlist">Nova lista</string>
+    <string name="undo">Desfazer</string>
+</resources>

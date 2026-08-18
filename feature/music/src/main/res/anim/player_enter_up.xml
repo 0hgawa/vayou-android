@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The player rising over the screen it was opened from. The bar at the foot of that screen is this
+  same player, collapsed, so the motion has to read as that bar growing rather than as a new place
+  arriving from the side. The arrow at its top points down for the same reason.
+-->
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="300"
+    android:fromYDelta="100%p"
+    android:interpolator="@android:interpolator/fast_out_slow_in"
+    android:toYDelta="0" />

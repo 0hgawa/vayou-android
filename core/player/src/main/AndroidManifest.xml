@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
+    <application>
+        <!--
+            exported, because the session is meant to be found: Android Auto, a watch and the
+            system's own media controls all resolve a player through this filter.
+        -->
+        <service
+            android:name="dev.vayou.core.player.PlaybackService"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService" />
+            </intent-filter>
+        </service>
+
+        <!--
+            Media3's own provider, not one of ours. The old build wrote eighteen lines to name the
+            default receiver and stop it on disconnect, which is what this already does.
+        -->
+        <meta-data
+            android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+            android:value="androidx.media3.cast.DefaultCastOptionsProvider" />
+
+        <!--
+            What puts a television in Android's own output switcher: the panel that opens from the
+            volume keys and from the media notification. Without it a cast route is reachable only
+            through a button inside the app.
+        -->
+        <receiver
+            android:name="androidx.mediarouter.media.MediaTransferReceiver"
+            android:exported="false" />
+    </application>
+
+</manifest>

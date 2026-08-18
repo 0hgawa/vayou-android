@@ -1,0 +1,12 @@
+[*.{kt,kts}]
+max_line_length = 120
+ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = true
+ktlint_code_style = android_studio
+ktlint_standard_property-naming = disabled
+ktlint_function_naming_ignore_when_annotated_with = Composable
+
+# SVG path data is one opaque token. Breaking it at column 120 puts the split in the middle of a
+# coordinate pair, which reads worse than the long line and invites a typo on the next edit.
+[**/VayouIcons.kt]
+max_line_length = off

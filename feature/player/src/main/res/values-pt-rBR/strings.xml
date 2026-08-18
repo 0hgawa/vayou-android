@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="play">Reproduzir</string>
+    <string name="pause">Pausar</string>
+    <string name="subtitles_off">Desativar</string>
+    <string name="subtitles">Legenda</string>
+    <string name="audio_track">Faixa de áudio</string>
+    <string name="playback_speed">Velocidade</string>
+    <string name="cast">Transmitir</string>
+    <string name="cast_to">Transmitir para</string>
+    <string name="cast_active">Transmitindo</string>
+    <string name="cast_searching">Procurando uma televisão</string>
+    <string name="no_cast_devices_found">Nada para transmitir nesta rede</string>
+    <string name="disconnect">Parar de transmitir</string>
+
+    <string name="queue">Tocando agora</string>
+    <string name="night_mode">Modo noturno</string>
+    <string name="night_mode_on">Modo noturno: ligado</string>
+    <string name="background_play">Tocar em segundo plano</string>
+    <string name="picture_in_picture">Modo picture in picture</string>
+    <string name="player_live">AO VIVO</string>
+    <string name="clear">Limpar</string>
+    <string name="shuffle">Aleatório</string>
+    <string name="repeat">Repetir</string>
+    <string name="reorder">Mover</string>
+    <string name="cast_skip_back">Voltar 15 segundos</string>
+    <string name="cast_skip_forward">Avançar 15 segundos</string>
+</resources>

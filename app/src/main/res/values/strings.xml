@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Vayou</string>
+    <string name="destination_video">Video</string>
+    <string name="destination_audio">Audio</string>
+    <string name="destination_network">Network</string>
+    <string name="destination_settings">Settings</string>
+</resources>

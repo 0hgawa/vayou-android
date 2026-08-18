@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Reaching a server, and finding one: the subnet scan needs the phone's own address, which is
+         what ACCESS_WIFI_STATE grants. Declared by the module that needs them, so a build without
+         the network section asks for neither. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <!--
+        Plain HTTP, which Android has blocked by default since Android 9.
+
+        Not a preference: a channel list from the open internet is mostly http, and so are the
+        station logos beside the names. Refusing it means a list that loads with every row blank,
+        and half its channels failing to open, for a protocol the reader did not choose and cannot
+        change. The old build allows it for the same reason.
+    -->
+    <application
+        xmlns:tools="http://schemas.android.com/tools"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="28" />
+</manifest>

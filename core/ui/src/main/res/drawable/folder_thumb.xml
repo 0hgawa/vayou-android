@@ -1,0 +1,21 @@
+<!-- The folder’s outline, and the panel behind. The front covers all of it but the tab, so what
+     this contributes is the tab and the left-hand sliver; it is kept whole so the two panels cannot
+     drift apart, and so the outline stays one shape if the front ever moves.
+
+     The corners are quarter circles, which is why the radius is not a number that can be edited on
+     its own: both control points are fixed fractions of it, and every straight run between two
+     corners gives up what the corners now take. The shoulder where the tab steps down keeps its
+     angle, being a diagonal and not a corner.
+
+     The radius is bounded by the tab, not by the body. The tab has 3.7 units of top edge to spend,
+     and once the corner takes most of it there is no straight left and the tab reads as a bump.
+     At 2.7 it keeps roughly twice the corner in flat edge; much past that it does not. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="17dp"
+    android:viewportWidth="20"
+    android:viewportHeight="17">
+  <path
+      android:pathData="M2.747,0.547 H7.147 C7.435,0.547 7.71,0.602 7.973,0.711 C8.236,0.821 8.468,0.977 8.669,1.18 L10,2.511 H17.253 c1.491,0 2.7,1.209 2.7,2.7 V13.753 c0,1.491 -1.209,2.7 -2.7,2.7 H2.747 c-1.491,0 -2.7,-1.209 -2.7,-2.7 V3.247 c0,-1.491 1.209,-2.7 2.7,-2.7 Z"
+      android:fillColor="#ffffff"/>
+</vector>

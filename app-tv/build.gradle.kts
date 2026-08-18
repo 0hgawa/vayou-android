@@ -1,0 +1,58 @@
+plugins {
+    id("vayou.android.application")
+    id("vayou.android.compose")
+    id("vayou.hilt")
+}
+
+android {
+    namespace = "dev.vayou.tv"
+
+    defaultConfig {
+        applicationId = "dev.vayou.tv"
+        versionCode = 1
+        versionName = "0.1"
+    }
+
+    buildTypes {
+        debug {
+            // Beside the old TV build rather than over it, for the reason the phone's shell gives.
+            applicationIdSuffix = ".next"
+            versionNameSuffix = "-next"
+        }
+    }
+}
+
+dependencies {
+    implementation(projects.core.common)
+    implementation(projects.core.data)
+    implementation(projects.core.domain)
+    implementation(projects.core.imageloader)
+    implementation(projects.core.media)
+    implementation(projects.core.model)
+    implementation(projects.core.player)
+    implementation(projects.core.smb)
+    implementation(projects.core.ui)
+    // The phone's settings store and its names for every one of them. A television that kept its
+    // own copy would be a second place for "reset" to mean something slightly different.
+    implementation(projects.feature.settings)
+
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.runtimeCompose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.accompanist.permissions)
+    implementation(libs.coil.compose)
+    // As on the phone: Coil 3 fetches nothing over http without a client on the classpath, and a
+    // channel list is all remote logos.
+    implementation(libs.coil.network.okhttp)
+
+    implementation(libs.androidx.media3.common)
+    implementation(libs.androidx.media3.session)
+    implementation(libs.androidx.media3.ui.compose)
+    implementation(libs.kotlinx.coroutines.guava)
+
+    // The set built for a remote control: focus that is visible from three metres, and rows that
+    // scroll under a D-pad rather than a thumb.
+    implementation(libs.androidx.tv.material)
+}
