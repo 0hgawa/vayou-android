@@ -8,7 +8,9 @@ import android.media.audiofx.LoudnessEnhancer
 import android.media.audiofx.Virtualizer
 import android.os.Build
 import android.util.Log
+import androidx.annotation.OptIn
 import androidx.media3.common.C
+import androidx.media3.common.util.UnstableApi
 import dev.vayou.core.model.AudioEffectType
 import dev.vayou.core.model.EqPreset
 import dev.vayou.core.model.PlayerPreferences
@@ -31,6 +33,7 @@ import kotlin.math.abs
  * replacement for it.
  */
 @Suppress("DEPRECATION")
+@OptIn(UnstableApi::class)
 internal class AudioEffects {
 
     private var sessionId: Int = C.AUDIO_SESSION_ID_UNSET
@@ -236,6 +239,7 @@ internal class AudioEffects {
 }
 
 /** What the equalizer looks like right now, in the shape the screen draws. */
+@OptIn(UnstableApi::class)
 internal class EqualizerBands(
     val centreFreqsHz: IntArray,
     val levelsMillibels: IntArray,
@@ -243,6 +247,7 @@ internal class EqualizerBands(
     val maxMillibels: Int,
 )
 
+@OptIn(UnstableApi::class)
 private fun Equalizer.applyPresetGains(preset: EqPreset) {
     val gains = preset.gains
     val range = bandLevelRange
@@ -286,4 +291,5 @@ private const val EffectPriority = 0
 private const val Tag = "AudioEffects"
 
 /** Whether this device can run the night-mode limiter at all. `DynamicsProcessing` is API 28. */
+@OptIn(UnstableApi::class)
 val isNightModeSupported: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P

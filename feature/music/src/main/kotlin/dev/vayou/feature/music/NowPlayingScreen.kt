@@ -3,8 +3,8 @@ package dev.vayou.feature.music
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -33,7 +33,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,13 +46,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import dev.vayou.core.common.Utils
+import dev.vayou.core.media.Lyrics
 import dev.vayou.core.model.PlayerPreferences
 import dev.vayou.core.player.stepToNext
 import dev.vayou.core.player.stepToPrevious
@@ -91,6 +90,8 @@ fun NowPlayingScreen(
     menu: @Composable () -> Unit = {},
     /** The star, at the far end of the title's line -- the one action here that gets repeated. */
     favourite: @Composable () -> Unit = {},
+    /** The words of what is playing, or null for a track that has none. */
+    lyrics: Lyrics? = null,
 ) {
     // The screen is dressed by whatever is playing. It reads the cover the content decided to show
     // rather than resolving the artwork twice -- the metadata listeners live one level down.
@@ -114,7 +115,10 @@ fun NowPlayingScreen(
             .navigationBarsPadding(),
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = ButtonRowPadding),
+            // The same inset the film player's bar takes below the status bar. Without it the keys
+            // sat against the clock here and a finger's width lower there, and the two players read
+            // as two apps at the moment you leave one for the other.
+            modifier = Modifier.padding(horizontal = ButtonRowPadding, vertical = VayouTheme.spacing.lg),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             // A chevron down, not an arrow back: this screen came up from the bottom, and it goes
@@ -143,6 +147,7 @@ fun NowPlayingScreen(
             onSavePreferences = onSavePreferences,
             onArtworkChange = { artwork = it },
             favourite = favourite,
+            lyrics = lyrics,
         )
     }
 }
@@ -154,6 +159,7 @@ private fun NowPlaying(
     onSavePreferences: (PlayerPreferences.() -> PlayerPreferences) -> Unit,
     onArtworkChange: (Any?) -> Unit,
     favourite: @Composable () -> Unit,
+    lyrics: Lyrics?,
 ) {
     var isPlaying by remember { mutableStateOf(player.isPlaying) }
     var isShuffled by remember { mutableStateOf(player.shuffleModeEnabled) }
@@ -163,12 +169,14 @@ private fun NowPlaying(
     var durationMs by remember { mutableLongStateOf(player.duration.coerceAtLeast(0)) }
     var isDragging by remember { mutableStateOf(false) }
     var draggedMs by remember { mutableFloatStateOf(0f) }
-    // Which way the last change went, so the next track arrives from the side it came from.
-    var slidesForward by remember { mutableStateOf(true) }
-    var lastIndex by remember { mutableIntStateOf(player.currentMediaItemIndex) }
     var isEqualizerOpen by remember { mutableStateOf(false) }
     var isSleepTimerOpen by remember { mutableStateOf(false) }
     var isQueueOpen by remember { mutableStateOf(false) }
+    var isLyricsOpen by remember { mutableStateOf(false) }
+    // One value rather than a flag and a nullable read apart: the panel is open only while there
+    // is something in it, so a track change to one without words puts the cover back instead of
+    // leaving an empty page.
+    val shownLyrics = lyrics?.takeIf { isLyricsOpen }
 
     val sleepTimer = rememberSleepTimerState(player)
     val equalizer = rememberEqualizerState(player, preferences, onSavePreferences)
@@ -188,12 +196,6 @@ private fun NowPlaying(
             }
 
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                val index = player.currentMediaItemIndex
-                // A track that ran out went forward whatever the numbers say: the last of a queue on
-                // repeat lands on the first, and by index alone that would read as going back. Only
-                // a listener pressing the buttons can send it either way.
-                slidesForward = reason != Player.MEDIA_ITEM_TRANSITION_REASON_SEEK || index >= lastIndex
-                lastIndex = index
                 currentItem = mediaItem
                 playerMetadata = player.mediaMetadata
                 positionMs = player.currentPosition.coerceAtLeast(0)
@@ -275,11 +277,19 @@ private fun NowPlaying(
                 horizontalArrangement = Arrangement.spacedBy(WideGap),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                // Bounded by the short side, not the long one: sized from the width, the square
-                // would be taller than the window and lose its bottom.
-                Cover(face.cover, Modifier.fillMaxHeight())
+                if (shownLyrics != null) {
+                    LyricsPanel(
+                        lyrics = shownLyrics,
+                        positionMs = shownMs.toLong(),
+                        modifier = Modifier.fillMaxHeight().weight(1f),
+                    )
+                } else {
+                    // Bounded by the short side, not the long one: sized from the width, the square
+                    // would be taller than the window and lose its bottom.
+                    Cover(face.cover, Modifier.fillMaxHeight())
+                }
                 Column(modifier = Modifier.weight(1f)) {
-                    TrackLine(face, slidesForward, favourite)
+                    TrackLine(face, favourite)
                     // Stripped to what a glance needs. The two times are dropped rather than
                     // squeezed -- a wide window is short, and the handle already says where the
                     // track is.
@@ -303,25 +313,41 @@ private fun NowPlaying(
                     // fixed gap: pinned under the chevron the square sat against the bar on a tall
                     // phone and in the middle of a short one. A third above and two thirds below
                     // keeps it high enough to be the subject and low enough not to touch the bar.
-                    Spacer(modifier = Modifier.weight(CoverHeadroom))
-                    // Just inside the full width, and centred on it. Edge to edge the square is the
-                    // tallest thing on the screen by a distance, and a margin of its own parts it
-                    // from the text that starts on the column's.
-                    Cover(
-                        artwork = face.cover,
-                        modifier = Modifier
-                            .fillMaxWidth(CoverWidthFraction)
-                            .align(Alignment.CenterHorizontally),
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    TrackLine(face, slidesForward, favourite)
+                    // With the words open the name goes above them, where it names what is being
+                    // read; with the cover it stays under the square, where it names what is being
+                    // looked at. Either way the seek bar below does not move.
+                    if (shownLyrics != null) {
+                        TrackLine(face, favourite)
+                        LyricsPanel(
+                            lyrics = shownLyrics,
+                            positionMs = shownMs.toLong(),
+                            modifier = Modifier.weight(1f),
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.weight(CoverHeadroom))
+                        // Just inside the full width, and centred on it. Edge to edge the square is
+                        // the tallest thing on the screen by a distance, and a margin of its own
+                        // parts it from the text that starts on the column's.
+                        Cover(
+                            artwork = face.cover,
+                            modifier = Modifier
+                                .fillMaxWidth(CoverWidthFraction)
+                                .align(Alignment.CenterHorizontally),
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        TrackLine(face, favourite)
+                    }
                     Progress(shownMs, durationMs, showTimes = true, onSeek = {
                         isDragging = true
                         draggedMs = it
                     }, onSeekFinished = onSeekFinished)
                 }
                 Transport(player, isPlaying, isShuffled, sleepTimer.isArmed) { isSleepTimerOpen = true }
-                SecondaryActions(onEqualizer = { isEqualizerOpen = true }, onQueue = { isQueueOpen = true })
+                SecondaryActions(
+                    onEqualizer = { isEqualizerOpen = true },
+                    onQueue = { isQueueOpen = true },
+                    onLyrics = lyrics?.let { { isLyricsOpen = !isLyricsOpen } },
+                )
             }
         }
     }
@@ -413,13 +439,13 @@ private fun CastCover(room: String, modifier: Modifier = Modifier) {
  * copy of this arrangement is where the two of them would start to drift apart.
  */
 @Composable
-private fun TrackLine(face: TrackFace, slidesForward: Boolean, favourite: @Composable () -> Unit) {
+private fun TrackLine(face: TrackFace, favourite: @Composable () -> Unit) {
     // Bottom, so the star lands on the artist's line rather than between the two: the name is the
     // subject and the star is a remark about it, and level with the quieter line it stops competing
     // with the title for the eye.
     Row(verticalAlignment = Alignment.Bottom) {
         Box(modifier = Modifier.weight(1f)) {
-            SlidingTrack(face, slidesForward) { TrackInfo(it.title, it.artist) }
+            DissolvingTrack(face) { TrackInfo(it.title, it.artist) }
         }
         favourite()
     }
@@ -429,42 +455,26 @@ private fun TrackLine(face: TrackFace, slidesForward: Boolean, favourite: @Compo
 private data class TrackFace(val id: String?, val cover: Any?, val title: String, val artist: String)
 
 /**
- * A pane that slides aside when the track changes, carrying what belongs to that track.
+ * The words, dissolving where they stand.
  *
- * The change of song is the one moment on this screen with any distance in it -- everything else is
- * a button or a bar -- and cutting between two covers reads as a glitch where a slide reads as a
- * step through a queue. It is the gesture the other players use for the same reason.
+ * The same change the cover makes, because they are one thing changing: a track. They used to
+ * travel sideways while the picture dissolved, and the two readings of a single event fought each
+ * other -- the eye followed the words off the screen and found the cover already replaced. A
+ * picture has no direction to move in, so the words gave up theirs.
  *
- * Keyed on the track and not on the whole of [face]: the store fills in a title and the player
- * revises the metadata a moment later, and on the value alone the words would slide off the screen
- * because a tag arrived.
+ * Short rather than medium: a dissolve says what it has to say in half the time a journey needs,
+ * and at the medium length it reads as a hesitation.
  */
 @Composable
-private fun SlidingTrack(
-    face: TrackFace,
-    forward: Boolean,
-    modifier: Modifier = Modifier,
-    content: @Composable (TrackFace) -> Unit,
-) {
+private fun DissolvingTrack(face: TrackFace, modifier: Modifier = Modifier, content: @Composable (TrackFace) -> Unit) {
     val motion = VayouTheme.motion
     AnimatedContent(
         targetState = face,
         modifier = modifier,
         contentKey = { it.id },
         transitionSpec = {
-            // A slide and nothing else. Fading the two panes as well leaves a moment with the old
-            // one already transparent and the new one still off the side, and the screen blinks
-            // empty in the middle of the step. Opaque, the two of them always cover the space
-            // between them, which is what makes it read as one thing moving rather than two things
-            // swapping.
-            val travel = tween<IntOffset>(motion.durationMedium, easing = motion.easingStandard)
-            slideInHorizontally(travel) { if (forward) it else -it }
-                .togetherWith(slideOutHorizontally(travel) { if (forward) -it else it })
-                // Without this the pane is clipped to its own box while it travels, so the half of
-                // the cover that is still outside is cut by a straight edge: the square arrives with
-                // square corners and grows its radius back as it lands. Nothing here changes size
-                // between tracks, so there is no size to animate and nothing to clip for.
-                .using(SizeTransform(clip = false))
+            val fade = tween<Float>(motion.durationShort, easing = motion.easingStandard)
+            fadeIn(fade).togetherWith(fadeOut(fade)).using(SizeTransform(clip = false))
         },
         label = "track",
     ) { content(it) }
@@ -633,7 +643,7 @@ private fun Transport(
  * dimmed, these read as disabled beside the transport.
  */
 @Composable
-private fun SecondaryActions(onEqualizer: () -> Unit, onQueue: () -> Unit) {
+private fun SecondaryActions(onEqualizer: () -> Unit, onQueue: () -> Unit, onLyrics: (() -> Unit)?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -649,6 +659,20 @@ private fun SecondaryActions(onEqualizer: () -> Unit, onQueue: () -> Unit) {
                 tint = VayouTheme.colors.onSurface,
                 modifier = Modifier.size(VayouTheme.iconSize.md),
             )
+        }
+        // In the middle, between the two ends this row has always had, and only for a track that
+        // has words: drawn always it would be a key that does nothing on most of a library -- on
+        // this one, where much of what plays is speech, on nearly all of it. The gap it leaves when
+        // absent is the same gap the row had before there were words to show.
+        onLyrics?.let { toggle ->
+            ControlButton(onClick = toggle) {
+                Icon(
+                    imageVector = VayouIcons.Caption,
+                    contentDescription = stringResource(R.string.lyrics),
+                    tint = VayouTheme.colors.onSurface,
+                    modifier = Modifier.size(VayouTheme.iconSize.md),
+                )
+            }
         }
         ControlButton(onClick = onQueue) {
             Icon(
@@ -680,8 +704,14 @@ private fun ControlButton(onClick: () -> Unit, modifier: Modifier = Modifier, co
  * A canvas and not a Material slider: this one is drawn on a surface whose colour changes with the
  * cover, and the track has to stay visible against any of them.
  */
-/** A tenth off the width, which the square pays for twice over in height. */
-private const val CoverWidthFraction = 0.9f
+/**
+ * Nearly the full width, short of the margin the text below it starts on.
+ *
+ * The square is the subject of this screen and the only thing on it worth looking at, so what it
+ * gives up sideways it loses twice over in height. What it keeps is the column's own margin, which
+ * is what stops the cover reading as a picture pasted over the screen rather than one laid on it.
+ */
+private const val CoverWidthFraction = 0.96f
 
 private const val GradientMidpoint = 0.55f
 
@@ -714,5 +744,11 @@ private val PlayGlyph = 32.dp
 
 private val CastGlyphSize = 56.dp
 
-/** What is left over above the cover, against the one below it. */
-private const val CoverHeadroom = 0.5f
+/**
+ * What is left over above the cover, against the one below it.
+ *
+ * Around a quarter above and three quarters below. Pinned to the top the square sat against the
+ * bar; halfway down it drifted into the middle and the words under it lost their place. This is the
+ * setting that keeps it clear of the chevron and still reads as the top half of the screen.
+ */
+private const val CoverHeadroom = 0.35f

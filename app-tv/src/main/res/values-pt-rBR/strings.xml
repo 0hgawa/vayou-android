@@ -39,7 +39,7 @@
     <string name="server_unreachable">Esse servidor não responde, ou pede uma senha que o celular não salvou</string>
     <string name="nothing_here">Nada para reproduzir aqui</string>
     <string name="sign_in">Esse servidor pede nome e senha</string>
-    <string name="sign_in_failed">Nome ou senha nao aceitos</string>
+    <string name="sign_in_failed">Nome ou senha não aceitos</string>
     <string name="username">Nome</string>
     <string name="password">Senha</string>
     <string name="connect">Conectar</string>

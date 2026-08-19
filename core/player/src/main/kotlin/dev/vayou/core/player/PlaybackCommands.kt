@@ -34,7 +34,11 @@ object PlaybackCommands {
         GetVolumeBoostSupport,
         SetSkipSilence,
         GetSkipSilence,
+        Close,
     ).map { SessionCommand(it, Bundle.EMPTY) }
+
+    /** Ends the session from the panel the system draws: stop, forget the queue, take the row away. */
+    const val Close = "CLOSE"
 
     const val SetSleepTimer = "SET_SLEEP_TIMER"
     const val GetSleepTimer = "GET_SLEEP_TIMER"
@@ -294,7 +298,9 @@ const val NoVolumeBoost = 0
 fun List<MediaItem>.queueKeys(): List<String> {
     val seen = HashMap<String, Int>()
     return map { item ->
-        val occurrence = seen.getOrDefault(item.mediaId, 0) + 1
+        // Kotlin's elvis and not Map.getOrDefault, which arrived in Android 7 -- this app opens on
+        // Android 6, where the call does not exist and the queue would take the process down.
+        val occurrence = (seen[item.mediaId] ?: 0) + 1
         seen[item.mediaId] = occurrence
         "${item.mediaId}#$occurrence"
     }

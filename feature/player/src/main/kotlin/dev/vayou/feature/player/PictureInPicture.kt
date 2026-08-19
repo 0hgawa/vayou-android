@@ -11,6 +11,7 @@ import android.graphics.drawable.Icon
 import android.os.Build
 import android.util.Rational
 import androidx.activity.ComponentActivity
+import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.media3.common.Player
@@ -23,6 +24,9 @@ import androidx.media3.common.Player
  */
 object PictureInPicture {
 
+    // Annotated so the check is understood where it is made: without this the tools see a plain
+    // boolean and every guarded call still reads as a call from Android 5.
+    @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.O)
     val isSupported: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
     /**

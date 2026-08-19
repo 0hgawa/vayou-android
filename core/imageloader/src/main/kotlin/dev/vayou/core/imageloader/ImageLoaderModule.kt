@@ -31,6 +31,10 @@ object ImageLoaderModule {
         preferencesRepository: PreferencesRepository,
     ): ImageLoader = ImageLoader.Builder(context)
         .components {
+            // A track's own address, answered by the provider with the picture inside the file --
+            // see [AudioArtworkFetcher]. First, because it is the only one that knows what to do
+            // with an address that is not a picture.
+            add(AudioArtworkFetcher.Factory(context))
             // A frame out of the file itself, since a video has no cover to fetch. Which frame is
             // read at decode time rather than captured here, so changing the preference does not
             // need the loader rebuilt.

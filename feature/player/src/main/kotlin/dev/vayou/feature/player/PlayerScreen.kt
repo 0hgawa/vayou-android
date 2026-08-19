@@ -88,12 +88,17 @@ internal fun PlayerScreen(
 
     val activity = requireNotNull(LocalActivity.current) { "PlayerScreen outside an activity" }
     KeepScreenOnWhilePlaying(player = player, activity = activity)
+    // Read once, on the first composition: the state owns the level from then on, and feeding it
+    // back what it just wrote would fight the drag it is in the middle of. Held in a remember for
+    // that reason -- read in place it was taken again on every recomposition, which is a read of
+    // the stored settings on each frame of a drag for a value that is only ever used on the first.
+    val rememberedBrightness = remember {
+        val preferences = viewModel.preferences.value
+        preferences.playerBrightness.takeIf { preferences.rememberPlayerBrightness }
+    }
     val brightness = rememberBrightnessState(
         activity = activity,
-        // Read once, on the first composition: the state owns the level from then on, and feeding
-        // it back what it just wrote would fight the drag it is in the middle of.
-        remembered = viewModel.preferences.value.playerBrightness
-            .takeIf { viewModel.preferences.value.rememberPlayerBrightness },
+        remembered = rememberedBrightness,
         onChanged = { level -> viewModel.updatePreferences { copy(playerBrightness = level) } },
     )
     val volume = rememberVolumeState(LocalContext.current)

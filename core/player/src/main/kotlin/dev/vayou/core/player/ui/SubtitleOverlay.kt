@@ -129,6 +129,7 @@ fun SubtitleOverlay(
 }
 
 /** The platform face this choice names. */
+@OptIn(UnstableApi::class)
 private val SubtitleFont.typeface: Typeface
     get() = when (this) {
         SubtitleFont.Default -> Typeface.DEFAULT
@@ -144,6 +145,7 @@ private val SubtitleFont.typeface: Typeface
  * shadow at once used to be answered with the outline alone -- which is why "Outlined" and "Raised"
  * were the same style wearing two names. Both together is what a raised edge is.
  */
+@OptIn(UnstableApi::class)
 fun subtitleEdge(outline: Boolean, shadow: Boolean): SubtitleEdge = when {
     outline && shadow -> SubtitleEdge.Raised
     outline -> SubtitleEdge.Outline
@@ -151,8 +153,10 @@ fun subtitleEdge(outline: Boolean, shadow: Boolean): SubtitleEdge = when {
     else -> SubtitleEdge.None
 }
 
+@OptIn(UnstableApi::class)
 enum class SubtitleEdge { None, Outline, Shadow, Raised }
 
+@OptIn(UnstableApi::class)
 private fun subtitleEdgeType(outline: Boolean, shadow: Boolean): Int = when (subtitleEdge(outline, shadow)) {
     SubtitleEdge.None -> CaptionStyleCompat.EDGE_TYPE_NONE
     SubtitleEdge.Outline -> CaptionStyleCompat.EDGE_TYPE_OUTLINE

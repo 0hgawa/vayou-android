@@ -12,10 +12,14 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.SeekParameters
+import androidx.media3.session.CacheBitmapLoader
+import androidx.media3.session.CommandButton
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionCommand
+import androidx.media3.session.SessionError
 import androidx.media3.session.SessionResult
+import coil3.ImageLoader
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,6 +51,7 @@ import kotlinx.coroutines.launch
  * notification on its own once the session exists.
  */
 @AndroidEntryPoint
+@OptIn(UnstableApi::class)
 class PlaybackService : MediaSessionService() {
 
     @Inject
@@ -62,6 +67,10 @@ class PlaybackService : MediaSessionService() {
 
     @Inject
     lateinit var preferences: PreferencesRepository
+
+    /** The same loader every cover on screen comes from -- see [CoilBitmapLoader]. */
+    @Inject
+    lateinit var imageLoader: ImageLoader
 
     private var session: MediaSession? = null
 
@@ -103,6 +112,15 @@ class PlaybackService : MediaSessionService() {
             customCommand: SessionCommand,
             args: Bundle,
         ): ListenableFuture<SessionResult> = when (customCommand.customAction) {
+            PlaybackCommands.Close -> {
+                // Emptied, not just stopped: a stopped player with a queue still describes
+                // something to come back to, and the panel would draw the row again.
+                session.player.stop()
+                session.player.clearMediaItems()
+                stopSelf()
+                Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
+            }
+
             PlaybackCommands.SetSleepTimer -> {
                 setSleepTimer(args.getInt(PlaybackCommands.MinutesKey, PlaybackCommands.Off))
                 Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
@@ -229,7 +247,10 @@ class PlaybackService : MediaSessionService() {
                 Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
             }
 
-            else -> Futures.immediateFuture(SessionResult(SessionResult.RESULT_ERROR_NOT_SUPPORTED))
+            // SessionError's code and not SessionResult's: the old constant still compiles and is
+            // no longer one of the values a result may carry, which is a controller being told
+            // something the library will not recognise.
+            else -> Futures.immediateFuture(SessionResult(SessionError.ERROR_NOT_SUPPORTED))
         }
     }
 
@@ -256,6 +277,20 @@ class PlaybackService : MediaSessionService() {
         super.onCreate()
         session = MediaSession.Builder(this, castAwarePlayer().also { it.addListener(playerListener) })
             .setCallback(callback)
+            // Cached around, because the notification asks for the same cover on every update and
+            // the system control asks again for its own copy.
+            .setBitmapLoader(CacheBitmapLoader(CoilBitmapLoader(this, imageLoader, scope)))
+            // The way out, in the panel itself. Paused media sits in the shade until something
+            // clears it, and on this phone a swipe does not: the row is what the system draws for
+            // an active session, and only the session can say it is over.
+            .setCustomLayout(
+                listOf(
+                    CommandButton.Builder(CommandButton.ICON_STOP)
+                        .setSessionCommand(SessionCommand(PlaybackCommands.Close, Bundle.EMPTY))
+                        .setDisplayName(getString(R.string.close_session))
+                        .build(),
+                ),
+            )
             .setSessionActivity(
                 PendingIntent.getActivity(
                     this,
@@ -390,6 +425,7 @@ private const val MillisPerMinute = 60_000L
  * up a local web server for the receiver to fetch from. Both happen the first time anything is
  * played, and on a television both are paid for something that can never be used.
  */
+@OptIn(UnstableApi::class)
 fun interface CastAvailability {
     fun isSupported(): Boolean
 }

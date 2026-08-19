@@ -30,6 +30,13 @@ internal fun Project.configureAndroidCommon(extension: CommonExtension) {
     extension.compileOptions.sourceCompatibility = jvm
     extension.compileOptions.targetCompatibility = jvm
 
+    // Media3 marks almost everything a player needs as unstable -- the renderers, the load control,
+    // the session's own callbacks -- and this app is a player. Every use of it is a deliberate one,
+    // and lint failing the build over each is a check that can only ever be answered by annotating
+    // the whole app. Kept as a warning rather than switched off: the risk it names is real, and it
+    // is what an upgrade of the library has to be read against.
+    extension.lint.warning.add("UnsafeOptInUsageError")
+
     // Two licence copies every Kotlin coroutines artifact carries. Packaged twice, they collide.
     extension.packaging.resources.excludes.add("/META-INF/{AL2.0,LGPL2.1}")
 

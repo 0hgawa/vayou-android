@@ -97,17 +97,16 @@ class MusicLibrary @Inject constructor(
         val mimeTypeColumn = getColumnIndexOrThrow(MediaStore.Audio.Media.MIME_TYPE)
         val sizeColumn = getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE)
         val durationColumn = getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
-        val albumIdColumn = getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
         val dateAddedColumn = getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_ADDED)
 
         // Sized up front, so a large library does not grow its list by doubling it a dozen times.
         val songs = ArrayList<Song>(count)
         while (moveToNext()) {
             val id = getLong(idColumn)
-            val albumId = getLong(albumIdColumn)
+            val trackUri = ContentUris.withAppendedId(Collection, id)
             songs += Song(
                 id = id,
-                uri = ContentUris.withAppendedId(Collection, id),
+                uri = trackUri,
                 fileName = getString(fileNameColumn).orEmpty(),
                 folderPath = getString(pathColumn).orEmpty().substringBeforeLast('/', ""),
                 title = getString(titleColumn).orEmpty(),
@@ -117,7 +116,16 @@ class MusicLibrary @Inject constructor(
                 sizeBytes = getLong(sizeColumn),
                 durationMs = getLong(durationColumn),
                 dateAddedSeconds = getLong(dateAddedColumn),
-                artworkUri = albumId.takeIf { it > 0 }?.let { ContentUris.withAppendedId(AlbumArt, it) },
+                // The track's own address, not the album's.
+                //
+                // Two reasons, and the second is a bug the first hid. The album address is the
+                // legacy one a player built by hand, and on modern Android the provider answers it
+                // with "failed to create image decoder" -- so covers came up empty. And a picture
+                // written into one file is that file's, not its album's: editing a track's cover
+                // changed nothing on screen, because the screen was asking the album what it looked
+                // like. Asked about the track, the provider answers with what is inside it and
+                // falls back to the album's when the file carries none.
+                artworkUri = trackUri,
             )
         }
         return songs
@@ -127,7 +135,6 @@ class MusicLibrary @Inject constructor(
         val Collection: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 
         /** Undocumented and unchanged since Android 1, and the only route to a cover before API 29. */
-        val AlbumArt = "content://media/external/audio/albumart".toUri()
 
         val Projection = arrayOf(
             MediaStore.Audio.Media._ID,

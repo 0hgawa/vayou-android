@@ -65,4 +65,10 @@
     <string name="moved_to_private_message">Movido para Privado</string>
     <string name="move_to_private_failed">Não foi possível mover para Privado</string>
     <string name="delete_failed">Não foi possível excluir</string>
+    <string name="sort">Ordenar</string>
+    <string name="sort_by_date">Data de adição</string>
+    <string name="sort_by_length">Duração</string>
+    <string name="sort_by_path">Local</string>
+    <string name="sort_by_size">Tamanho</string>
+    <string name="sort_by_title">Nome</string>
 </resources>

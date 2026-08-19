@@ -78,4 +78,5 @@
     <string name="tags_saved">Tags salvas</string>
     <string name="tags_not_saved">Não foi possível gravar as tags</string>
     <string name="delete_failed">Não foi possível excluir</string>
+    <string name="lyrics">Letra</string>
 </resources>

@@ -30,10 +30,11 @@ data class Song(
     /** When MediaStore first saw the file, in epoch seconds -- what "recently added" orders by. */
     val dateAddedSeconds: Long,
     /**
-     * The album-art address, or null for a track with no album.
+     * Where to ask what this track looks like, which is the track itself.
      *
-     * It may resolve to nothing even when present -- most tracks carry an album id and no embedded
-     * art -- so whatever draws it falls back rather than trusting this to be a picture.
+     * Not a picture but an address to ask about one: the provider answers with the picture inside
+     * the file, or the album's when the file carries none, and with nothing at all for a track that
+     * has neither -- so whatever draws it falls back rather than trusting this to be an image.
      */
     val artworkUri: Uri?,
 ) : Parcelable {

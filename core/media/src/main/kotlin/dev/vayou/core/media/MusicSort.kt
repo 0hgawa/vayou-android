@@ -1,5 +1,7 @@
 package dev.vayou.core.media
 
+import dev.vayou.core.model.reversedCompat
+
 /**
  * How a music library is ordered.
  *
@@ -17,5 +19,8 @@ enum class MusicSort(private val comparator: Comparator<Song>) {
     DateAdded(compareBy(Song::dateAddedSeconds)),
     ;
 
-    fun ordering(isAscending: Boolean): Comparator<Song> = if (isAscending) comparator else comparator.reversed()
+    // `reversedCompat`, not `reversed`: the one on Comparator arrived in Android 7, and this app
+    // still opens on Android 6 -- where sorting a list backwards would end the process rather than
+    // reverse anything. Kotlin's own has been there all along.
+    fun ordering(isAscending: Boolean): Comparator<Song> = if (isAscending) comparator else comparator.reversedCompat()
 }

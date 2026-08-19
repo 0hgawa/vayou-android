@@ -20,6 +20,7 @@ dependencies {
     // Reading a file off a share, which ExoPlayer does through a DataSource like any other.
     implementation(projects.core.smb)
 
+    implementation(libs.coil.compose)
     implementation(libs.androidx.media3.common)
     // The subtitle renderer and the cues behind it: one of the few Android views that earns its
     // keep, and wanted by both the phone and the television.

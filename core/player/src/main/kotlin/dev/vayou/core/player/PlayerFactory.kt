@@ -1,8 +1,10 @@
 package dev.vayou.core.player
 
 import android.content.Context
+import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
@@ -21,6 +23,7 @@ import javax.inject.Inject
  * Not a singleton and not injected as one: a player holds a codec and a surface, and one kept alive
  * between screens is one holding hardware nothing is using. The screen that opens it releases it.
  */
+@OptIn(UnstableApi::class)
 class PlayerFactory @Inject constructor(
     @ApplicationContext private val context: Context,
     /** So a file on a share opens the same way a file on this phone does. */
@@ -77,6 +80,7 @@ class PlayerFactory @Inject constructor(
  * at the defaults, which is the part that matters over a network: the same player opens files from a
  * server, and this changes when it begins, not how far ahead it reads.
  */
+@OptIn(UnstableApi::class)
 private fun startFastLoadControl(): LoadControl = DefaultLoadControl.Builder()
     .setBufferDurationsMs(
         DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,

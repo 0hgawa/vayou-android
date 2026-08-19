@@ -20,6 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import dagger.hilt.android.AndroidEntryPoint
+import dev.vayou.core.media.Lyrics
 import dev.vayou.core.media.Song
 import dev.vayou.core.player.ui.musicMediaItem
 import dev.vayou.core.player.ui.rememberMusicController
@@ -107,6 +108,13 @@ class MusicPlayerActivity : ComponentActivity() {
                 // too many.
                 val playlists by library.playlists.collectAsStateWithLifecycle()
 
+                // Looked up when the track changes, off the main thread, and null while it is being
+                // looked up: the key appears the moment there is something behind it.
+                var lyrics by remember { mutableStateOf<Lyrics?>(null) }
+                LaunchedEffect(playingSong) {
+                    lyrics = playingSong?.let { viewModel.lyricsFor(it) }
+                }
+
                 NowPlayingScreen(
                     player = player,
                     preferences = preferences,
@@ -115,6 +123,7 @@ class MusicPlayerActivity : ComponentActivity() {
                     menu = {
                         playingSong?.let { NowPlayingMenu(song = it, viewModel = library, playlists = playlists) }
                     },
+                    lyrics = lyrics,
                     favourite = {
                         playingSong?.let {
                             NowPlayingStar(song = it, viewModel = library, favouriteUris = playlists.favouriteUris)

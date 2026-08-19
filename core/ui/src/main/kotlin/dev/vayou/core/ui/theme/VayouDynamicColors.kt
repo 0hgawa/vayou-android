@@ -3,6 +3,7 @@ package dev.vayou.core.ui.theme
 import android.content.Context
 import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast
+import androidx.annotation.RequiresApi
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.ui.graphics.lerp
@@ -30,6 +31,9 @@ enum class VayouDynamicColor {
     Full,
 }
 
+// Says out loud what the guard above already enforces: the schemes it reads are Android 12's, and
+// a caller that has not asked [supportsDynamicColors] first has no business here.
+@RequiresApi(Build.VERSION_CODES.S)
 fun vayouDynamicColors(context: Context, isDark: Boolean, highContrast: Boolean = false): VayouColors {
     val scheme = if (isDark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
     val base = if (highContrast && isDark) VayouPureBlackColors else null

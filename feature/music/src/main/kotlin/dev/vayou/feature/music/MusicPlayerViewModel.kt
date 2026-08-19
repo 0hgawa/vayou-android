@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.vayou.core.data.repository.PreferencesRepository
+import dev.vayou.core.media.Lyrics
+import dev.vayou.core.media.LyricsReader
 import dev.vayou.core.media.MusicLibrary
 import dev.vayou.core.media.Song
 import dev.vayou.core.model.PlayerPreferences
@@ -16,6 +18,7 @@ import kotlinx.coroutines.sync.withLock
 @HiltViewModel
 class MusicPlayerViewModel @Inject constructor(
     private val library: MusicLibrary,
+    private val lyricsReader: LyricsReader,
     private val preferencesRepository: PreferencesRepository,
 ) : ViewModel() {
 
@@ -44,6 +47,9 @@ class MusicPlayerViewModel @Inject constructor(
      * in a binder transaction, and the store already has every one of them.
      */
     suspend fun resolve(uris: List<String>): List<Song> = index().let { uris.mapNotNull(it::get) }
+
+    /** The words of a track, when the file or the folder beside it has them. */
+    suspend fun lyricsFor(song: Song): Lyrics? = lyricsReader.lyricsFor(song)
 
     /** The same lookup, keyed, for callers that ask about rows rather than about order. */
     suspend fun tracksFor(uris: List<String>): Map<String, Song> = index().filterKeys(uris.toHashSet()::contains)

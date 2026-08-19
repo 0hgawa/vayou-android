@@ -10,9 +10,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -40,6 +40,7 @@ import dev.vayou.core.ui.designsystem.components.VayouArtworkRole
 import dev.vayou.core.ui.designsystem.components.VayouBackButton
 import dev.vayou.core.ui.designsystem.components.VayouCircularProgress
 import dev.vayou.core.ui.designsystem.components.VayouConfirmButton
+import dev.vayou.core.ui.designsystem.components.VayouFullScreenDialogWindow
 import dev.vayou.core.ui.designsystem.components.VayouTextButton
 import dev.vayou.core.ui.designsystem.components.VayouTextField
 import dev.vayou.core.ui.designsystem.components.VayouTopAppBar
@@ -85,16 +86,51 @@ internal fun TagEditor(
             pickedCover != null
 
         BackHandler(onBack = onDismiss)
+        VayouFullScreenDialogWindow()
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                // Painted before the insets are taken, so the surface reaches under the bars and
+                // the form sits inside them. The other way round leaves the platform's own colour
+                // showing at the top and bottom, which is the dark strip a full-screen dialog gets
+                // when nobody tells its window otherwise.
                 .background(VayouTheme.colors.surface)
+                .safeDrawingPadding()
                 .imePadding(),
         ) {
             VayouTopAppBar(
                 title = stringResource(R.string.edit_tags),
                 navigationIcon = { VayouBackButton(onClick = onDismiss) },
+                // In the bar, opposite the way out: the two answers to this screen are "keep it"
+                // and "leave it", and they belong on the same line. At the foot of the form it sat
+                // below the last field, where a long form put it off the screen until scrolled to.
+                actions = {
+                    // A named button and not a tick: this writes to the file, and the one control
+                    // that changes something on disk should say which word it stands for.
+                    VayouConfirmButton(
+                        onClick = {
+                            onSave(
+                                MediaTags(
+                                    title = title.trim(),
+                                    artist = artist.trim(),
+                                    album = album.trim(),
+                                    albumArtist = albumArtist.trim(),
+                                    year = year.trim(),
+                                ),
+                                pickedCover,
+                            )
+                        },
+                        enabled = isEdited && title.isNotBlank() && !isSaving,
+                        modifier = Modifier.padding(end = VayouTheme.spacing.sm),
+                    ) {
+                        if (isSaving) {
+                            VayouCircularProgress(size = SpinnerSize)
+                        } else {
+                            Text(text = stringResource(R.string.save))
+                        }
+                    }
+                },
             )
             Column(
                 modifier = Modifier
@@ -132,33 +168,6 @@ internal fun TagEditor(
                 TagField(R.string.tag_album, album) { album = it }
                 TagField(R.string.tag_album_artist, albumArtist) { albumArtist = it }
                 TagField(R.string.tag_year, year, isNumeric = true) { year = it }
-
-                // At the foot of the form rather than in the bar: the last thing to do is the last
-                // thing on the screen, and after the final field the thumb is already down here.
-                VayouConfirmButton(
-                    onClick = {
-                        onSave(
-                            MediaTags(
-                                title = title.trim(),
-                                artist = artist.trim(),
-                                album = album.trim(),
-                                albumArtist = albumArtist.trim(),
-                                year = year.trim(),
-                            ),
-                            pickedCover,
-                        )
-                    },
-                    enabled = isEdited && title.isNotBlank() && !isSaving,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = VayouTheme.spacing.xl),
-                ) {
-                    if (isSaving) {
-                        VayouCircularProgress(size = SpinnerSize)
-                    } else {
-                        Text(text = stringResource(R.string.save))
-                    }
-                }
             }
         }
     }

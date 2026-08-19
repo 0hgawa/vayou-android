@@ -10,6 +10,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.comparisons.reversed as kotlinReversed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -81,7 +82,10 @@ fun List<SmbFileItem>.sortedBy(sort: BrowserSort): List<SmbFileItem> {
         // share listed them.
         BrowserSortBy.Type -> compareBy<SmbFileItem> { it.extension }.thenBy { it.name.lowercase() }
     }
-    val order = if (sort.isAscending) axis else axis.reversed()
+    // Kotlin's reversed and not Comparator's: the one on Comparator arrived in Android 7, and this
+    // app opens on Android 6, where the call is not there to be made. Spelled out here rather than
+    // taken from the model's helper, which would mean this module depending on that one for a line.
+    val order = if (sort.isAscending) axis else axis.kotlinReversed()
     return sortedWith(compareBy<SmbFileItem> { !it.isDirectory }.then(order))
 }
 

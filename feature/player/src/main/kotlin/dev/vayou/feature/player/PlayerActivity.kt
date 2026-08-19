@@ -6,12 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -155,7 +157,6 @@ class PlayerActivity : ComponentActivity() {
         super.onDestroy()
     }
 
-    /** Shrinking into the corner when the viewer leaves, for those who asked for that. */
     /**
      * Asks for the floating window, and stays put if the system refuses.
      *
@@ -164,6 +165,7 @@ class PlayerActivity : ComponentActivity() {
      * build died of exactly that on a real device. A refused shrink is a button that did nothing,
      * not a reason to close the film.
      */
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun enterPipOrStay(params: PictureInPictureParams) {
         try {
             enterPictureInPictureMode(params)

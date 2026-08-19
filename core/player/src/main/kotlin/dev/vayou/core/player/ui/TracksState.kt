@@ -1,5 +1,6 @@
 package dev.vayou.core.player.ui
 
+import androidx.annotation.OptIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -36,6 +37,7 @@ data class MediaTrack(
  */
 @UnstableApi
 @Stable
+@OptIn(UnstableApi::class)
 class TracksState(private val player: Player, private val trackType: @C.TrackType Int) {
 
     var tracks: List<MediaTrack> by mutableStateOf(emptyList())
@@ -98,6 +100,7 @@ class TracksState(private val player: Player, private val trackType: @C.TrackTyp
  * code again -- which is why this list was a column of "de", "en", "pt_BR". It reads region tags
  * too, so "pt-BR" arrives as Portuguese rather than as nothing.
  */
+@OptIn(UnstableApi::class)
 private fun Format.trackLabel(index: Int): String {
     val spoken = language
         ?.takeUnless { it == C.LANGUAGE_UNDETERMINED }
@@ -129,6 +132,7 @@ private fun Format.trackLabel(index: Int): String {
  * Only for the ones worth naming. A tag nobody recognises is noise in a row that already says the
  * language, so anything unmapped adds nothing.
  */
+@OptIn(UnstableApi::class)
 private fun formatTag(mimeType: String): String? = when (mimeType) {
     MimeTypes.APPLICATION_SUBRIP -> "SRT"
     MimeTypes.TEXT_SSA -> "ASS"
