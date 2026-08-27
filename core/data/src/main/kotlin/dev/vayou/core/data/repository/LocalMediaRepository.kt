@@ -35,6 +35,9 @@ class LocalMediaRepository @Inject constructor(
         it.map(DirectoryWithMedia::toFolder)
     }
 
+    override fun getRecentlyPlayedUris(limit: Int): Flow<List<String>> =
+        mediumStateDao.recentlyPlayed(limit).map { states -> states.map(MediumStateEntity::uriString) }
+
     override suspend fun getVideoByUri(uri: String): Video? = mediumDao.getWithInfo(uri)?.toVideo()
 
     override suspend fun getVideoState(uri: String): VideoState? = mediumStateDao.get(uri)?.toVideoState()

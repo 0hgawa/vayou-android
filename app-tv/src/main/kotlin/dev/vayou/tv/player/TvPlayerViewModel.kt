@@ -83,7 +83,14 @@ class TvPlayerViewModel @Inject constructor(
             val queue = opened?.parentPath
                 ?.let { folder -> runCatching { getSortedVideos(folder).first() }.getOrNull() }
                 .orEmpty()
-            val resumeAt = if (isFromStart) StartOfFile else opened?.playbackPosition ?: StartOfFile
+            // The library first, and the table of positions behind it. A film on a share has no
+            // library entry -- MediaStore never saw it -- so asking the library alone found nothing
+            // and every one of them began again from the start, however far in the viewer had got.
+            // The position was there all along: it is written down by address, and a share's
+            // address is as good an address as any.
+            val saved = opened?.playbackPosition
+                ?: mediaRepository.getVideoState(videoUri)?.position
+            val resumeAt = if (isFromStart) StartOfFile else saved ?: StartOfFile
             _opening.value = Opening(startPosition = resumeAt, queue = queue)
         }
     }

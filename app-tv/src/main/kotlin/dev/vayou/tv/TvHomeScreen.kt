@@ -52,6 +52,8 @@ import dev.vayou.core.ui.designsystem.VayouIcons
 @Composable
 fun TvHomeScreen(
     onPlayVideo: (Video) -> Unit,
+    /** A film reached by address alone -- what a share hands back, having no library entry. */
+    onPlayNetwork: (String) -> Unit,
     onOpenServer: (String) -> Unit,
     onOpenFolder: (FavoriteFolder) -> Unit,
     onOpenPlaylist: (SavedPlaylist) -> Unit,
@@ -119,15 +121,31 @@ fun TvHomeScreen(
                             title = stringResource(R.string.continue_watching),
                             items = state.recent,
                             firstCard = landing.takeIf { landingRow == HomeRow.Recent },
-                            key = Video::uriString,
-                        ) { video, cardModifier ->
-                            Card(video.displayName, { onPlayVideo(video) }, cardModifier) {
-                                AsyncImage(
-                                    model = video.uriString,
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier.fillMaxSize(),
-                                )
+                            key = TvRecent::id,
+                        ) { entry, cardModifier ->
+                            when (entry) {
+                                is TvRecent.Local -> Card(
+                                    entry.video.displayName,
+                                    { onPlayVideo(entry.video) },
+                                    cardModifier,
+                                ) {
+                                    AsyncImage(
+                                        model = entry.video.uriString,
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.fillMaxSize(),
+                                    )
+                                }
+                                // A mark and not a frame. Taking a frame out of a file on a share
+                                // means opening it over the network, and doing that for a row that
+                                // is only being drawn would hold the screen on a server that may be
+                                // switched off. The card says where the film lives; the picture
+                                // waits until somebody asks for the film itself.
+                                is TvRecent.Remote -> Card(
+                                    entry.displayName,
+                                    { onPlayNetwork(entry.uri) },
+                                    cardModifier,
+                                ) { TvCardMark(if (entry.isAudio) VayouIcons.Audio else VayouIcons.Video) }
                             }
                         }
                     }

@@ -1,5 +1,6 @@
 package dev.vayou.tv
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,6 +12,7 @@ import dev.vayou.core.smb.NetworkServerEntry
 import dev.vayou.core.smb.PlaylistStore
 import dev.vayou.core.smb.SavedPlaylist
 import dev.vayou.core.smb.SmbDiscovery
+import dev.vayou.core.smb.SmbFileItem
 import dev.vayou.core.smb.SmbServerStore
 import dev.vayou.core.smb.mergeNetworkServers
 import javax.inject.Inject
@@ -81,19 +83,28 @@ class TvHomeViewModel @Inject constructor(
 
     val state: StateFlow<TvHomeState> = combine(
         mediaRepository.getVideosFlow(),
+        // Read from the table that writes down every play, rather than from the library: a film
+        // watched off a share is not in MediaStore and never could be, so the library's own list
+        // cannot answer "what did I watch last" for the half of the viewing that happens over the
+        // network. Eleven rows with an index on the address -- it costs nothing to ask.
+        mediaRepository.getRecentlyPlayedUris(MaxRow),
         // Saved and found on the wire as one list. A television that has never been set up has
         // nothing saved, and a row that waits for the phone to save something first would never
         // appear at all.
         combine(smbServerStore.savedServers, discovery.discover(), ::mergeNetworkServers),
         playlistStore.playlists,
         folderFavourites.favourites,
-    ) { videos, servers, playlists, folders ->
+    ) { videos, recentUris, servers, playlists, folders ->
+        val byUri = videos.associateBy { it.uriString }
         TvHomeState(
-            recent = videos.asSequence()
-                .filter { it.lastPlayedAt != null }
-                .sortedByDescending { it.lastPlayedAt }
-                .take(MaxRow)
-                .toList(),
+            // In the order they were watched, whichever they were. A local film is drawn from the
+            // library entry, which knows its name, its length and where to find a frame of it; one
+            // off a share is drawn from its address alone, which is all there is until the file is
+            // opened again. Nothing here reaches for the network: a server that is switched off
+            // would hold the home screen waiting on a timeout for each card it owns.
+            recent = recentUris.map { uri ->
+                byUri[uri]?.let(TvRecent::Local) ?: TvRecent.Remote(uri)
+            },
             // The library itself, and not only what has been started. A television opened for the
             // first time has nothing to continue and no server saved yet, and a home screen that
             // answers that with one row of channels is a home screen that looks broken.
@@ -117,8 +128,44 @@ class TvHomeViewModel @Inject constructor(
     }
 }
 
+/**
+ * Something watched before, either from this device or from a machine on the network.
+ *
+ * Two shapes because there are two amounts known. A film in the library has been read: it has a
+ * name, a length, and a frame to show. One on a share has only the address it was played from --
+ * finding out more means opening it again, over the network, which is the one thing this row must
+ * not do while it is only being drawn.
+ */
+sealed interface TvRecent {
+
+    val id: String
+
+    data class Local(val video: Video) : TvRecent {
+        override val id: String get() = video.uriString
+    }
+
+    data class Remote(val uri: String) : TvRecent {
+        override val id: String get() = uri
+
+        /** The file's own name, unescaped -- the last thing an address has to say about itself. */
+        private val fileName: String get() = Uri.decode(uri.substringAfterLast('/'))
+
+        val displayName: String get() = fileName.substringBeforeLast('.')
+
+        /**
+         * Whether this was music rather than a film, which is all the card needs to pick its mark.
+         *
+         * Asked of the share's own model rather than by keeping a list of extensions here: the
+         * browser two screens away answers the same question off the same sets, and a second copy
+         * of them would be a second list to remember when a format is added.
+         */
+        val isAudio: Boolean
+            get() = SmbFileItem(name = fileName, path = "", isDirectory = false).isAudio
+    }
+}
+
 data class TvHomeState(
-    val recent: List<Video> = emptyList(),
+    val recent: List<TvRecent> = emptyList(),
     val videos: List<Video> = emptyList(),
     val servers: List<NetworkServerEntry> = emptyList(),
     val playlists: List<SavedPlaylist> = emptyList(),

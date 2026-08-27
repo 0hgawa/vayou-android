@@ -11,6 +11,9 @@ interface MediaRepository {
     fun getVideosFlowFromFolderPath(folderPath: String): Flow<List<Video>>
     fun getFoldersFlow(): Flow<List<Folder>>
 
+    /** Addresses of what was played last, newest first -- network shares included. */
+    fun getRecentlyPlayedUris(limit: Int): Flow<List<String>>
+
     suspend fun getVideoByUri(uri: String): Video?
     suspend fun getVideoState(uri: String): VideoState?
 

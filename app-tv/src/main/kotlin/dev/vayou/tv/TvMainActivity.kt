@@ -108,6 +108,7 @@ private fun TvNavigation() {
         composable(RouteHome) {
             TvHomeScreen(
                 onPlayVideo = { video -> navController.navigate(playerRoute(video.uriString)) },
+                onPlayNetwork = { uri -> navController.navigate(playerRoute(uri)) },
                 onOpenServer = { host -> navController.navigate(serverRoute(host)) },
                 onOpenFolder = { folder ->
                     navController.navigate(serverRoute(folder.host, folder.share, folder.path))
