@@ -27,9 +27,10 @@ android {
 
     defaultConfig {
         applicationId = "dev.vayou"
-        // Carried over, not restarted: the listing was at 58, and a rewrite that ships as version
-        // 1 is a different app to every phone that already has this one.
-        versionCode = 59
+        // Carried over, not restarted: a rewrite that ships as version 1 is a different app to
+        // every phone that already has this one. 58 is what the store hands out; 59 was spent on
+        // an upload that never reached anyone, and the store does not lend a number twice.
+        versionCode = 60
         // Not 0.1.2: what changed between these two is the whole of the app under the screens.
         versionName = "0.2.0"
     }
