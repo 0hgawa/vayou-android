@@ -39,7 +39,6 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
-import dev.vayou.core.ui.theme.VayouTheme
 
 /**
  * A round button that fills with white when focus lands on it.
@@ -61,7 +60,7 @@ fun TvControlButton(
     isGrouped: Boolean = false,
 ) {
     TvControlButton(label = label, onClick = onClick, modifier = modifier, isGrouped = isGrouped) {
-        Icon(imageVector = icon, contentDescription = label, modifier = Modifier.size(VayouTheme.iconSize.md))
+        Icon(imageVector = icon, contentDescription = label, modifier = Modifier.size(TvControlMark))
     }
 }
 
@@ -94,7 +93,7 @@ private fun TvControlButton(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.size(TvButtonSize),
+        modifier = modifier.size(TvControlHeight),
         shape = ClickableSurfaceDefaults.shape(CircleShape),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = if (isGrouped) Color.Transparent else TvRestingFill,
@@ -230,8 +229,6 @@ fun tvClock(ms: Long): String {
 
 /** What an unpressed button sits on: a hint of the panel rather than a plate. */
 val TvRestingFill = Color.White.copy(alpha = 0.08f)
-
-val TvButtonSize = 48.dp
 
 /** How often a running clock is read. Finer than the eye reads a bar this wide, and no finer. */
 const val TvTickMs = 500L

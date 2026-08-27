@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -235,8 +234,12 @@ fun TvActions(modifier: Modifier = Modifier, content: @Composable RowScope.() ->
 fun TvAction(label: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = modifier.heightIn(min = TvActionHeight),
-        contentPadding = PaddingValues(horizontal = TvActionInset),
+        // Real padding rather than a height forced from outside. The set centres what is in a
+        // button within the box the padding makes; given none, the box was the height of the word
+        // and the word sat at the top of a plate stretched under it -- 14dp of air above and 23
+        // below, which is what a viewer sees before they can say why.
+        modifier = modifier,
+        contentPadding = PaddingValues(horizontal = TvActionInset, vertical = TvActionPadding),
         shape = ButtonDefaults.shape(MaterialTheme.shapes.medium),
         scale = ButtonDefaults.scale(focusedScale = 1f),
         colors = ButtonDefaults.colors(
@@ -252,8 +255,17 @@ fun TvAction(label: String, modifier: Modifier = Modifier, onClick: () -> Unit) 
 
 val TvDialogWidth = 560.dp
 
-/** Reachable from across the room, which is what the platform asks of anything answerable. */
-private val TvActionHeight = 48.dp
+/** The line a label of this size takes up, measured on the screen it is drawn on. */
+private val TvActionLine = 15.dp
 
-/** Twice the inset of a row, so a single word still reads as something to press. */
-private val TvActionInset = 24.dp
+/**
+ * What is left of [TvControlHeight] once that line is taken out, halved.
+ *
+ * Given as padding and not as a height. The set sizes a button by what is inside it and centres it
+ * there; a height forced from outside leaves the content at the top of a plate stretched under it,
+ * which is what it did here before -- 14dp of air above the word and 23 below.
+ */
+private val TvActionPadding = (TvControlHeight - TvActionLine) / 2
+
+/** Wider than a row, so a single word still reads as something to press. */
+private val TvActionInset = 20.dp

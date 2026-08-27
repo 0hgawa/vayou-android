@@ -47,7 +47,7 @@ fun TvIconButton(
 ) {
     Surface(
         onClick = onClick,
-        modifier = if (caption == null) modifier.size(ButtonSize) else modifier.height(ButtonSize),
+        modifier = if (caption == null) modifier.size(TvControlHeight) else modifier.height(TvControlHeight),
         shape = ClickableSurfaceDefaults.shape(CircleShape),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
         colors = ClickableSurfaceDefaults.colors(
@@ -72,7 +72,7 @@ fun TvIconButton(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(CaptionGap, Alignment.CenterHorizontally),
         ) {
-            Icon(imageVector = icon, contentDescription = label, modifier = Modifier.size(MarkSize))
+            Icon(imageVector = icon, contentDescription = label, modifier = Modifier.size(TvControlMark))
             caption?.let {
                 Text(
                     text = it,
@@ -85,11 +85,6 @@ fun TvIconButton(
         }
     }
 }
-
-/** Wide enough for a remote to be sure of, which on a television is the whole of the target. */
-private val ButtonSize = 44.dp
-
-private val MarkSize = 22.dp
 
 private val CaptionInset = 16.dp
 

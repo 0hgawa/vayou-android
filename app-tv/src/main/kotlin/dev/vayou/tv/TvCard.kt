@@ -265,6 +265,20 @@ private val FocusRing = 3.dp
  *  second border on the picture rather than as the focus being somewhere. */
 private val FocusRingInset = 3.dp
 
+/**
+ * The height of everything that can be pressed: a mark in a header, a control over a film, the way
+ * out of a question.
+ *
+ * Measured rather than chosen. The television's own reference draws a button 45dp tall around a
+ * glyph of 10.5dp, and the set puts the floor for one at 40. The header marks here were already 44
+ * and everything else was 48, which is how one panel came to have three heights for one kind of
+ * thing.
+ */
+val TvControlHeight = 44.dp
+
+/** Half of it, which is the ratio the set draws its own icon buttons at. */
+val TvControlMark = 22.dp
+
 private val MarkSize = 40.dp
 
 /** The folder drawing's own width over its height, as `VayouFolderGraphic` lays it out. */

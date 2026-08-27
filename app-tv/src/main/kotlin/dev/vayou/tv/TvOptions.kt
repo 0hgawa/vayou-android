@@ -63,11 +63,15 @@ fun TvOptions(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(TvScreenInset),
-            horizontalArrangement = Arrangement.spacedBy(TvScreenInset),
+            // Held together in the middle rather than pushed to the two edges. Given the whole
+            // width, the list of actions stretched to the far side and left the card stranded at
+            // the near one, with the gap between them wider than either -- two things on one
+            // screen that did not look like they were about each other.
+            horizontalArrangement = Arrangement.spacedBy(TvScreenInset, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(
-                modifier = Modifier.width(SubjectWidth),
+                modifier = Modifier.width(ColumnWidth),
                 verticalArrangement = Arrangement.spacedBy(TvCardTitleGap),
             ) {
                 TvCardFace(content = face)
@@ -89,7 +93,10 @@ fun TvOptions(
                 }
             }
             Column(
-                modifier = Modifier.weight(1f),
+                // The same width as the card beside it, which is what balanced means, and enough
+                // for the longest thing that can be done to one with room to spare. The two of
+                // them and the gap come to about the width this app gives any other question.
+                modifier = Modifier.width(ColumnWidth),
                 verticalArrangement = Arrangement.spacedBy(TvRowGap),
             ) {
                 options.forEachIndexed { index, option ->
@@ -129,6 +136,6 @@ fun TvOptions(
 class TvOptionItem(val icon: ImageVector, val label: String, val onChoose: () -> Unit)
 
 /** Wider than a card in a grid, because it is the only picture on the screen. */
-private val SubjectWidth = 300.dp
+private val ColumnWidth = 300.dp
 
 private val OptionMark = 20.dp
