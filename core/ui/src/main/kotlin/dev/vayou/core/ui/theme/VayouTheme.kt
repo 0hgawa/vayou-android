@@ -1,6 +1,8 @@
 package dev.vayou.core.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -107,6 +109,18 @@ fun VayouTheme(
         )
     }
 
+    // The grip under a caret and the band behind a selection. Left alone Material draws both from
+    // its primary, which here is the amber -- so a field whose cursor and rule are deliberately
+    // drawn in onSurface sprouts an amber teardrop the moment a finger lands in it. The handle is
+    // the caret's grip and takes the caret's own colour; the band is that colour thinned, so the
+    // words sitting on it stay the thing being read.
+    val selectionColors = remember(colors) {
+        TextSelectionColors(
+            handleColor = colors.onSurface,
+            backgroundColor = colors.onSurface.copy(alpha = SelectionBandAlpha),
+        )
+    }
+
     MaterialTheme(colorScheme = materialScheme) {
         CompositionLocalProvider(
             LocalVayouColors provides colors,
@@ -116,8 +130,16 @@ fun VayouTheme(
             LocalVayouSpacing provides VayouDefaultSpacing,
             LocalVayouIconSize provides VayouDefaultIconSize,
             LocalContentColor provides colors.onSurface,
+            LocalTextSelectionColors provides selectionColors,
             LocalTextStyle provides VayouDefaultTypography.bodyMedium,
             content = content,
         )
     }
 }
+
+/**
+ * Enough band to see where a selection starts and ends, and little enough that the words on it are
+ * still read as words. Material puts its own at 0.4, which it can afford because its band is a
+ * light accent rather than the text colour itself.
+ */
+private const val SelectionBandAlpha = 0.22f
