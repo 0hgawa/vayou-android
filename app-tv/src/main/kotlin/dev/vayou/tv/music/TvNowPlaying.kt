@@ -45,6 +45,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
@@ -91,7 +93,7 @@ import kotlinx.coroutines.delay
  */
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun TvNowPlaying(controller: MediaController, known: TrackFacts? = null) {
+fun TvNowPlaying(controller: MediaController, known: TrackFacts? = null, sleeve: TvSleeveViewModel = hiltViewModel()) {
     var isPlaying by remember { mutableStateOf(controller.isPlaying) }
     var metadata by remember { mutableStateOf(controller.mediaMetadata) }
     var item by remember { mutableStateOf(controller.currentMediaItem) }
@@ -99,7 +101,7 @@ fun TvNowPlaying(controller: MediaController, known: TrackFacts? = null) {
     var durationMs by remember { mutableLongStateOf(controller.duration.coerceAtLeast(0)) }
     var repeatMode by remember { mutableIntStateOf(controller.repeatMode) }
     var isShuffling by remember { mutableStateOf(controller.shuffleModeEnabled) }
-    var isQueueOpen by remember { mutableStateOf(false) }
+    var panel: TvSleevePanel? by remember { mutableStateOf(null) }
 
     // Held rather than read where it is needed. The count arrives after this screen does -- the
     // queue is handed over once the folder has answered -- and read straight off the controller it
@@ -182,6 +184,18 @@ fun TvNowPlaying(controller: MediaController, known: TrackFacts? = null) {
     // black -- so a file without artwork looked like a different screen from one with it.
     val tint = rememberArtworkTint(model = cover, fallback = MaterialTheme.colorScheme.surfaceVariant)
 
+    // Asked for on every change of track, and only then: reading a tag is a file being opened,
+    // and a sleeve that is up for the length of an album would otherwise ask again on every tick.
+    val lyrics by sleeve.lyrics.collectAsStateWithLifecycle()
+    LaunchedEffect(item?.mediaId) { sleeve.loadLyrics(item?.mediaId) }
+    // A track without words takes its button away with it, and a panel whose way out has gone is a
+    // panel the viewer is stuck in.
+    LaunchedEffect(lyrics) {
+        if (panel == TvSleevePanel.Lyrics && lyrics !is LyricsState.Found) panel = null
+    }
+    val preset by sleeve.preset.collectAsStateWithLifecycle()
+    val isEqualizerOn by sleeve.isEqualizerOn.collectAsStateWithLifecycle()
+
     val play = remember { FocusRequester() }
     var isPlayFocused by remember { mutableStateOf(false) }
 
@@ -209,17 +223,17 @@ fun TvNowPlaying(controller: MediaController, known: TrackFacts? = null) {
     // place the focus rests, and a viewer who has just closed a list is far likelier to want to stop
     // the music than to open the same list again. It is also the same place the focus starts, so
     // there is one rule to learn rather than two.
-    var wasQueueOpen by remember { mutableStateOf(false) }
-    LaunchedEffect(isQueueOpen) {
-        if (!isQueueOpen && wasQueueOpen) play.claim { isPlayFocused }
-        wasQueueOpen = isQueueOpen
+    var wasPanelOpen by remember { mutableStateOf(false) }
+    LaunchedEffect(panel) {
+        if (panel == null && wasPanelOpen) play.claim { isPlayFocused }
+        wasPanelOpen = panel != null
     }
 
     // The queue arrives beside the sleeve rather than over it, the way the film player opens its
     // lists. A panel is where the focus can simply go -- something laid over the middle of the
     // screen has to take the focus away from what is underneath and give it back on the way out,
     // and every list that failed to do so left the remote stranded on the bar at the top.
-    val isSplit = isQueueOpen
+    val isSplit = panel != null
     val sleeveWeight by animateFloatAsState(
         targetValue = if (isSplit) SleeveShare else WholeScreen,
         animationSpec = tween(SplitMs),
@@ -337,9 +351,27 @@ fun TvNowPlaying(controller: MediaController, known: TrackFacts? = null) {
                     TvControlButton(
                         icon = VayouIcons.MusicPlaylist,
                         label = stringResource(R.string.queue),
-                        onClick = { isQueueOpen = true },
+                        onClick = { panel = panel.toggled(TvSleevePanel.Queue) },
                     )
                 }
+                // Only where there are words to read. A button that opens an empty panel is a
+                // button that teaches the viewer to stop pressing it.
+                // The button toggles rather than only opening, and for the words it is the only
+                // way out: nothing in that panel takes the focus, so there is no left press for it
+                // to consume the way the queue does. The other two toggle as well, because two
+                // buttons that behave alike are one thing to learn.
+                if (lyrics is LyricsState.Found) {
+                    TvControlButton(
+                        icon = VayouIcons.Subtitle,
+                        label = stringResource(R.string.lyrics),
+                        onClick = { panel = panel.toggled(TvSleevePanel.Lyrics) },
+                    )
+                }
+                TvControlButton(
+                    icon = VayouIcons.Equalizer,
+                    label = stringResource(R.string.equalizer),
+                    onClick = { panel = panel.toggled(TvSleevePanel.Equalizer) },
+                )
             }
         }
     }
@@ -392,8 +424,17 @@ fun TvNowPlaying(controller: MediaController, known: TrackFacts? = null) {
                 .weight(panelWeight)
                 .padding(start = if (isSplit) TvScreenInset else 0.dp),
         ) {
-            if (isQueueOpen) {
-                Queue(controller, trackCount, onDismiss = { isQueueOpen = false })
+            when (panel) {
+                TvSleevePanel.Queue -> Queue(controller, trackCount, onDismiss = { panel = null })
+                TvSleevePanel.Lyrics -> TvLyricsPanel(state = lyrics, positionMs = positionMs)
+                TvSleevePanel.Equalizer -> TvEqualizerPanel(
+                    controller = controller,
+                    current = preset,
+                    isOn = isEqualizerOn,
+                    onChosen = sleeve::rememberPreset,
+                    onDismiss = { panel = null },
+                )
+                null -> Unit
             }
         }
     }
@@ -544,3 +585,18 @@ private const val PanelShare = 0.36f
 private const val CoverShare = 0.42f
 
 private const val SplitCoverShare = 0.22f
+
+/**
+ * What the panel beside the sleeve is showing.
+ *
+ * One at a time, and one place for it: three panels that could each be open would be three widths
+ * to animate between and a focus that has to be handed back from whichever of them had it.
+ */
+internal enum class TvSleevePanel {
+    Queue,
+    Lyrics,
+    Equalizer,
+}
+
+/** Pressing the button that opened a panel closes it, which is the only way out of the words. */
+private fun TvSleevePanel?.toggled(wanted: TvSleevePanel): TvSleevePanel? = if (this == wanted) null else wanted

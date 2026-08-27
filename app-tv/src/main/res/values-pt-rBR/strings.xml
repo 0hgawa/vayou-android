@@ -128,4 +128,8 @@
     <string name="info_resolution">Resolução</string>
     <string name="info_format">Formato</string>
     <string name="pinned">Fixada</string>
+    <string name="lyrics">Letra</string>
+    <string name="no_lyrics">Esta faixa não traz letra</string>
+    <string name="equalizer">Equalizador</string>
+    <string name="equalizer_off">Desligado</string>
 </resources>

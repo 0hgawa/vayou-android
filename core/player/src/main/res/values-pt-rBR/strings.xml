@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="close_session">Fechar</string>
+    <!--
+        The names of the curves in core.model.EqPreset. Here rather than in either shell,
+        because both of them show the same list off the same enum, and a name kept twice is a
+        name that gets translated twice and then differs.
+    -->
+    <string name="eq_preset_flat">Plano</string>
+    <string name="eq_preset_vocal">Voz</string>
+    <string name="eq_preset_classical">Clássica</string>
+    <string name="eq_preset_dance">Dance</string>
+    <string name="eq_preset_folk">Folk</string>
+    <string name="eq_preset_heavy_metal">Heavy metal</string>
+    <string name="eq_preset_hip_hop">Hip hop</string>
+    <string name="eq_preset_jazz">Jazz</string>
+    <string name="eq_preset_pop">Pop</string>
+    <string name="eq_preset_rock">Rock</string>
+    <string name="eq_preset_custom">Personalizado</string>
 </resources>

@@ -129,4 +129,8 @@
     <string name="info_resolution">Resolution</string>
     <string name="info_format">Format</string>
     <string name="pinned">Pinned</string>
+    <string name="lyrics">Lyrics</string>
+    <string name="no_lyrics">This track carries no words</string>
+    <string name="equalizer">Equalizer</string>
+    <string name="equalizer_off">Off</string>
 </resources>
