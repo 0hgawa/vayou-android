@@ -1,5 +1,6 @@
 package dev.vayou.tv
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,8 +18,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -114,6 +118,15 @@ fun TvHomeScreen(
     val surface = MaterialTheme.colorScheme.surface
     val tint = rememberArtworkTint(model = focused, fallback = surface)
 
+    // Read rather than remembered as a boolean of its own, so the name answers to the rows without
+    // anything having to tell it. Derived, so only the fade recomposes as the list moves and not
+    // the screen around it.
+    val rows = rememberLazyListState()
+    val isAtTop by remember {
+        derivedStateOf { rows.firstVisibleItemIndex == 0 && rows.firstVisibleItemScrollOffset == 0 }
+    }
+    val nameAlpha by animateFloatAsState(if (isAtTop) 1f else 0f, label = "name")
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -136,13 +149,28 @@ fun TvHomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = TvScreenInset, vertical = TvRowInset),
-                horizontalArrangement = Arrangement.spacedBy(TvRowGap, Alignment.End),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                TvIconButton(VayouIcons.Search, stringResource(R.string.search), onSearch)
-                TvIconButton(VayouIcons.Settings, stringResource(R.string.settings), onOpenSettings)
+                // Whose screen this is, and only while the viewer is still at the top of it. A name
+                // that stayed would be a word held over somebody else's pictures for as long as they
+                // browsed; gone, the rows have the whole width, and coming back up brings it with
+                // them. Faded rather than removed, because a row of marks that jumps sideways when
+                // a word leaves is worse than the word.
+                Text(
+                    text = stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.alpha(nameAlpha),
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(TvRowGap)) {
+                    TvIconButton(VayouIcons.Search, stringResource(R.string.search), onSearch)
+                    TvIconButton(VayouIcons.Settings, stringResource(R.string.settings), onOpenSettings)
+                }
             }
 
             LazyColumn(
+                state = rows,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = TvScreenInset),
                 verticalArrangement = Arrangement.spacedBy(RowGap),
