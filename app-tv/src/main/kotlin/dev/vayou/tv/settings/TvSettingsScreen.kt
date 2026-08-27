@@ -45,11 +45,11 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import dev.vayou.core.model.ApplicationPreferences
 import dev.vayou.core.model.DecoderPriority
-import dev.vayou.core.model.Folder
 import dev.vayou.core.model.PlayerPreferences
 import dev.vayou.core.model.Resume
 import dev.vayou.core.player.ui.asSpeedLabel
 import dev.vayou.core.ui.designsystem.VayouIcons
+import dev.vayou.feature.settings.LibraryFolder
 import dev.vayou.feature.settings.R as SettingsR
 import dev.vayou.feature.settings.SettingsViewModel
 import dev.vayou.feature.settings.clearThumbnailCache
@@ -349,17 +349,12 @@ private fun SubtitleRows(preferences: PlayerPreferences, onChange: ((PlayerPrefe
 @Composable
 private fun LibraryRows(
     preferences: ApplicationPreferences,
-    folders: List<Folder>?,
+    folders: List<LibraryFolder>?,
     onChange: ((ApplicationPreferences) -> ApplicationPreferences) -> Unit,
     onToggleFolder: (String) -> Unit,
     onRescan: () -> Unit,
 ) {
     Rows {
-        item {
-            SwitchRow(stringResource(SettingsR.string.settings_mark_watched), preferences.markLastPlayedMedia) {
-                onChange { it.copy(markLastPlayedMedia = !it.markLastPlayedMedia) }
-            }
-        }
         item {
             SwitchRow(stringResource(SettingsR.string.settings_recent), preferences.showRecentVideos) {
                 onChange { it.copy(showRecentVideos = !it.showRecentVideos) }
@@ -378,7 +373,7 @@ private fun LibraryRows(
                     modifier = Modifier.padding(top = TvTitleInset, bottom = TvCardTitleGap),
                 )
             }
-            items(found, key = Folder::path) { folder ->
+            items(found, key = LibraryFolder::path) { folder ->
                 SwitchRow(
                     title = folder.name,
                     isOn = folder.path !in preferences.excludeFolders,

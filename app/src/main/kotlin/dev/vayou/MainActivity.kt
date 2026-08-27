@@ -41,6 +41,7 @@ import dev.vayou.core.common.storagePermission
 import dev.vayou.core.data.repository.PreferencesRepository
 import dev.vayou.core.media.sync.MediaSynchronizer
 import dev.vayou.core.model.ThemeConfig
+import dev.vayou.core.ui.designsystem.components.LocalShowsPlayedProgress
 import dev.vayou.core.ui.designsystem.components.LocalVayouMessages
 import dev.vayou.core.ui.designsystem.components.VayouMessageHost
 import dev.vayou.core.ui.designsystem.components.VayouNavBar
@@ -113,29 +114,33 @@ class MainActivity : FragmentActivity() {
                     VayouDynamicColor.None
                 },
             ) {
-                VayouApp(
-                    onPermissionGranted = synchronizer::startSync,
-                    onPlayVideo = { request ->
-                        startActivity(
-                            PlayerActivity.intentFor(
-                                context = this,
-                                uri = request.uri,
-                                title = request.title,
-                                subtitles = request.subtitles,
-                                startAtBeginning = request.startAtBeginning,
-                                queue = request.queue,
-                                queueTitles = request.queueTitles,
-                                isLive = request.isLive,
-                            ),
-                        )
-                    },
-                    onPlaySong = { uri, queue ->
-                        startActivity(MusicPlayerActivity.intentFor(this, uri, queue))
-                    },
-                    onPlayNetworkTrack = { uri, title ->
-                        startActivity(MusicPlayerActivity.streamIntent(this, uri, title))
-                    },
-                )
+                CompositionLocalProvider(
+                    LocalShowsPlayedProgress provides preferences.markLastPlayedMedia,
+                ) {
+                    VayouApp(
+                        onPermissionGranted = synchronizer::startSync,
+                        onPlayVideo = { request ->
+                            startActivity(
+                                PlayerActivity.intentFor(
+                                    context = this,
+                                    uri = request.uri,
+                                    title = request.title,
+                                    subtitles = request.subtitles,
+                                    startAtBeginning = request.startAtBeginning,
+                                    queue = request.queue,
+                                    queueTitles = request.queueTitles,
+                                    isLive = request.isLive,
+                                ),
+                            )
+                        },
+                        onPlaySong = { uri, queue ->
+                            startActivity(MusicPlayerActivity.intentFor(this, uri, queue))
+                        },
+                        onPlayNetworkTrack = { uri, title ->
+                            startActivity(MusicPlayerActivity.streamIntent(this, uri, title))
+                        },
+                    )
+                }
             }
         }
     }

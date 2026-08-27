@@ -5,13 +5,15 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.vayou.core.data.repository.MediaRepository
 import dev.vayou.core.data.repository.PreferencesRepository
+import dev.vayou.core.media.MusicLibrary
 import dev.vayou.core.media.sync.MediaSynchronizer
 import dev.vayou.core.model.ApplicationPreferences
-import dev.vayou.core.model.Folder
 import dev.vayou.core.model.PlayerPreferences
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -19,6 +21,7 @@ import kotlinx.coroutines.launch
 class SettingsViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val synchronizer: MediaSynchronizer,
+    private val musicLibrary: MusicLibrary,
     mediaRepository: MediaRepository,
 ) : ViewModel() {
 
@@ -27,13 +30,29 @@ class SettingsViewModel @Inject constructor(
     val player: StateFlow<PlayerPreferences> = preferencesRepository.playerPreferences
 
     /**
-     * Every folder the library found, or null until it has looked.
+     * Every folder either library found, or null until they have looked.
+     *
+     * Both, because a folder is kept out of the library and not out of one half of it -- and until
+     * this asked the music as well, a folder holding only audio was one the reader could see in the
+     * app and never exclude, since it was not on the list to tick.
      *
      * Null rather than an empty list, because the two mean opposite things on the screen that shows
-     * them: one is a spinner, the other is a phone with no video on it.
+     * them: one is a spinner, the other is a phone with nothing on it.
      */
-    val folders: StateFlow<List<Folder>?> = mediaRepository.getFoldersFlow()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(SubscriptionTimeout), null)
+    val folders: StateFlow<List<LibraryFolder>?> = combine(
+        mediaRepository.getFoldersFlow(),
+        // Asked once, when the screen starts listening. The store's own folders do not come and go
+        // while a settings page is open, and watching for it would re-run this on every tick of a
+        // media scan.
+        flow { emit(musicLibrary.folders()) },
+    ) { videoFolders, audioFolders ->
+        val fromVideo = videoFolders.map { LibraryFolder(name = it.name, path = it.path) }
+        val known = videoFolders.mapTo(HashSet()) { it.path }
+        val fromAudio = audioFolders.asSequence()
+            .filterNot { it in known }
+            .map { LibraryFolder(name = it.substringAfterLast('/'), path = it) }
+        (fromVideo + fromAudio).sortedBy { it.name.lowercase() }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(SubscriptionTimeout), null)
 
     fun updateApplication(transform: ApplicationPreferences.() -> ApplicationPreferences) {
         viewModelScope.launch { preferencesRepository.updateApplicationPreferences { it.transform() } }
@@ -50,8 +69,10 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    /** Both libraries, because the row says the library and a reader means all of it. */
     fun rescanLibrary() {
         viewModelScope.launch { synchronizer.refresh() }
+        musicLibrary.rescan()
     }
 
     /**
@@ -67,6 +88,9 @@ class SettingsViewModel @Inject constructor(
         }
     }
 }
+
+/** A folder the reader may keep out, named and addressed, whichever library turned it up. */
+data class LibraryFolder(val name: String, val path: String)
 
 /** Long enough to survive a rotation, short enough that leaving the screen stops the query. */
 private const val SubscriptionTimeout = 5_000L

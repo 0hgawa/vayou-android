@@ -13,14 +13,20 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.vayou.core.common.Dispatcher
 import dev.vayou.core.common.VayouDispatchers
 import dev.vayou.core.common.di.ApplicationScope
+import dev.vayou.core.data.repository.PreferencesRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.withContext
 
@@ -37,7 +43,11 @@ class MusicLibrary @Inject constructor(
     @param:ApplicationContext private val context: Context,
     @param:Dispatcher(VayouDispatchers.IO) private val dispatcher: CoroutineDispatcher,
     @param:ApplicationScope private val scope: CoroutineScope,
+    private val preferencesRepository: PreferencesRepository,
 ) {
+
+    /** A look asked for by hand, which is what the rescan in the settings is. */
+    private val rescans = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     /**
      * A tick whenever the store's audio changes.
@@ -46,22 +56,76 @@ class MusicLibrary @Inject constructor(
      * second screen that also watches used to mean a second observer and a second scan of the
      * library for every change. Shared while anyone is listening and let go when nobody is.
      */
-    val changes: Flow<Unit> = callbackFlow {
-        val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
-            override fun onChange(selfChange: Boolean) {
-                trySend(Unit)
+    val changes: Flow<Unit> = merge(
+        callbackFlow {
+            val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
+                override fun onChange(selfChange: Boolean) {
+                    trySend(Unit)
+                }
             }
-        }
-        context.contentResolver.registerContentObserver(
-            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-            true,
-            observer,
-        )
-        awaitClose { context.contentResolver.unregisterContentObserver(observer) }
-    }.shareIn(scope, SharingStarted.WhileSubscribed(), replay = 0)
+            context.contentResolver.registerContentObserver(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                true,
+                observer,
+            )
+            awaitClose { context.contentResolver.unregisterContentObserver(observer) }
+        },
+        rescans,
+        // Keeping a folder out of the library changes what the library holds as surely as deleting
+        // it would, and the reader who just excluded one is looking at the list while they do it.
+        // Dropped once, because a subscriber is handed the setting as it stands and that is not a
+        // change.
+        preferencesRepository.applicationPreferences
+            .map { it.excludeFolders }
+            .distinctUntilChanged()
+            .drop(1)
+            .map { },
+    ).shareIn(scope, SharingStarted.WhileSubscribed(), replay = 0)
 
-    /** Every track on the device, unordered -- callers sort by whatever they are showing. */
-    suspend fun all(): List<Song> = query(selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0")
+    /** Look again, for a reader who thinks something was missed. */
+    fun rescan() {
+        rescans.tryEmit(Unit)
+    }
+
+    /**
+     * Every track on the device, unordered -- callers sort by whatever they are showing -- less
+     * whatever sits in a folder the reader has kept out.
+     *
+     * Excluded here rather than by each screen, so the list, the folders, the queue handed to the
+     * player and the television all agree about what the library holds. The video side does this in
+     * its own use case, which is why a folder excluded there went on showing its music.
+     */
+    suspend fun all(): List<Song> = query(
+        selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0",
+        excluding = preferencesRepository.applicationPreferences.value.excludeFolders.toSet(),
+    )
+
+    /**
+     * Every folder holding audio, whether it is in the library or kept out of it.
+     *
+     * Unfiltered on purpose: this answers the screen that does the excluding, and a folder that
+     * vanished from that list the moment it was excluded could never be let back in.
+     *
+     * Reads the one column rather than going through [all]: the paths are all it needs, and
+     * building a track per row to throw it away is a library of objects for a list of folders.
+     */
+    suspend fun folders(): Set<String> = withContext(dispatcher) {
+        context.contentResolver.query(
+            Collection,
+            arrayOf(MediaStore.Audio.Media.DATA),
+            "${MediaStore.Audio.Media.IS_MUSIC} != 0",
+            null,
+            null,
+        )?.use { cursor ->
+            val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
+            val paths = LinkedHashSet<String>()
+            while (cursor.moveToNext()) {
+                val folder = cursor.getString(pathColumn).orEmpty().substringBeforeLast('/', "")
+                if (folder.isNotEmpty()) paths += folder
+            }
+            paths
+        }.orEmpty()
+    }
 
     /** The one track at [uriString], or null once the store no longer has it. */
     suspend fun byUri(uriString: String): Song? {
@@ -72,20 +136,23 @@ class MusicLibrary @Inject constructor(
         ).firstOrNull()
     }
 
-    private suspend fun query(selection: String, selectionArgs: Array<String>? = null): List<Song> =
-        withContext(dispatcher) {
-            context.contentResolver.query(
-                Collection,
-                Projection,
-                selection,
-                selectionArgs,
-                // No sort order: the chosen one is applied in memory, and asking the store to sort as
-                // well is the same work done twice, the first time by the wrong key.
-                null,
-            )?.use { cursor -> cursor.readSongs() }.orEmpty()
-        }
+    private suspend fun query(
+        selection: String,
+        selectionArgs: Array<String>? = null,
+        excluding: Set<String> = emptySet(),
+    ): List<Song> = withContext(dispatcher) {
+        context.contentResolver.query(
+            Collection,
+            Projection,
+            selection,
+            selectionArgs,
+            // No sort order: the chosen one is applied in memory, and asking the store to sort as
+            // well is the same work done twice, the first time by the wrong key.
+            null,
+        )?.use { cursor -> cursor.readSongs(excluding) }.orEmpty()
+    }
 
-    private fun Cursor.readSongs(): List<Song> {
+    private fun Cursor.readSongs(excluding: Set<String>): List<Song> {
         // Resolved once, not once per row: eleven columns across a five-hundred-track library would
         // otherwise be five and a half thousand string lookups.
         val idColumn = getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
@@ -102,13 +169,17 @@ class MusicLibrary @Inject constructor(
         // Sized up front, so a large library does not grow its list by doubling it a dozen times.
         val songs = ArrayList<Song>(count)
         while (moveToNext()) {
+            val folderPath = getString(pathColumn).orEmpty().substringBeforeLast('/', "")
+            // Tested before the track is built rather than after: a folder is usually kept out
+            // because of how much is in it, and each of those would be an object made to be dropped.
+            if (folderPath in excluding) continue
             val id = getLong(idColumn)
             val trackUri = ContentUris.withAppendedId(Collection, id)
             songs += Song(
                 id = id,
                 uri = trackUri,
                 fileName = getString(fileNameColumn).orEmpty(),
-                folderPath = getString(pathColumn).orEmpty().substringBeforeLast('/', ""),
+                folderPath = folderPath,
                 title = getString(titleColumn).orEmpty(),
                 artist = getString(artistColumn).orEmpty(),
                 album = getString(albumColumn).orEmpty(),
@@ -133,8 +204,6 @@ class MusicLibrary @Inject constructor(
 
     private companion object {
         val Collection: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-
-        /** Undocumented and unchanged since Android 1, and the only route to a cover before API 29. */
 
         val Projection = arrayOf(
             MediaStore.Audio.Media._ID,

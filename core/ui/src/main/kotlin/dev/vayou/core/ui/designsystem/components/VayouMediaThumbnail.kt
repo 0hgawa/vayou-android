@@ -13,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +37,20 @@ import dev.vayou.core.ui.theme.VayouTheme
  * The play symbol sits behind the frame rather than in an `else`: decoding a frame takes a moment
  * and can fail outright, and the tile has to read as a video either way.
  */
+/**
+ * Whether a thumbnail says how far into the video the viewer got.
+ *
+ * A setting, and one the reader turns off to stop the app announcing what they have watched, so it
+ * has to reach every thumbnail on every screen -- the list, the grid, the strip along the top, the
+ * search results. Handed down the composition rather than threaded through each of them: it is one
+ * value, it changes about never, and passing it by hand meant a parameter on three components and
+ * an argument at every place they are used, for a bar that is drawn in exactly one place.
+ *
+ * Shown unless something says otherwise, which is what a component drawn outside the app -- in a
+ * preview, in a test -- should do.
+ */
+val LocalShowsPlayedProgress = staticCompositionLocalOf { true }
+
 @Composable
 fun VayouMediaThumbnail(
     model: Any?,
@@ -93,7 +108,7 @@ fun VayouMediaThumbnail(
             }
         }
 
-        if (playedFraction > 0f) {
+        if (playedFraction > 0f && LocalShowsPlayedProgress.current) {
             Box(
                 modifier = Modifier
                     .height(ProgressHeight)
