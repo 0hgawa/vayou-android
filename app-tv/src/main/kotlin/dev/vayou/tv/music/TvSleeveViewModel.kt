@@ -3,12 +3,15 @@ package dev.vayou.tv.music
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.vayou.core.common.di.ApplicationScope
+import dev.vayou.core.data.repository.MediaRepository
 import dev.vayou.core.data.repository.PreferencesRepository
 import dev.vayou.core.media.Lyrics
 import dev.vayou.core.media.LyricsReader
 import dev.vayou.core.media.MusicLibrary
 import dev.vayou.core.model.EqPreset
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -29,6 +32,8 @@ class TvSleeveViewModel @Inject constructor(
     private val library: MusicLibrary,
     private val lyricsReader: LyricsReader,
     private val preferencesRepository: PreferencesRepository,
+    private val mediaRepository: MediaRepository,
+    @param:ApplicationScope private val applicationScope: CoroutineScope,
 ) : ViewModel() {
 
     private val _lyrics = MutableStateFlow<LyricsState>(LyricsState.Looking)
@@ -69,6 +74,31 @@ class TvSleeveViewModel @Inject constructor(
     }
 
     /**
+     * Writes down where a track was left, so it reaches the row of things to continue.
+     *
+     * The film player has done this since it was written; the sleeve never did, and nothing else
+     * does it for audio -- so music was in that row only by accident, from the days when a track
+     * opened on the film player by mistake. An hour of an audiobook is exactly the thing a
+     * television is opened to get back to.
+     *
+     * A track heard to the end is written down at the start, as a film is: it is something to hear
+     * again, not to resume four seconds before it finishes.
+     *
+     * On the application's own scope and not this model's. It runs as the screen is going away, and
+     * a coroutine started on a scope that has already been closed never runs at all -- the write
+     * would be lost exactly when it matters.
+     */
+    fun rememberProgress(mediaId: String?, positionMs: Long, durationMs: Long) {
+        val uri = mediaId?.takeIf { it.isNotBlank() } ?: return
+        if (durationMs <= 0L) return
+        val position = if (positionMs >= durationMs - EndOfTrackSlackMs) 0L else positionMs.coerceAtLeast(0L)
+        applicationScope.launch {
+            mediaRepository.updateMediumProgress(uri, position, durationMs)
+            mediaRepository.updateMediumLastPlayedTime(uri, System.currentTimeMillis())
+        }
+    }
+
+    /**
      * Remembers the curve, which is the half the player does not do.
      *
      * The sound itself changes through a session command the moment the row is chosen, because the
@@ -92,3 +122,6 @@ sealed interface LyricsState {
 
     data class Found(val lyrics: Lyrics) : LyricsState
 }
+
+/** Near enough the end to count as finished, as the film player reckons it. */
+private const val EndOfTrackSlackMs = 5_000L

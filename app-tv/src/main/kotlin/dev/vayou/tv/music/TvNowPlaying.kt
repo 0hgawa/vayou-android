@@ -190,6 +190,17 @@ fun TvNowPlaying(controller: MediaController, known: TrackFacts? = null, sleeve:
     // and a sleeve that is up for the length of an album would otherwise ask again on every tick.
     val lyrics by sleeve.lyrics.collectAsStateWithLifecycle()
     LaunchedEffect(item?.mediaId) { sleeve.loadLyrics(item?.mediaId) }
+
+    // Written down on the way out and on every change of track, so a listener who walks away in the
+    // middle of a chapter finds it in the row of things to continue. Read off the controller rather
+    // than off the ticking state: the tick stops with the last frame and the position it left
+    // behind is a moment old, which on a two-hour recording is a paragraph.
+    DisposableEffect(item?.mediaId) {
+        val id = item?.mediaId
+        onDispose {
+            sleeve.rememberProgress(id, controller.currentPosition, controller.duration)
+        }
+    }
     // A track without words takes its button away with it, and a panel whose way out has gone is a
     // panel the viewer is stuck in.
     LaunchedEffect(lyrics) {
