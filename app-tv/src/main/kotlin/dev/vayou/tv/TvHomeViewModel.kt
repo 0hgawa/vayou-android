@@ -102,9 +102,17 @@ class TvHomeViewModel @Inject constructor(
             // off a share is drawn from its address alone, which is all there is until the file is
             // opened again. Nothing here reaches for the network: a server that is switched off
             // would hold the home screen waiting on a timeout for each card it owns.
-            recent = played.map { entry ->
-                byUri[entry.uri]?.let { TvRecent.Local(it) } ?: TvRecent.Remote(entry.uri, entry.watched)
-            },
+            recent = played.asSequence()
+                // Not the live channels. This row exists to be resumed and a broadcast has nowhere
+                // to resume to -- the player refuses to write a position for one, so a channel here
+                // is an item that cannot be continued. It arrives named after the last part of its
+                // address, which for a stream is always "index", and it has its own row below with
+                // its proper name and picture. Everything this app plays over http is a channel.
+                .filterNot { it.uri.startsWith("http") }
+                .map { entry ->
+                    byUri[entry.uri]?.let { TvRecent.Local(it) } ?: TvRecent.Remote(entry.uri, entry.watched)
+                }
+                .toList(),
             // The library itself, and not only what has been started. A television opened for the
             // first time has nothing to continue and no server saved yet, and a home screen that
             // answers that with one row of channels is a home screen that looks broken.
