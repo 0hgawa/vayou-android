@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vayou — Privacy Policy / Política de Privacidade</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1b1b1b;
+    --muted: #5f5f5f;
+    --rule: #e2e2e2;
+    --accent: #b47300;
+    --code-bg: #f4f4f4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121212;
+      --fg: #e8e8e8;
+      --muted: #a6a6a6;
+      --rule: #2c2c2c;
+      --accent: #e0a536;
+      --code-bg: #1e1e1e;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2.5rem 1.25rem 5rem;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  main { max-width: 46rem; margin: 0 auto; }
+  h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 .35rem; }
+  h2 {
+    font-size: 1.2rem;
+    margin: 2.5rem 0 .75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+  }
+  h3 { font-size: 1rem; margin: 1.5rem 0 .4rem; }
+  p, li { color: var(--fg); }
+  ul { padding-left: 1.25rem; }
+  li { margin: .4rem 0; }
+  .updated { color: var(--muted); font-size: .9rem; margin: 0 0 2rem; }
+  .lead {
+    border-left: 3px solid var(--accent);
+    padding: .1rem 0 .1rem 1rem;
+    margin: 1.5rem 0;
+  }
+  code {
+    background: var(--code-bg);
+    padding: .1rem .35rem;
+    border-radius: 3px;
+    font-size: .9em;
+    word-break: break-all;
+  }
+  a { color: var(--accent); }
+  .langs { margin: 0 0 2.5rem; font-size: .95rem; }
+  footer {
+    margin-top: 4rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    color: var(--muted);
+    font-size: .9rem;
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <h1>Vayou</h1>
+  <p class="updated">Privacy Policy · Política de Privacidade — 27 August 2026</p>
+  <p class="langs"><a href="#en">English</a> · <a href="#pt">Português</a></p>
+
+  <h2 id="en">Privacy Policy</h2>
+
+  <p class="lead">
+    Vayou collects no personal data, stores none and transmits none. There is no analytics, no
+    tracking, no advertising, no account and no sign-up. The app works entirely offline, apart from
+    the four cases described below — each of which you start yourself.
+  </p>
+
+  <h3>What stays on your device</h3>
+  <p>Written only to the device's own storage, and never sent anywhere:</p>
+  <ul>
+    <li>Your media library — titles, folders, durations and artwork — read from Android's catalogue;</li>
+    <li>Your settings, playlists, favourites and where you left off in each item;</li>
+    <li>The credentials for any network server you add.</li>
+  </ul>
+  <p>Uninstalling the app removes all of it. There is no copy on a server, because there is no server.</p>
+
+  <h3>When the app reaches the internet</h3>
+  <ul>
+    <li>
+      <strong>Live channels.</strong> Downloads public channel lists from
+      <code>iptv-org.github.io</code> and <code>raw.githubusercontent.com</code>. Nothing about you
+      is sent; it is a public file being read.
+    </li>
+    <li>
+      <strong>Subtitle search.</strong> Sends OpenSubtitles
+      (<code>rest.opensubtitles.org</code>) the search term — usually the file name or the title you
+      typed — and the language you chose.
+    </li>
+    <li>
+      <strong>Subtitle translation.</strong> Sends the subtitle text to Google's translation service
+      (<code>translate.google.com</code>) to get the translation back.
+    </li>
+    <li>
+      <strong>Media on your own network.</strong> Connects to the server you added, using the
+      credentials you supplied. That traffic stays on your network and never passes through us.
+    </li>
+  </ul>
+  <p>
+    Subtitle search and translation are the two that hand anything to a third party, and those
+    parties have policies of their own:
+    <a href="https://www.opensubtitles.org/en/privacypolicy">OpenSubtitles</a> and
+    <a href="https://policies.google.com/privacy">Google</a>. Use none of those features and nothing
+    leaves the device.
+  </p>
+
+  <h3>Why each permission is asked for</h3>
+  <ul>
+    <li><strong>Audio, video and storage</strong> — to read the files you are going to play;</li>
+    <li><strong>Internet and network state</strong> — for the four cases above;</li>
+    <li><strong>Wi-Fi state</strong> — to find media servers on your own network;</li>
+    <li><strong>Foreground service</strong> — so music keeps playing with the screen off;</li>
+    <li><strong>Wake lock</strong> — so the screen does not sleep during a video;</li>
+    <li>
+      <strong>Biometrics</strong> — to unlock the private folder. Android performs the check; the
+      app receives a yes or a no, and no biometric data.
+    </li>
+  </ul>
+
+  <h3>Children</h3>
+  <p>
+    Vayou is not directed at children under 13. As it collects no data from anyone, it collects none
+    from children.
+  </p>
+
+  <h3>Changes</h3>
+  <p>
+    If this policy changes, the date at the top of this page changes with it, and the previous
+    wording stays in the repository's public history.
+  </p>
+
+  <h3>Contact</h3>
+  <p>
+    Questions, corrections or requests:
+    <a href="https://github.com/0hgawa/vayou-android/issues">github.com/0hgawa/vayou-android/issues</a>.
+  </p>
+
+  <h2 id="pt" lang="pt-BR">Política de Privacidade</h2>
+
+  <p class="lead">
+    O Vayou não coleta, não armazena e não transmite dados pessoais. Não há análise de uso,
+    rastreamento, publicidade, contas nem cadastro. O aplicativo funciona inteiramente sem internet,
+    exceto nos quatro casos descritos abaixo — todos iniciados por você.
+  </p>
+
+  <h3>O que fica no seu aparelho</h3>
+  <p>Estas informações são gravadas apenas no armazenamento do próprio aparelho e nunca saem dele:</p>
+  <ul>
+    <li>A sua biblioteca de mídia — títulos, pastas, durações e capas — lida do catálogo do Android;</li>
+    <li>Suas preferências, listas de reprodução, favoritos e a posição em que cada mídia parou;</li>
+    <li>As credenciais dos servidores de rede que você cadastrar.</li>
+  </ul>
+  <p>
+    Desinstalar o aplicativo apaga tudo isso. Não existe cópia em nenhum servidor, porque não existe
+    servidor.
+  </p>
+
+  <h3>Quando o aplicativo acessa a internet</h3>
+  <p>Em quatro situações, e nenhuma acontece sozinha:</p>
+  <ul>
+    <li>
+      <strong>Canais ao vivo.</strong> Baixa listas públicas de canais de
+      <code>iptv-org.github.io</code> e <code>raw.githubusercontent.com</code>. Nenhuma informação
+      sua é enviada — é apenas a leitura de um arquivo público.
+    </li>
+    <li>
+      <strong>Busca de legendas.</strong> Envia ao OpenSubtitles
+      (<code>rest.opensubtitles.org</code>) o termo procurado, que costuma ser o nome do arquivo ou
+      o título que você digitou, e o idioma escolhido.
+    </li>
+    <li>
+      <strong>Tradução de legendas.</strong> Envia o texto das legendas ao serviço de tradução do
+      Google (<code>translate.google.com</code>) para receber a tradução de volta.
+    </li>
+    <li>
+      <strong>Mídia na sua rede local.</strong> Conecta ao servidor que você cadastrou, com as
+      credenciais que você forneceu. Esse tráfego não sai da sua rede e não passa por nós.
+    </li>
+  </ul>
+  <p>
+    A busca de legendas e a tradução são as duas que entregam algo a terceiros, e esses terceiros
+    têm políticas próprias:
+    <a href="https://www.opensubtitles.org/en/privacypolicy">OpenSubtitles</a> e
+    <a href="https://policies.google.com/privacy">Google</a>. Se você não usar esses recursos, nada
+    é enviado a lugar nenhum.
+  </p>
+
+  <h3>Por que cada permissão é pedida</h3>
+  <ul>
+    <li><strong>Áudio, vídeo e armazenamento</strong> — para ler os arquivos que você vai reproduzir;</li>
+    <li><strong>Internet e estado da rede</strong> — para os quatro casos acima;</li>
+    <li><strong>Estado do Wi-Fi</strong> — para encontrar servidores de mídia na sua própria rede;</li>
+    <li><strong>Serviço em primeiro plano</strong> — para a música continuar com a tela apagada;</li>
+    <li><strong>Manter ativo</strong> — para a tela não apagar durante um vídeo;</li>
+    <li>
+      <strong>Biometria</strong> — para destravar a pasta privada. A conferência é feita pelo
+      Android; o aplicativo recebe apenas um sim ou um não, e nenhum dado biométrico.
+    </li>
+  </ul>
+
+  <h3>Crianças</h3>
+  <p>
+    O Vayou não é dirigido a menores de 13 anos. Como não coleta dados de ninguém, também não
+    coleta dados de crianças.
+  </p>
+
+  <h3>Alterações</h3>
+  <p>
+    Se esta política mudar, a data no topo desta página muda com ela, e a versão anterior continua
+    disponível no histórico público do repositório.
+  </p>
+
+  <h3>Contato</h3>
+  <p>
+    Dúvidas, correções ou pedidos:
+    <a href="https://github.com/0hgawa/vayou-android/issues">github.com/0hgawa/vayou-android/issues</a>.
+  </p>
+
+  <footer>
+    Vayou — reprodutor de mídia para Android · media player for Android<br>
+    <a href="https://github.com/0hgawa/vayou-android">github.com/0hgawa/vayou-android</a>
+  </footer>
+
+</main>
+</body>
+</html>
