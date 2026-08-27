@@ -56,6 +56,7 @@ import dev.vayou.core.media.Lyrics
 import dev.vayou.core.model.PlayerPreferences
 import dev.vayou.core.player.stepToNext
 import dev.vayou.core.player.stepToPrevious
+import dev.vayou.core.player.ui.isDescribed
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.VayouArtwork
 import dev.vayou.core.ui.designsystem.components.VayouArtworkRole
@@ -249,9 +250,15 @@ private fun NowPlaying(
         ?: playerMetadata.title?.toString()?.takeIf { it.isNotBlank() }
         ?: currentItem?.localConfiguration?.uri?.lastPathSegment
         ?: ""
+    // Blank rather than "unknown" until one of the two has described the track: said before either
+    // has answered it is said wrongly, and the line corrects itself in front of the listener.
     val artist = itemMetadata?.artist?.toString()?.takeIf { it.isNotBlank() }
         ?: playerMetadata.artist?.toString()?.takeIf { it.isNotBlank() }
-        ?: stringResource(R.string.unknown_artist)
+        ?: if (itemMetadata?.isDescribed == true || playerMetadata.isDescribed) {
+            stringResource(R.string.unknown_artist)
+        } else {
+            ""
+        }
 
     // Gathered into one value because it all changes together and has to *move* together: the
     // sliding panes read what they show from this, not from the screen around them, or the outgoing

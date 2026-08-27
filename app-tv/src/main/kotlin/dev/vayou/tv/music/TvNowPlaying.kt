@@ -55,6 +55,7 @@ import androidx.media3.session.MediaController
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import coil3.compose.SubcomposeAsyncImage
+import dev.vayou.core.player.ui.isDescribed
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.graphics.rememberArtworkTint
 import dev.vayou.tv.Hairline
@@ -174,9 +175,12 @@ fun TvNowPlaying(controller: MediaController, known: TrackFacts? = null, sleeve:
     val title = known?.title?.takeIf { it.isNotBlank() }
         ?: metadata.title?.toString()?.takeIf { it.isNotBlank() }
         ?: item?.mediaId?.substringAfterLast('/').orEmpty()
+    // Blank rather than "unknown" until the session has described the track: said too early it is
+    // said wrongly, and the line then corrects itself in front of the viewer at the start of every
+    // track. An empty line for a moment is the honest version of not knowing yet.
     val artist = known?.artist?.takeIf { it.isNotBlank() }
         ?: metadata.artist?.toString()?.takeIf { it.isNotBlank() }
-        ?: stringResource(R.string.unknown_artist)
+        ?: if (metadata.isDescribed) stringResource(R.string.unknown_artist) else ""
 
     val surface = MaterialTheme.colorScheme.surface
     // A track with no cover still gets the wash, in the app's own grey rather than in the surface.

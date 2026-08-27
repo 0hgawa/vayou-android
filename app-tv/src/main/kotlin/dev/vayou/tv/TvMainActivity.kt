@@ -194,6 +194,14 @@ private fun TvNavigation() {
                     type = NavType.BoolType
                     defaultValue = false
                 },
+                // Declared, and not merely written into the route above. An argument the route
+                // names but does not type arrives as the text "true", and a view model that reads
+                // it as the boolean it plainly looks like is handed a String -- which is a cast
+                // that throws before the player has drawn anything. Every film goes through here.
+                navArgument(TvPlayerViewModel.FromStartArg) {
+                    type = NavType.BoolType
+                    defaultValue = false
+                },
             ),
         ) {
             TvPlayerScreen(onBack = { navController.popBackStack() })
