@@ -51,7 +51,8 @@ import kotlinx.coroutines.launch
 data class PendingSongWrite(val request: IntentSender, val work: Work) {
     sealed interface Work {
         /** Nothing is left to do once allowed but forget the lists that named it. */
-        data class Delete(val uri: String) : Work
+        /** Every address the one dialog asked about, so all of them are forgotten together. */
+        data class Delete(val uris: List<String>) : Work
 
         /** The permission was the question; the tags themselves still have to be written. */
         data class Tags(
@@ -175,13 +176,19 @@ class MusicViewModel @Inject constructor(
     fun shareIntent(songs: List<Song>): Intent =
         mediaActions.shareIntent(songs.map { it.uriString.toUri() }, AudioMimeType)
 
-    fun deleteSong(song: Song) {
+    /**
+     * Tracks, in one request, however many were picked. See LibraryViewModel.deleteVideos: asked
+     * one at a time, all but one of the dialogs are lost and all but one of the files survive.
+     */
+    fun deleteSongs(songs: List<Song>) {
+        if (songs.isEmpty()) return
         viewModelScope.launch {
-            when (val write = mediaActions.delete(listOf(song.uriString.toUri()))) {
-                // Below Android 11 it is already gone, so the lists that named it are pruned now.
-                MediaWrite.Done -> playlistRepository.forgetItems(listOf(song.uriString))
+            val uris = songs.map { it.uriString }
+            when (val write = mediaActions.delete(uris.map(String::toUri))) {
+                // Below Android 11 they are already gone, so the lists that named them are pruned now.
+                MediaWrite.Done -> playlistRepository.forgetItems(uris)
                 is MediaWrite.NeedsPermission ->
-                    pendingWrite = PendingSongWrite(write.request, PendingSongWrite.Work.Delete(song.uriString))
+                    pendingWrite = PendingSongWrite(write.request, PendingSongWrite.Work.Delete(uris))
 
                 MediaWrite.Failed -> _outcomes.send(MusicOutcome.DeleteFailed)
             }
@@ -247,7 +254,7 @@ class MusicViewModel @Inject constructor(
         }
         viewModelScope.launch {
             when (val work = pending.work) {
-                is PendingSongWrite.Work.Delete -> playlistRepository.forgetItems(listOf(work.uri))
+                is PendingSongWrite.Work.Delete -> playlistRepository.forgetItems(work.uris)
                 is PendingSongWrite.Work.Tags -> {
                     val written = mediaActions.applyTags(work.uri.toUri(), work.tags, work.cover)
                     finishTags(work.artworkUri)

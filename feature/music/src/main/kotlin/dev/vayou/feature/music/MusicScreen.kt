@@ -654,7 +654,7 @@ fun MusicScreen(onPlaySong: (Song, List<Song>) -> Unit, viewModel: MusicViewMode
             name = doomed.first().title.ifBlank { doomed.first().fileName },
             onDismiss = { deletingSongs = emptyList() },
             onConfirm = {
-                doomed.forEach(viewModel::deleteSong)
+                viewModel.deleteSongs(doomed)
                 selectedIds = emptySet()
                 selectedGroups = emptySet()
             },

@@ -136,7 +136,7 @@ internal fun NowPlayingMenu(song: Song, viewModel: MusicViewModel, playlists: Me
             name = song.title.ifBlank { song.fileName },
             onDismiss = { isDeleting = false },
             onConfirm = {
-                viewModel.deleteSong(song)
+                viewModel.deleteSongs(listOf(song))
                 isDeleting = false
             },
         )

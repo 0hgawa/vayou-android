@@ -189,14 +189,24 @@ class LibraryViewModel @Inject constructor(
         }
     }
 
-    fun deleteVideo(video: Video) {
+    /**
+     * Films, in one request, however many were picked.
+     *
+     * One request and not one each, because from Android 11 the system asks the viewer before a
+     * file the app did not write is removed, and that question arrives as a dialog. Asked once per
+     * film, a folder of forty raises forty dialogs that each overwrite the last, one is answered,
+     * and thirty-nine files quietly stay -- which is what emptying a folder used to do. The store
+     * takes the whole list and puts a single question for all of it.
+     */
+    fun deleteVideos(videos: List<Video>) {
+        if (videos.isEmpty()) return
         viewModelScope.launch {
-            val uri = video.uriString.toUri()
-            when (val write = mediaActions.delete(listOf(uri))) {
-                // Below Android 11 it is already gone, so the lists that named it are pruned now.
-                MediaWrite.Done -> playlistRepository.forgetItems(listOf(video.uriString))
+            val uris = videos.map { it.uriString }
+            when (val write = mediaActions.delete(uris.map(String::toUri))) {
+                // Below Android 11 they are already gone, so the lists that named them are pruned now.
+                MediaWrite.Done -> playlistRepository.forgetItems(uris)
                 is MediaWrite.NeedsPermission ->
-                    pendingWrite = PendingWrite(write.request, PendingWrite.Work.Delete(video.uriString))
+                    pendingWrite = PendingWrite(write.request, PendingWrite.Work.Delete(uris))
 
                 MediaWrite.Failed -> _outcomes.send(LibraryOutcome.DeleteFailed)
             }
@@ -227,7 +237,7 @@ class LibraryViewModel @Inject constructor(
                 // The permission was the question; the rename itself still has to be done.
                 is PendingWrite.Work.Rename -> if (isAllowed) mediaActions.applyRename(work.uri, work.to)
                 // Only now is the file actually gone, so only now do the lists stop naming it.
-                is PendingWrite.Work.Delete -> if (isAllowed) playlistRepository.forgetItems(listOf(work.uri))
+                is PendingWrite.Work.Delete -> if (isAllowed) playlistRepository.forgetItems(work.uris)
             }
         }
     }
@@ -302,7 +312,8 @@ data class PendingWrite(val request: IntentSender, val work: Work) {
 
         data class Rename(val uri: Uri, val to: String) : Work
 
-        data class Delete(val uri: String) : Work
+        /** Every address the one dialog asked about, so all of them are forgotten together. */
+        data class Delete(val uris: List<String>) : Work
     }
 }
 

@@ -493,7 +493,7 @@ private fun LibraryContent(
             count = 1,
             name = video.displayName,
             onDismiss = { deletingVideo = null },
-            onConfirm = { viewModel.deleteVideo(video) },
+            onConfirm = { viewModel.deleteVideos(listOf(video)) },
         )
     }
 
@@ -504,7 +504,7 @@ private fun LibraryContent(
             name = picked.first().displayName,
             onDismiss = { deletingSelection = emptyList() },
             onConfirm = {
-                picked.forEach(viewModel::deleteVideo)
+                viewModel.deleteVideos(picked)
                 selection.clear()
             },
         )
