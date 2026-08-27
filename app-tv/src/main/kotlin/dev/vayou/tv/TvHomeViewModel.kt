@@ -102,13 +102,19 @@ class TvHomeViewModel @Inject constructor(
             // off a share is drawn from its address alone, which is all there is until the file is
             // opened again. Nothing here reaches for the network: a server that is switched off
             // would hold the home screen waiting on a timeout for each card it owns.
+            // Films, and only films.
+            //
+            // Live channels have nowhere to resume to -- the player refuses to write a position for
+            // one -- and they arrive named after the last part of their address, which for a stream
+            // is always "index". Everything this app plays over http is a channel.
+            //
+            // Music is left out because this is a row of things to watch, and a row of films with
+            // the odd track among them reads as a mistake rather than as a convenience. Tracks are
+            // reached through the music library, which is arranged for them.
+            //
+            // Both tests run before anything is built, so nothing is made to be thrown away.
             recent = played.asSequence()
-                // Not the live channels. This row exists to be resumed and a broadcast has nowhere
-                // to resume to -- the player refuses to write a position for one, so a channel here
-                // is an item that cannot be continued. It arrives named after the last part of its
-                // address, which for a stream is always "index", and it has its own row below with
-                // its proper name and picture. Everything this app plays over http is a channel.
-                .filterNot { it.uri.startsWith("http") }
+                .filterNot { it.uri.startsWith("http") || isTrack(it.uri) }
                 .map { entry ->
                     byUri[entry.uri]?.let { TvRecent.Local(it) } ?: TvRecent.Remote(entry.uri, entry.watched)
                 }
@@ -160,21 +166,10 @@ sealed interface TvRecent {
     data class Remote(val uri: String, override val watched: Float?) : TvRecent {
         override val id: String get() = uri
 
-        // Worked out once, when the row is built, and not on every read. These are asked for by
-        // the card each time it is drawn, and a getter here is an address decoded and a model
-        // allocated on every recomposition of a row that scrolls.
-        private val fileName: String = Uri.decode(uri.substringAfterLast('/'))
-
-        val displayName: String = fileName.substringBeforeLast('.')
-
-        /**
-         * Whether this was music rather than a film, which is all the card needs to pick its mark.
-         *
-         * Asked of the share's own model rather than by keeping a list of extensions here: the
-         * browser two screens away answers the same question off the same sets, and a second copy
-         * of them would be a second list to remember when a format is added.
-         */
-        val isAudio: Boolean = SmbFileItem(name = fileName, path = "", isDirectory = false).isAudio
+        // Worked out once, when the row is built, and not on every read: the card asks for this
+        // each time it is drawn, and a getter would decode the address on every recomposition of a
+        // row that scrolls.
+        val displayName: String = Uri.decode(uri.substringAfterLast('/')).substringBeforeLast('.')
     }
 }
 
@@ -190,3 +185,13 @@ data class TvHomeState(
 private const val MaxRow = 16
 
 private const val IdleTimeoutMs = 5_000L
+
+/**
+ * Whether an address names music rather than a film.
+ *
+ * Asked of the share's own model rather than by keeping a list of extensions here: the browser two
+ * screens away answers the same question off the same sets, and a second copy of them would be a
+ * second list to remember the day a format is added.
+ */
+private fun isTrack(uri: String): Boolean =
+    SmbFileItem(name = Uri.decode(uri.substringAfterLast('/')), path = "", isDirectory = false).isAudio

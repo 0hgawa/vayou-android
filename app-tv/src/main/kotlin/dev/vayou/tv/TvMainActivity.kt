@@ -109,7 +109,6 @@ private fun TvNavigation() {
             TvHomeScreen(
                 onPlayVideo = { video -> navController.navigate(playerRoute(video.uriString)) },
                 onPlayNetwork = { uri -> navController.navigate(playerRoute(uri)) },
-                onPlayNetworkAudio = { uri -> navController.navigate(audioRoute(uri)) },
                 onOpenServer = { host -> navController.navigate(serverRoute(host)) },
                 onOpenFolder = { folder ->
                     navController.navigate(serverRoute(folder.host, folder.share, folder.path))

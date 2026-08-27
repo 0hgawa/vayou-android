@@ -61,8 +61,6 @@ fun TvHomeScreen(
     onPlayVideo: (Video) -> Unit,
     /** A film reached by address alone -- what a share hands back, having no library entry. */
     onPlayNetwork: (String) -> Unit,
-    /** The same for music, which needs the sleeve and not the film player. */
-    onPlayNetworkAudio: (String) -> Unit,
     onOpenServer: (String) -> Unit,
     onOpenFolder: (FavoriteFolder) -> Unit,
     onOpenPlaylist: (SavedPlaylist) -> Unit,
@@ -178,13 +176,10 @@ fun TvHomeScreen(
                                 // waits until somebody asks for the film itself.
                                 is TvRecent.Remote -> Card(
                                     entry.displayName,
-                                    // The sleeve for music and the player for film, as the share
-                                    // browser already sorts them. Sent to the film player, a track
-                                    // opened on a black screen with a transport that never started.
-                                    { if (entry.isAudio) onPlayNetworkAudio(entry.uri) else onPlayNetwork(entry.uri) },
+                                    { onPlayNetwork(entry.uri) },
                                     cardModifier.reporting(null) { focused = it },
                                 ) {
-                                    TvCardMark(if (entry.isAudio) VayouIcons.Audio else VayouIcons.Video)
+                                    TvCardMark(VayouIcons.Video)
                                     WatchedBar(entry.watched)
                                 }
                             }
