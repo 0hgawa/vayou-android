@@ -249,21 +249,9 @@ private fun NowPlaying(
         ?: playerMetadata.title?.toString()?.takeIf { it.isNotBlank() }
         ?: currentItem?.localConfiguration?.uri?.lastPathSegment
         ?: ""
-    // Blank where there is no artist, rather than the word "unknown".
-    //
-    // Not a shortening -- it is the only version that is never wrong. The two sources answer at
-    // different moments: the queue item carries the title straight away and often no artist, and
-    // the name arrives a beat later when the service has read the file's tags. Anything that fills
-    // that beat with a word fills it with the wrong one, and the line then corrects itself in front
-    // of the listener at the start of every track. Waiting for "described" does not help, because
-    // the title alone already answers that.
-    //
-    // And the word earns nothing here. A row in a list is one of hundreds and needs a second line
-    // to keep its shape; a sleeve is one track, named above, with its cover beside it. Nobody
-    // looking at it needs to be told that the artist is not known.
     val artist = itemMetadata?.artist?.toString()?.takeIf { it.isNotBlank() }
         ?: playerMetadata.artist?.toString()?.takeIf { it.isNotBlank() }
-        ?: ""
+        ?: stringResource(R.string.unknown_artist)
 
     // Gathered into one value because it all changes together and has to *move* together: the
     // sliding panes read what they show from this, not from the screen around them, or the outgoing
