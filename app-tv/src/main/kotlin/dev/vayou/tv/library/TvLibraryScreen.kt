@@ -182,7 +182,10 @@ fun TvLibraryScreen(
                     onPlayVideo(video, true)
                 }.takeIf { video.playbackPosition > 0L },
                 TvOptionItem(
-                    icon = if (isStarred) VayouIcons.StarOutlined else VayouIcons.StarFilled,
+                    // The state it is in, not the state it will be in. The card itself marks a
+                    // favourite with a filled star, so a menu that showed a hollow one over the very
+                    // card wearing a filled one was two answers to one question.
+                    icon = if (isStarred) VayouIcons.StarFilled else VayouIcons.StarOutlined,
                     label = stringResource(if (isStarred) R.string.remove_favourite else R.string.add_favourite),
                 ) { viewModel.toggleFavourite(video) },
                 TvOptionItem(VayouIcons.Info, stringResource(R.string.details)) { showing = video },

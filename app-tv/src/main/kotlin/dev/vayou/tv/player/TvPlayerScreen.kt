@@ -104,6 +104,7 @@ import dev.vayou.tv.TvAction
 import dev.vayou.tv.TvActions
 import dev.vayou.tv.TvCardTitleGap
 import dev.vayou.tv.TvDialogWidth
+import dev.vayou.tv.TvMessage
 import dev.vayou.tv.TvRowGap
 import dev.vayou.tv.TvRowInset
 import dev.vayou.tv.TvScreenInset
@@ -344,10 +345,10 @@ private fun Playing(
     var sourceSize by remember { mutableStateOf<Size?>(null) }
     var hasPrevious by remember { mutableStateOf(player.hasPreviousMediaItem()) }
     var hasNext by remember { mutableStateOf(player.hasNextMediaItem()) }
-    // Assumed until the tracks say otherwise, which is the only order that does not flicker: they
-    // arrive a moment after the film does, and starting at "no picture" would put the name of every
-    // film on the screen for that moment before the first frame covered it.
-    var hasVideo by remember { mutableStateOf(true) }
+    // Three answers and not two: there is a picture, there is none, and it is too early to say.
+    // The third is most of the first few seconds of anything opened over a network, and answering
+    // it with "none" is what put a music mark over every film while it was still being reached.
+    var hasVideo by remember { mutableStateOf<Boolean?>(null) }
     var title by remember { mutableStateOf(player.mediaMetadata.title?.toString().orEmpty()) }
 
     DisposableEffect(player) {
@@ -375,7 +376,11 @@ private fun Playing(
             }
 
             override fun onTracksChanged(tracks: Tracks) {
-                hasVideo = tracks.groups.any { it.type == C.TRACK_TYPE_VIDEO }
+                // An empty set is the player between two items, not a file with nothing in it.
+                // Taken as an answer it says "no picture" for the moment a film takes to open.
+                if (tracks.groups.isNotEmpty()) {
+                    hasVideo = tracks.groups.any { it.type == C.TRACK_TYPE_VIDEO }
+                }
             }
 
             override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
@@ -554,11 +559,15 @@ private fun Playing(
                         .fillMaxSize()
                         .resizeWithContentScale(scale.toContentScale(), sourceSize),
                 )
-                // A track from a share has no picture, and a picture is the whole of what this
-                // screen usually shows. Without this it is a black rectangle with a seek bar under
-                // it, which reads as a film that failed rather than as music that is playing.
-                if (!hasVideo) {
-                    NowPlaying(title = title, icon = VayouIcons.Audio)
+                // A black rectangle with a seek bar under it reads as a film that failed. What
+                // goes over it depends on which of the three answers is in: a word while the file
+                // is still being reached -- which on a share or a channel is seconds, and was the
+                // one moment this screen said nothing at all -- and the music mark only once the
+                // tracks have confirmed there is no picture coming.
+                when (hasVideo) {
+                    null -> TvMessage(stringResource(R.string.opening_media))
+                    false -> NowPlaying(title = title, icon = VayouIcons.Audio)
+                    true -> Unit
                 }
                 SubtitleOverlay(
                     player = player,

@@ -187,7 +187,8 @@ fun TvChannelsScreen(
                 onDismiss = { acting = null },
                 options = listOf(
                     TvOptionItem(
-                        icon = if (isStarred) VayouIcons.StarOutlined else VayouIcons.StarFilled,
+                        // As on the card, which marks a favourite with a filled star.
+                        icon = if (isStarred) VayouIcons.StarFilled else VayouIcons.StarOutlined,
                         label = stringResource(
                             if (isStarred) R.string.remove_favourite else R.string.add_favourite,
                         ),

@@ -131,4 +131,5 @@
     <string name="no_lyrics">Esta faixa não traz letra</string>
     <string name="equalizer">Equalizador</string>
     <string name="equalizer_off">Desligado</string>
+    <string name="opening_media">Abrindo…</string>
 </resources>
