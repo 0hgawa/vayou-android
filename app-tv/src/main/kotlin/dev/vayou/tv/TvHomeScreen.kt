@@ -29,7 +29,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -44,6 +47,7 @@ import dev.vayou.core.smb.FavoriteFolder
 import dev.vayou.core.smb.NetworkServerEntry
 import dev.vayou.core.smb.SavedPlaylist
 import dev.vayou.core.ui.designsystem.VayouIcons
+import dev.vayou.core.ui.graphics.rememberArtworkTint
 
 /**
  * The first thing on the television.
@@ -100,7 +104,32 @@ fun TvHomeScreen(
     // Boxed, so the dialog below has something to be laid over. As siblings in a column, the rows
     // took the whole height and the dialog was measured into what was left, which was nothing: the
     // card opened, the state flipped, and no dialog was ever drawn.
-    Box(modifier = Modifier.fillMaxSize()) {
+    // What the card under the focus looks like, or null where it is a mark rather than a picture.
+    // Held here and not in each row, because there is one background and it answers to whichever
+    // card has the focus, wherever that card is.
+    var focused: Any? by remember { mutableStateOf(null) }
+
+    // The colour is read from a 24-pixel copy of a picture that is already on screen, so it is a
+    // cache hit and a scan of a few hundred pixels off the main thread. Surface where there is
+    // nothing to read: a row of folders and servers lets the screen settle rather than inventing
+    // a colour for a glyph.
+    val surface = MaterialTheme.colorScheme.surface
+    val tint = rememberArtworkTint(model = focused, fallback = surface)
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            // Down and not across, unlike the sleeve: this screen is rows stacked downwards, and a
+            // wash that follows them is one the eye reads as depth rather than as a second element.
+            // Gone by two thirds, so the lower rows keep the contrast the titles were chosen for.
+            .background(
+                Brush.verticalGradient(
+                    0f to tint,
+                    BackdropMidpoint to lerp(tint, surface, BackdropMidBlend),
+                    1f to surface,
+                ),
+            ),
+    ) {
         Column(modifier = Modifier.fillMaxSize()) {
             // The two marks the phone keeps in its header, here for the same reason: they are things
             // to do rather than places to go. A place belongs in a row with the others; a thing to do
@@ -132,7 +161,7 @@ fun TvHomeScreen(
                                 is TvRecent.Local -> Card(
                                     entry.video.displayName,
                                     { onPlayVideo(entry.video) },
-                                    cardModifier,
+                                    cardModifier.reporting(entry.video.uriString) { focused = it },
                                 ) {
                                     AsyncImage(
                                         model = entry.video.uriString,
@@ -153,7 +182,7 @@ fun TvHomeScreen(
                                     // browser already sorts them. Sent to the film player, a track
                                     // opened on a black screen with a transport that never started.
                                     { if (entry.isAudio) onPlayNetworkAudio(entry.uri) else onPlayNetwork(entry.uri) },
-                                    cardModifier,
+                                    cardModifier.reporting(null) { focused = it },
                                 ) {
                                     TvCardMark(if (entry.isAudio) VayouIcons.Audio else VayouIcons.Video)
                                     WatchedBar(entry.watched)
@@ -171,7 +200,11 @@ fun TvHomeScreen(
                             firstCard = landing.takeIf { landingRow == HomeRow.Videos },
                             key = Video::uriString,
                         ) { video, cardModifier ->
-                            Card(video.displayName, { onPlayVideo(video) }, cardModifier) {
+                            Card(
+                                video.displayName,
+                                { onPlayVideo(video) },
+                                cardModifier.reporting(video.uriString) { focused = it },
+                            ) {
                                 AsyncImage(
                                     model = video.uriString,
                                     contentDescription = null,
@@ -196,7 +229,7 @@ fun TvHomeScreen(
                             Tile(
                                 title = folder.displayName,
                                 onClick = { onOpenFolder(folder) },
-                                modifier = cardModifier,
+                                modifier = cardModifier.reporting(null) { focused = it },
                                 onLongClick = { acting = HomeAction.Unpin(folder) },
                             ) { TvCardFolder() }
                         }
@@ -222,7 +255,7 @@ fun TvHomeScreen(
                         Tile(
                             title = server.displayName,
                             onClick = { onOpenServer(server.host) },
-                            modifier = cardModifier,
+                            modifier = cardModifier.reporting(null) { focused = it },
                             // Only for the saved: a machine merely found on the wire has nothing to
                             // forget, and would be back the moment discovery saw it again.
                             onLongClick = {
@@ -255,7 +288,7 @@ fun TvHomeScreen(
                                     Destination.Music -> onOpenMusic()
                                 }
                             },
-                            modifier = cardModifier,
+                            modifier = cardModifier.reporting(null) { focused = it },
                         ) { TvCardMark(destination.icon) }
                     }
                 }
@@ -276,7 +309,11 @@ fun TvHomeScreen(
                             ) { TvCardMark(VayouIcons.Add) }
                         },
                     ) { playlist, cardModifier ->
-                        Tile(playlist.name, { onOpenPlaylist(playlist) }, cardModifier) {
+                        Tile(
+                            playlist.name,
+                            { onOpenPlaylist(playlist) },
+                            cardModifier.reporting(null) { focused = it },
+                        ) {
                             TvCardMark(VayouIcons.Tv)
                         }
                     }
@@ -464,6 +501,20 @@ private fun BoxScope.WatchedBar(watched: Float?) {
 private val BarHeight = 4.dp
 
 private const val BarTrackAlpha = 0.4f
+
+/**
+ * Says what this card looks like when the focus arrives on it, and nothing when it leaves.
+ *
+ * Only on arrival: a focus move is one card losing it and another taking it, and clearing on the
+ * way out would blank the background for the frame in between, which reads as a flicker.
+ */
+private fun Modifier.reporting(artwork: Any?, onFocused: (Any?) -> Unit): Modifier =
+    onFocusChanged { if (it.isFocused) onFocused(artwork) }
+
+/** Where the wash has given way, and how far it has gone by then. */
+private const val BackdropMidpoint = 0.45f
+
+private const val BackdropMidBlend = 0.7f
 
 private val RowGap = 32.dp
 
