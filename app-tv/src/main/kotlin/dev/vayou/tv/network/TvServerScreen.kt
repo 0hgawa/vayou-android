@@ -60,7 +60,6 @@ import dev.vayou.tv.TvSearchHeader
 import dev.vayou.tv.TvTextField
 import dev.vayou.tv.TvTile
 import dev.vayou.tv.TvTitleInset
-import dev.vayou.tv.orderLabel
 import kotlinx.coroutines.launch
 
 /**
@@ -128,7 +127,7 @@ fun TvServerScreen(
         TvChoiceList(
             title = stringResource(R.string.sort),
             options = BrowserSortBy.entries.map {
-                it to orderLabel(stringResource(it.label), it == state.sort.by, state.sort.isAscending)
+                it to stringResource(it.label)
             },
             selected = state.sort.by,
             onChoose = viewModel::selectSort,

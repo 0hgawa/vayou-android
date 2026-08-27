@@ -50,7 +50,6 @@ import dev.vayou.tv.TvScreenInset
 import dev.vayou.tv.TvSearchHeader
 import dev.vayou.tv.TvTile
 import dev.vayou.tv.TvTitleInset
-import dev.vayou.tv.orderLabel
 
 /**
  * The films on this television, by folder, flat, or in the lists the viewer built.
@@ -138,11 +137,7 @@ fun TvLibraryScreen(
         TvChoiceList(
             title = stringResource(R.string.sort),
             options = SortAxes.map {
-                it.by to orderLabel(
-                    label = stringResource(it.label),
-                    isChosen = it.by == state.sort.by,
-                    isAscending = state.sort.order == Sort.Order.ASCENDING,
-                )
+                it.by to stringResource(it.label)
             },
             selected = state.sort.by,
             onChoose = viewModel::selectSort,

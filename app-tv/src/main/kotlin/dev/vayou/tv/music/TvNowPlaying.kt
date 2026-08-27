@@ -267,13 +267,27 @@ fun TvNowPlaying(controller: MediaController, known: TrackFacts? = null, sleeve:
                 text = title,
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 2,
+                // One line, fixed. This column is centred against the sleeve beside it, so every
+                // change in its height moves everything in it -- and the title is the part that
+                // changes: a track opened from the network is named by its file until the tags
+                // arrive, and a file name wraps to two lines where the title it becomes fits on
+                // one. The block then re-centres and the title climbs, which is the jump.
+                //
+                // A television is wide and this column is nearly half of it; one line holds what a
+                // viewer reads from a sofa. Two were never read as two anyway -- the second was
+                // there for the long names that a screen this size does not need to show whole.
+                minLines = 1,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
                 text = artist,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                // Held at one line even when empty, for the reason the phone's sleeve gives: with
+                // no height of its own, everything under it rises and then drops when the name
+                // lands.
+                minLines = 1,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )

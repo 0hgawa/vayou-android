@@ -108,25 +108,11 @@ private val CaptionWidth = 220.dp
 @Composable
 fun TvOrderButton(isAscending: Boolean, label: String, onClick: () -> Unit) {
     TvIconButton(
-        icon = if (isAscending) VayouIcons.ArrowUpward else VayouIcons.ArrowDownward,
+        icon = if (isAscending) VayouIcons.SortAscending else VayouIcons.SortDescending,
         label = label,
         onClick = onClick,
     )
 }
-
-/**
- * An axis with the way it runs written after it, for the one axis in force.
- *
- * The arrow is in the list rather than on the button because the button is a mark in a corner and a
- * mark has no room for a word. It is also where it is of use: the list is where a second press on
- * the chosen axis turns the order over, and the arrow is what says so.
- */
-fun orderLabel(label: String, isChosen: Boolean, isAscending: Boolean): String =
-    if (isChosen) label + if (isAscending) Rising else Falling else label
-
-private const val Rising = "  \u2191"
-
-private const val Falling = "  \u2193"
 
 /**
  * The way out of a screen that was pushed on top of the others.

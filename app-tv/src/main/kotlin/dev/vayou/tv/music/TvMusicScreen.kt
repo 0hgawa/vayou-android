@@ -43,7 +43,6 @@ import dev.vayou.tv.TvScreenInset
 import dev.vayou.tv.TvSearchHeader
 import dev.vayou.tv.TvTile
 import dev.vayou.tv.TvTitleInset
-import dev.vayou.tv.orderLabel
 
 /**
  * The music on this television: a wall of covers, and what is playing.
@@ -116,7 +115,7 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
         TvChoiceList(
             title = stringResource(R.string.sort),
             options = MusicSort.entries.map {
-                it to orderLabel(stringResource(it.label), it == state.order.by, state.order.isAscending)
+                it to stringResource(it.label)
             },
             selected = state.order.by,
             onChoose = viewModel::selectSort,
