@@ -4,6 +4,7 @@ import android.net.Uri
 import dev.vayou.core.data.mappers.toFolder
 import dev.vayou.core.data.mappers.toVideo
 import dev.vayou.core.data.mappers.toVideoState
+import dev.vayou.core.data.models.RecentPlayback
 import dev.vayou.core.data.models.VideoState
 import dev.vayou.core.database.converter.UriListConverter
 import dev.vayou.core.database.dao.DirectoryDao
@@ -35,8 +36,13 @@ class LocalMediaRepository @Inject constructor(
         it.map(DirectoryWithMedia::toFolder)
     }
 
-    override fun getRecentlyPlayedUris(limit: Int): Flow<List<String>> =
-        mediumStateDao.recentlyPlayed(limit).map { states -> states.map(MediumStateEntity::uriString) }
+    override fun getRecentlyPlayed(limit: Int): Flow<List<RecentPlayback>> =
+        mediumStateDao.recentlyPlayed(limit).map { states ->
+            states.map { RecentPlayback(it.uriString, it.playbackPosition, it.durationMillis) }
+        }
+
+    override suspend fun updateMediumProgress(uri: String, position: Long, duration: Long) =
+        updateState(uri) { copy(playbackPosition = position, durationMillis = duration) }
 
     override suspend fun getVideoByUri(uri: String): Video? = mediumDao.getWithInfo(uri)?.toVideo()
 

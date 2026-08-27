@@ -23,7 +23,7 @@ import dev.vayou.core.database.entities.VideoStreamInfoEntity
         AudioStreamInfoEntity::class,
         SubtitleStreamInfoEntity::class,
     ],
-    version = 8,
+    version = 9,
     exportSchema = true,
 )
 abstract class MediaDatabase : RoomDatabase() {
@@ -190,6 +190,18 @@ abstract class MediaDatabase : RoomDatabase() {
          * create them, because an install sitting on version 4 has to walk the whole path to get
          * here; they are built and then discarded rather than being edited out of history.
          */
+        /**
+         * How long each thing is, so a card can show how far into it the viewer got.
+         *
+         * Additive and defaulted: every row that already exists keeps everything it had and gains a
+         * zero, which the screens read as "not known" and answer with no bar at all.
+         */
+        val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `media_state` ADD COLUMN `duration` INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
         val MIGRATION_7_8 = object : Migration(7, 8) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("DROP TABLE IF EXISTS `playlist_items`")

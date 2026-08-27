@@ -1,5 +1,6 @@
 package dev.vayou.tv
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -135,6 +138,7 @@ fun TvHomeScreen(
                                         contentScale = ContentScale.Crop,
                                         modifier = Modifier.fillMaxSize(),
                                     )
+                                    WatchedBar(entry.watched)
                                 }
                                 // A mark and not a frame. Taking a frame out of a file on a share
                                 // means opening it over the network, and doing that for a row that
@@ -145,7 +149,10 @@ fun TvHomeScreen(
                                     entry.displayName,
                                     { onPlayNetwork(entry.uri) },
                                     cardModifier,
-                                ) { TvCardMark(if (entry.isAudio) VayouIcons.Audio else VayouIcons.Video) }
+                                ) {
+                                    TvCardMark(if (entry.isAudio) VayouIcons.Audio else VayouIcons.Video)
+                                    WatchedBar(entry.watched)
+                                }
                             }
                         }
                     }
@@ -418,6 +425,40 @@ private fun Card(
 ) {
     TvCard(title = title, onClick = onClick, modifier = modifier.width(TvCardWidth), face = face)
 }
+
+/**
+ * How far into a thing the viewer got, along the bottom edge of its card.
+ *
+ * Drawn on the card and not under it, where a row of them would push the titles down and change
+ * the height of every card in the row for the sake of the few that have been started.
+ *
+ * Nothing at all where the fraction is not known -- a film watched before lengths were written
+ * down has a position and no total, and a bar guessed from that would be a bar that lies.
+ */
+@Composable
+private fun BoxScope.WatchedBar(watched: Float?) {
+    if (watched == null || watched <= 0f) return
+    Box(
+        modifier = Modifier
+            .align(Alignment.BottomStart)
+            .fillMaxWidth()
+            .height(BarHeight)
+            // Translucent white under the fill, as the phone draws it: this lies on a frame nobody
+            // chose, and a colour from the palette reads as a block on some of them.
+            .background(Color.White.copy(alpha = BarTrackAlpha)),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(watched)
+                .fillMaxHeight()
+                .background(MaterialTheme.colorScheme.primary),
+        )
+    }
+}
+
+private val BarHeight = 4.dp
+
+private const val BarTrackAlpha = 0.4f
 
 private val RowGap = 32.dp
 

@@ -109,7 +109,9 @@ class TvPlayerViewModel @Inject constructor(
         val position = if (positionMs >= durationMs - CompletionSlackMs) StartOfFile else positionMs.coerceAtLeast(0L)
         viewModelScope.launch {
             withContext(NonCancellable) {
-                mediaRepository.updateMediumPosition(videoUri, position)
+                // The length goes down with the position. It is known here and nowhere else for a
+                // film on a share, and without it no card can say how far in the viewer got.
+                mediaRepository.updateMediumProgress(videoUri, position, durationMs)
                 mediaRepository.updateMediumLastPlayedTime(videoUri, System.currentTimeMillis())
             }
         }

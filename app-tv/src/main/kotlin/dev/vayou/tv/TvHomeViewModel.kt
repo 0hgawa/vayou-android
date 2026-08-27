@@ -87,14 +87,14 @@ class TvHomeViewModel @Inject constructor(
         // watched off a share is not in MediaStore and never could be, so the library's own list
         // cannot answer "what did I watch last" for the half of the viewing that happens over the
         // network. Eleven rows with an index on the address -- it costs nothing to ask.
-        mediaRepository.getRecentlyPlayedUris(MaxRow),
+        mediaRepository.getRecentlyPlayed(MaxRow),
         // Saved and found on the wire as one list. A television that has never been set up has
         // nothing saved, and a row that waits for the phone to save something first would never
         // appear at all.
         combine(smbServerStore.savedServers, discovery.discover(), ::mergeNetworkServers),
         playlistStore.playlists,
         folderFavourites.favourites,
-    ) { videos, recentUris, servers, playlists, folders ->
+    ) { videos, played, servers, playlists, folders ->
         val byUri = videos.associateBy { it.uriString }
         TvHomeState(
             // In the order they were watched, whichever they were. A local film is drawn from the
@@ -102,8 +102,8 @@ class TvHomeViewModel @Inject constructor(
             // off a share is drawn from its address alone, which is all there is until the file is
             // opened again. Nothing here reaches for the network: a server that is switched off
             // would hold the home screen waiting on a timeout for each card it owns.
-            recent = recentUris.map { uri ->
-                byUri[uri]?.let(TvRecent::Local) ?: TvRecent.Remote(uri)
+            recent = played.map { entry ->
+                byUri[entry.uri]?.let { TvRecent.Local(it) } ?: TvRecent.Remote(entry.uri, entry.watched)
             },
             // The library itself, and not only what has been started. A television opened for the
             // first time has nothing to continue and no server saved yet, and a home screen that
@@ -140,17 +140,24 @@ sealed interface TvRecent {
 
     val id: String
 
+    /** How far in the viewer got, or null where the length was never written down. */
+    val watched: Float?
+
     data class Local(val video: Video) : TvRecent {
         override val id: String get() = video.uriString
+
+        override val watched: Float? get() = video.playedPercentage.takeIf { it > 0f }
     }
 
-    data class Remote(val uri: String) : TvRecent {
+    data class Remote(val uri: String, override val watched: Float?) : TvRecent {
         override val id: String get() = uri
 
-        /** The file's own name, unescaped -- the last thing an address has to say about itself. */
-        private val fileName: String get() = Uri.decode(uri.substringAfterLast('/'))
+        // Worked out once, when the row is built, and not on every read. These are asked for by
+        // the card each time it is drawn, and a getter here is an address decoded and a model
+        // allocated on every recomposition of a row that scrolls.
+        private val fileName: String = Uri.decode(uri.substringAfterLast('/'))
 
-        val displayName: String get() = fileName.substringBeforeLast('.')
+        val displayName: String = fileName.substringBeforeLast('.')
 
         /**
          * Whether this was music rather than a film, which is all the card needs to pick its mark.
@@ -159,8 +166,7 @@ sealed interface TvRecent {
          * browser two screens away answers the same question off the same sets, and a second copy
          * of them would be a second list to remember when a format is added.
          */
-        val isAudio: Boolean
-            get() = SmbFileItem(name = fileName, path = "", isDirectory = false).isAudio
+        val isAudio: Boolean = SmbFileItem(name = fileName, path = "", isDirectory = false).isAudio
     }
 }
 

@@ -1,6 +1,7 @@
 package dev.vayou.core.data.repository
 
 import android.net.Uri
+import dev.vayou.core.data.models.RecentPlayback
 import dev.vayou.core.data.models.VideoState
 import dev.vayou.core.model.Folder
 import dev.vayou.core.model.Video
@@ -11,8 +12,11 @@ interface MediaRepository {
     fun getVideosFlowFromFolderPath(folderPath: String): Flow<List<Video>>
     fun getFoldersFlow(): Flow<List<Folder>>
 
-    /** Addresses of what was played last, newest first -- network shares included. */
-    fun getRecentlyPlayedUris(limit: Int): Flow<List<String>>
+    /** What was played last, newest first -- network shares included. */
+    fun getRecentlyPlayed(limit: Int): Flow<List<RecentPlayback>>
+
+    /** Where the viewer stopped and how long the thing was, written together. */
+    suspend fun updateMediumProgress(uri: String, position: Long, duration: Long)
 
     suspend fun getVideoByUri(uri: String): Video?
     suspend fun getVideoState(uri: String): VideoState?

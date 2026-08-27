@@ -19,6 +19,25 @@ android {
             applicationIdSuffix = ".next"
             versionNameSuffix = "-next"
         }
+
+        /**
+         * The build to judge this app by, as the phone has one.
+         *
+         * A television is the machine where the difference tells most: the phone opens four times
+         * faster once R8 has been over it, and the set has a fraction of the phone's processor.
+         * Measured on the debug build, a screen here drops nearly every frame -- which says nothing
+         * about the app and everything about what `debuggable` costs.
+         *
+         * Signed with the debug key so it installs without the upload one, and carrying the same
+         * `.next` package so it replaces the debug build rather than becoming a third icon.
+         */
+        create("comparable") {
+            initWith(getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            applicationIdSuffix = ".next"
+            versionNameSuffix = "-next"
+            matchingFallbacks.add("release")
+        }
     }
 }
 
