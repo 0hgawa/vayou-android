@@ -99,7 +99,6 @@
     <string name="playback_failed_format">This file is in a format this television cannot decode.</string>
     <string name="try_again">Try again</string>
     <string name="go_back">Go back</string>
-    <string name="unknown_artist">Unknown artist</string>
     <string name="queue">Queue</string>
     <string name="add_server">Add a server</string>
     <string name="server_address">Address</string>

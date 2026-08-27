@@ -4,19 +4,19 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.vayou.core.common.di.ApplicationScope
 import dev.vayou.core.data.repository.MediaRepository
 import dev.vayou.core.data.repository.PreferencesRepository
 import dev.vayou.core.domain.GetSortedVideosUseCase
 import dev.vayou.core.model.PlayerPreferences
 import dev.vayou.core.model.Video
 import javax.inject.Inject
-import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
  * What has to be known before a film can start, and what to write down when it stops.
@@ -30,6 +30,7 @@ class TvPlayerViewModel @Inject constructor(
     private val mediaRepository: MediaRepository,
     private val getSortedVideos: GetSortedVideosUseCase,
     private val preferencesRepository: PreferencesRepository,
+    @param:ApplicationScope private val applicationScope: CoroutineScope,
 ) : ViewModel() {
 
     /** How the captions are drawn, which is the viewer's to set and the same on either device. */
@@ -99,21 +100,23 @@ class TvPlayerViewModel @Inject constructor(
      * Where the viewer left the film, unless they were at the end of it.
      *
      * A film watched to the credits is a film to start again, not one to resume three seconds
-     * before it finishes. Written outside cancellation, because this runs as the screen closes and
-     * the scope is being torn down around it.
+     * before it finishes.
+     *
+     * On the application's own scope and not this model's, as the phone's player does it. This runs
+     * as the screen is going away, and a coroutine started on a scope that has already been closed
+     * never runs at all -- the position would be lost exactly on the exits that matter, which is
+     * every one where the model is cleared before the composition is disposed.
      */
     fun saveProgress(positionMs: Long, durationMs: Long) {
         // A channel has no position to come back to, and its "duration" is wherever the live edge
         // happened to be.
         if (isLive || durationMs <= 0L) return
         val position = if (positionMs >= durationMs - CompletionSlackMs) StartOfFile else positionMs.coerceAtLeast(0L)
-        viewModelScope.launch {
-            withContext(NonCancellable) {
-                // The length goes down with the position. It is known here and nowhere else for a
-                // film on a share, and without it no card can say how far in the viewer got.
-                mediaRepository.updateMediumProgress(videoUri, position, durationMs)
-                mediaRepository.updateMediumLastPlayedTime(videoUri, System.currentTimeMillis())
-            }
+        applicationScope.launch {
+            // The length goes down with the position. It is known here and nowhere else for a film
+            // on a share, and without it no card can say how far in the viewer got.
+            mediaRepository.updateMediumProgress(videoUri, position, durationMs)
+            mediaRepository.updateMediumLastPlayedTime(videoUri, System.currentTimeMillis())
         }
     }
 

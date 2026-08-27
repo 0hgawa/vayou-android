@@ -45,7 +45,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -191,16 +191,6 @@ fun TvNowPlaying(controller: MediaController, known: TrackFacts? = null, sleeve:
     val lyrics by sleeve.lyrics.collectAsStateWithLifecycle()
     LaunchedEffect(item?.mediaId) { sleeve.loadLyrics(item?.mediaId) }
 
-    // Written down on the way out and on every change of track, so a listener who walks away in the
-    // middle of a chapter finds it in the row of things to continue. Read off the controller rather
-    // than off the ticking state: the tick stops with the last frame and the position it left
-    // behind is a moment old, which on a two-hour recording is a paragraph.
-    DisposableEffect(item?.mediaId) {
-        val id = item?.mediaId
-        onDispose {
-            sleeve.rememberProgress(id, controller.currentPosition, controller.duration)
-        }
-    }
     // A track without words takes its button away with it, and a panel whose way out has gone is a
     // panel the viewer is stuck in.
     LaunchedEffect(lyrics) {
@@ -271,7 +261,7 @@ fun TvNowPlaying(controller: MediaController, known: TrackFacts? = null, sleeve:
             // beside it is somewhere the focus goes rather than something it falls into.
             modifier = modifier
                 .focusGroup()
-                .focusProperties { enter = { play } },
+                .focusProperties { onEnter = { play.requestFocus() } },
             verticalArrangement = Arrangement.spacedBy(TvTitleInset),
         ) {
             Text(

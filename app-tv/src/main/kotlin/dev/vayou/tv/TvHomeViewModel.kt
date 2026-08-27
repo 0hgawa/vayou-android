@@ -97,12 +97,11 @@ class TvHomeViewModel @Inject constructor(
     ) { videos, played, servers, playlists, folders ->
         val byUri = videos.associateBy { it.uriString }
         TvHomeState(
-            // In the order they were watched, whichever they were. A local film is drawn from the
-            // library entry, which knows its name, its length and where to find a frame of it; one
-            // off a share is drawn from its address alone, which is all there is until the file is
-            // opened again. Nothing here reaches for the network: a server that is switched off
+            // Films, and only films, in the order they were watched. A local one is drawn from
+            // the library entry, which knows its name, its length and where to find a frame of it;
+            // one off a share is drawn from its address alone, which is all there is until the file
+            // is opened again. Nothing here reaches for the network: a server that is switched off
             // would hold the home screen waiting on a timeout for each card it owns.
-            // Films, and only films.
             //
             // Live channels have nowhere to resume to -- the player refuses to write a position for
             // one -- and they arrive named after the last part of their address, which for a stream

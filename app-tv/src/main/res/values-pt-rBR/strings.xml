@@ -98,7 +98,6 @@
     <string name="playback_failed_format">Este arquivo está em um formato que esta TV não consegue decodificar.</string>
     <string name="try_again">Tentar de novo</string>
     <string name="go_back">Voltar</string>
-    <string name="unknown_artist">Artista desconhecido</string>
     <string name="queue">Fila</string>
     <string name="add_server">Adicionar servidor</string>
     <string name="server_address">Endereço</string>
