@@ -36,12 +36,12 @@ fun TvAddPlaylist(onAdd: (name: String, url: String) -> Unit, onDismiss: () -> U
         )
         TvTextField(value = name, onValueChange = { name = it }, label = stringResource(R.string.playlist_name))
         Spacer(modifier = Modifier.height(TvRowGap))
-        TvChoiceRow(label = stringResource(R.string.cancel), isSelected = false, onClick = onDismiss)
-        // Absent until there is an address rather than greyed out: a D-pad walks past a disabled
-        // row as if it were not there, so a dim one is a gap with a word in it.
-        if (url.isNotBlank()) {
-            TvChoiceRow(label = stringResource(R.string.save), isSelected = false) {
-                onAdd(name.trim(), url.trim())
+        TvActions {
+            TvAction(stringResource(R.string.cancel), onClick = onDismiss)
+            // Absent until there is an address rather than greyed out: a D-pad walks past a
+            // disabled control as if it were not there, so a dim one is a gap with a word in it.
+            if (url.isNotBlank()) {
+                TvAction(stringResource(R.string.save)) { onAdd(name.trim(), url.trim()) }
             }
         }
     }

@@ -424,11 +424,13 @@ private fun AddServer(onAdd: (String) -> Unit, onDismiss: () -> Unit) {
             modifier = Modifier.focusRequester(first),
         )
         Spacer(modifier = Modifier.height(TvRowGap))
-        TvChoiceRow(label = stringResource(R.string.cancel), isSelected = false, onClick = onDismiss)
-        // Absent until there is an address rather than greyed out: a D-pad walks past a disabled row
-        // as if it were not there, so a dim one is a gap with a word in it.
-        if (address.isNotBlank()) {
-            TvChoiceRow(label = stringResource(R.string.connect), isSelected = false) { onAdd(address.trim()) }
+        TvActions {
+            TvAction(stringResource(R.string.cancel), onClick = onDismiss)
+            // Absent until there is an address rather than greyed out: a D-pad walks past a
+            // disabled control as if it were not there, so a dim one is a gap with a word in it.
+            if (address.isNotBlank()) {
+                TvAction(stringResource(R.string.connect)) { onAdd(address.trim()) }
+            }
         }
     }
 }

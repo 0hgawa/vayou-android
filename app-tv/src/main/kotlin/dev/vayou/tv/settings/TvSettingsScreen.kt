@@ -54,6 +54,8 @@ import dev.vayou.feature.settings.R as SettingsR
 import dev.vayou.feature.settings.SettingsViewModel
 import dev.vayou.feature.settings.clearThumbnailCache
 import dev.vayou.tv.R
+import dev.vayou.tv.TvAction
+import dev.vayou.tv.TvActions
 import dev.vayou.tv.TvCardTitleGap
 import dev.vayou.tv.TvChoiceRow
 import dev.vayou.tv.TvDialog
@@ -582,13 +584,10 @@ private fun Confirm(message: String, onConfirm: () -> Unit, onDismiss: () -> Uni
     LaunchedEffect(Unit) { runCatching { first.requestFocus() } }
 
     TvDialog(title = message, onDismiss = onDismiss) {
-        TvChoiceRow(
-            label = stringResource(R.string.cancel),
-            isSelected = false,
-            modifier = Modifier.focusRequester(first),
-            onClick = onDismiss,
-        )
-        TvChoiceRow(label = stringResource(R.string.confirm), isSelected = false, onClick = onConfirm)
+        TvActions {
+            TvAction(stringResource(R.string.cancel), Modifier.focusRequester(first), onDismiss)
+            TvAction(stringResource(R.string.confirm), onClick = onConfirm)
+        }
     }
 }
 

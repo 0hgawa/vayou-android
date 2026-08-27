@@ -48,6 +48,8 @@ import dev.vayou.core.smb.IptvCountries
 import dev.vayou.core.smb.PlaylistChannel
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.tv.R
+import dev.vayou.tv.TvAction
+import dev.vayou.tv.TvActions
 import dev.vayou.tv.TvAddPlaylist
 import dev.vayou.tv.TvBackButton
 import dev.vayou.tv.TvCard
@@ -158,14 +160,19 @@ fun TvChannelsScreen(
                     }
                 }
                 Spacer(modifier = Modifier.height(TvRowGap))
-                TvChoiceRow(label = stringResource(R.string.add_playlist), isSelected = false) {
-                    isChoosingList = false
-                    isAdding = true
-                }
-                if (state.canRemove) {
-                    TvChoiceRow(label = stringResource(R.string.remove_playlist), isSelected = false) {
-                        viewModel.removeCurrent()
+                // Not two more rows of the list above: those are the lists to choose between, and
+                // these are what can be done to them. Drawn as rows they took the same tick gutter
+                // and left it empty, so the words sat indented under a column of marks.
+                TvActions {
+                    TvAction(stringResource(R.string.add_playlist)) {
                         isChoosingList = false
+                        isAdding = true
+                    }
+                    if (state.canRemove) {
+                        TvAction(stringResource(R.string.remove_playlist)) {
+                            viewModel.removeCurrent()
+                            isChoosingList = false
+                        }
                     }
                 }
             }

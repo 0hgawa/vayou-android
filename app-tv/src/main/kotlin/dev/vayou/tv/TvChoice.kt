@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,6 +35,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.tv.material3.Button
+import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
@@ -205,4 +209,51 @@ fun TvChoiceRow(label: String, isSelected: Boolean, modifier: Modifier = Modifie
     }
 }
 
+/**
+ * The ways out of a question, at the foot of whatever asked it.
+ *
+ * Side by side, and each one the width of its own word. A decision between two actions is not a
+ * list of answers, and drawn as one -- a column of plates the full width of the panel, with a tick
+ * gutter down the left that can never fill -- it reads as two more options rather than as the way
+ * out. The set draws this distinction itself: `Button` is the size of what is in it, `WideButton`
+ * fills the row, and they are two components rather than one with a flag.
+ *
+ * On the same left edge as the title above, because everything in that column shares it. The one
+ * that undoes nothing goes first, as it does on a phone.
+ */
+@Composable
+fun TvActions(modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
+    Row(
+        modifier = modifier.padding(horizontal = TvRowInset),
+        horizontalArrangement = Arrangement.spacedBy(TvRowGap),
+        content = content,
+    )
+}
+
+/** One of them: the quiet plate off the focus and the white one under it, as every row here is. */
+@Composable
+fun TvAction(label: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = modifier.heightIn(min = TvActionHeight),
+        contentPadding = PaddingValues(horizontal = TvActionInset),
+        shape = ButtonDefaults.shape(MaterialTheme.shapes.medium),
+        scale = ButtonDefaults.scale(focusedScale = 1f),
+        colors = ButtonDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            focusedContainerColor = MaterialTheme.colorScheme.onSurface,
+            focusedContentColor = MaterialTheme.colorScheme.surface,
+        ),
+    ) {
+        Text(text = label, style = MaterialTheme.typography.titleSmall)
+    }
+}
+
 val TvDialogWidth = 560.dp
+
+/** Reachable from across the room, which is what the platform asks of anything answerable. */
+private val TvActionHeight = 48.dp
+
+/** Twice the inset of a row, so a single word still reads as something to press. */
+private val TvActionInset = 24.dp

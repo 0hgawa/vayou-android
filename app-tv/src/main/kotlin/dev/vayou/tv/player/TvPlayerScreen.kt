@@ -100,16 +100,16 @@ import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.tv.Hairline
 import dev.vayou.tv.R
 import dev.vayou.tv.SplitMs
+import dev.vayou.tv.TvAction
+import dev.vayou.tv.TvActions
 import dev.vayou.tv.TvCardTitleGap
 import dev.vayou.tv.TvDialogWidth
-import dev.vayou.tv.TvRow
 import dev.vayou.tv.TvRowGap
 import dev.vayou.tv.TvRowInset
 import dev.vayou.tv.TvScreenInset
 import dev.vayou.tv.TvTickMs
 import dev.vayou.tv.TvTitleInset
 import dev.vayou.tv.WholeScreen
-import dev.vayou.tv.tvTone
 import java.util.Locale
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.guava.await
@@ -296,19 +296,11 @@ private fun PlaybackFailed(failure: PlaybackException, onRetry: () -> Unit, onBa
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = TvRowInset, vertical = TvCardTitleGap),
         )
-        TvRow(onClick = onRetry, modifier = Modifier.focusRequester(retry)) { isFocused ->
-            Text(
-                text = stringResource(R.string.try_again),
-                style = MaterialTheme.typography.titleSmall,
-                color = tvTone(isFocused, isStrong = true),
-            )
-        }
-        TvRow(onClick = onBack) { isFocused ->
-            Text(
-                text = stringResource(R.string.go_back),
-                style = MaterialTheme.typography.titleSmall,
-                color = tvTone(isFocused, isStrong = true),
-            )
+        // The way out first and the way on second, as everywhere else -- but the focus starts on
+        // the second, because whoever reached this screen came here to watch something.
+        TvActions {
+            TvAction(stringResource(R.string.go_back), onClick = onBack)
+            TvAction(stringResource(R.string.try_again), Modifier.focusRequester(retry), onRetry)
         }
     }
 }
