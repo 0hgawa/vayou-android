@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import dev.vayou.core.model.MediaPlaylist
 import dev.vayou.core.model.SmartPlaylist
 import dev.vayou.core.ui.designsystem.MediaListLayoutDefaults
@@ -141,13 +140,10 @@ private fun PlaylistRow(
         rippleColor = VayouTheme.colors.surfaceContainerHigh,
         onClick = onClick,
         leadingContent = {
-            VayouArtwork(model = null, modifier = Modifier.size(PlaylistTileSize), icon = icon)
+            VayouArtwork(model = null, modifier = Modifier.size(MediaListLayoutDefaults.LeadingSize), icon = icon)
         },
         content = { Text(text = name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         supportingContent = { SupportingLine(pluralStringResource(R.plurals.n_videos, count, count)) },
         trailingContent = trailing,
     )
 }
-
-/** The same square the network rows and the music library lead with. */
-private val PlaylistTileSize = 56.dp

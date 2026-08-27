@@ -9,13 +9,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import dev.vayou.core.ui.designsystem.MediaListLayoutDefaults
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.VayouActionSheet
 import dev.vayou.core.ui.designsystem.components.VayouActionSheetItem
 import dev.vayou.core.ui.designsystem.components.VayouArtwork
 import dev.vayou.core.ui.designsystem.components.VayouFolderTile
 import dev.vayou.core.ui.designsystem.components.VayouOverflowButton
-import dev.vayou.core.ui.designsystem.components.VayouSheetDefaults
 import dev.vayou.core.ui.theme.VayouTheme
 
 /**
@@ -75,7 +75,7 @@ internal fun GroupMenuButton(
                 VayouArtwork(
                     model = group.artworkUri.takeIf { tab == MusicTab.Albums },
                     initial = group.label.initial().takeIf { tab == MusicTab.Artists },
-                    modifier = Modifier.size(VayouSheetDefaults.LeadingSize),
+                    modifier = Modifier.size(MediaListLayoutDefaults.LeadingSize),
                     icon = tab.sheetMark,
                 )
             }

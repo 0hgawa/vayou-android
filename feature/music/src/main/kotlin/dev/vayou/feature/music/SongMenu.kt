@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.vayou.core.common.Utils
 import dev.vayou.core.media.Song
+import dev.vayou.core.ui.designsystem.MediaListLayoutDefaults
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.VayouActionSheet
 import dev.vayou.core.ui.designsystem.components.VayouActionSheetItem
@@ -27,7 +28,6 @@ import dev.vayou.core.ui.designsystem.components.VayouConfirmButton
 import dev.vayou.core.ui.designsystem.components.VayouDialog
 import dev.vayou.core.ui.designsystem.components.VayouDoneButton
 import dev.vayou.core.ui.designsystem.components.VayouOverflowButton
-import dev.vayou.core.ui.designsystem.components.VayouSheetDefaults
 import dev.vayou.core.ui.theme.VayouTheme
 
 /**
@@ -90,7 +90,7 @@ internal fun SongMenuButton(
                 VayouArtwork(
                     model = song.artworkUri,
                     iconTint = VayouTheme.colors.onSurfaceVariant,
-                    modifier = Modifier.size(VayouSheetDefaults.LeadingSize),
+                    modifier = Modifier.size(MediaListLayoutDefaults.LeadingSize),
                 )
             },
         ) {

@@ -41,7 +41,6 @@ import dev.vayou.core.ui.designsystem.components.VayouIconButton
 import dev.vayou.core.ui.designsystem.components.VayouOverflowButton
 import dev.vayou.core.ui.designsystem.components.VayouSegmentedListItem
 import dev.vayou.core.ui.designsystem.components.VayouSelectionMark
-import dev.vayou.core.ui.designsystem.components.VayouSheetDefaults
 import dev.vayou.core.ui.theme.VayouTheme
 
 /** Every row in this section, so a server, a share, a folder and a file all read as one list. */
@@ -72,14 +71,14 @@ internal fun NetworkRow(
  */
 @Composable
 internal fun NetworkFolderGraphic() {
-    VayouFolderGraphic(width = NetworkTileSize)
+    VayouFolderGraphic(modifier = Modifier.width(MediaListLayoutDefaults.LeadingSize))
 }
 
 @Composable
 internal fun NetworkTile(icon: ImageVector, tint: Color? = null) {
     VayouArtwork(
         model = null,
-        modifier = Modifier.size(NetworkTileSize),
+        modifier = Modifier.size(MediaListLayoutDefaults.LeadingSize),
         icon = icon,
         iconTint = tint ?: VayouTheme.colors.accent,
     )
@@ -206,7 +205,7 @@ internal fun ChannelRow(
 private fun ChannelLogo(logo: String?) {
     Box(
         modifier = Modifier
-            .width(NetworkTileSize)
+            .width(MediaListLayoutDefaults.LeadingSize)
             .aspectRatio(LogoAspect)
             .clip(VayouTheme.shapes.small)
             .background(VayouTheme.colors.surfaceContainerHigh),
@@ -279,8 +278,6 @@ private val ImageExtensions = setOf("jpg", "jpeg", "png", "webp", "gif", "bmp", 
 
 /** The square the network rows lead with, matching the library's own leading artwork. */
 /** The same box a sheet's header uses, so a row and the sheet it opens are one size. */
-internal val NetworkTileSize = VayouSheetDefaults.LeadingSize
-
 private const val LogoAspect = 4f / 3f
 
 private const val FallbackAlpha = 0.5f

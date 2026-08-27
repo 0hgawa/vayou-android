@@ -3,8 +3,10 @@ package dev.vayou.feature.music
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,7 +17,6 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import dev.vayou.core.common.Utils
 import dev.vayou.core.media.Song
 import dev.vayou.core.model.SmartPlaylist
@@ -26,7 +27,6 @@ import dev.vayou.core.ui.designsystem.components.VayouArtworkRole
 import dev.vayou.core.ui.designsystem.components.VayouFolderGraphic
 import dev.vayou.core.ui.designsystem.components.VayouSegmentedListItem
 import dev.vayou.core.ui.designsystem.components.VayouSelectionMark
-import dev.vayou.core.ui.designsystem.components.VayouSheetDefaults
 import dev.vayou.core.ui.theme.VayouTheme
 
 /** An album, an artist or a folder, and how many tracks are under it. */
@@ -57,8 +57,11 @@ internal fun GroupRow(
                 if (tab == MusicTab.Folders) {
                     // Bare, as on the folder's own screen: a folder drawn inside a rounded square
                     // reads as a card holding a folder, not as the folder itself.
-                    Box(modifier = Modifier.size(GroupLeadingSize), contentAlignment = Alignment.Center) {
-                        VayouFolderGraphic(width = GroupLeadingSize)
+                    Box(
+                        modifier = Modifier.size(MediaListLayoutDefaults.LeadingSize),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        VayouFolderGraphic(modifier = Modifier.width(MediaListLayoutDefaults.LeadingSize))
                     }
                 } else {
                     VayouArtwork(
@@ -66,7 +69,7 @@ internal fun GroupRow(
                         // reads as that album rather than as the artist.
                         model = group.artworkUri.takeIf { tab == MusicTab.Albums },
                         initial = group.label.initial().takeIf { tab == MusicTab.Artists },
-                        modifier = Modifier.size(GroupLeadingSize),
+                        modifier = Modifier.size(MediaListLayoutDefaults.LeadingSize),
                         // Starred is the one list nobody made, and it is known by its star in both
                         // libraries and on the television.
                         icon = if (group.key == SmartPlaylist.Favourites) VayouIcons.StarFilled else tab.groupMark,
@@ -115,7 +118,7 @@ internal fun SongRow(
                 VayouArtwork(
                     model = song.artworkUri,
                     iconTint = VayouTheme.colors.onSurfaceVariant,
-                    modifier = Modifier.size(SongLeadingSize),
+                    modifier = Modifier.size(MediaListLayoutDefaults.LeadingSize),
                     icon = VayouIcons.Audio,
                 )
             }
@@ -178,12 +181,12 @@ internal fun GroupCard(
             ) {
                 VayouSelectionMark(selected = isSelecting && isSelected) {
                     if (tab == MusicTab.Folders) {
-                        VayouFolderGraphic(width = MediaListLayoutDefaults.gridCoverSize(GridColumns))
+                        VayouFolderGraphic(modifier = Modifier.fillMaxWidth())
                     } else {
                         VayouArtwork(
                             model = group.artworkUri.takeIf { tab == MusicTab.Albums },
                             initial = group.label.initial().takeIf { tab == MusicTab.Artists },
-                            modifier = Modifier.size(MediaListLayoutDefaults.gridCoverSize(GridColumns)),
+                            modifier = Modifier.fillMaxWidth().aspectRatio(1f),
                             icon = tab.groupMark,
                             role = VayouArtworkRole.Hero,
                             shape = if (tab == MusicTab.Artists) CircleShape else VayouTheme.shapes.medium,
@@ -218,11 +221,7 @@ private val MusicTab.groupMark: ImageVector
     }
 
 /** One square for the leading visual of every grouped tab, and the same box a sheet's header uses. */
-private val GroupLeadingSize = VayouSheetDefaults.LeadingSize
-
 /** A track is one of many inside a group, and sits a step smaller than the group's own cover. */
-private val SongLeadingSize = 48.dp
-
 /**
  * The letter a name is filed under, or null when it has none.
  *

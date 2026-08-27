@@ -226,7 +226,7 @@ private fun QueueRow(
             VayouArtwork(
                 model = artworkUri,
                 iconTint = VayouTheme.colors.onSurfaceVariant,
-                modifier = Modifier.size(QueueArtworkSize),
+                modifier = Modifier.size(MediaListLayoutDefaults.DenseLeadingSize),
                 shape = VayouTheme.shapes.small,
             ) {
                 // The playing track is marked on its cover rather than by recolouring the row, so
@@ -282,8 +282,6 @@ private fun Int.nextRepeatMode(): Int = when (this) {
 }
 
 /** The same square a track row in the library uses, so the queue reads as that list reordered. */
-private val QueueArtworkSize = 48.dp
-
 private const val MarkerScrimAlpha = 0.55f
 
 private val MarkerWidth = 18.dp

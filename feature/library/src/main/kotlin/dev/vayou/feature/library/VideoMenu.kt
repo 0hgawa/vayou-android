@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.vayou.core.model.Folder
 import dev.vayou.core.model.Video
+import dev.vayou.core.ui.designsystem.MediaListLayoutDefaults
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.VayouActionSheet
 import dev.vayou.core.ui.designsystem.components.VayouActionSheetItem
@@ -32,7 +33,6 @@ import dev.vayou.core.ui.designsystem.components.VayouDoneButton
 import dev.vayou.core.ui.designsystem.components.VayouFolderTile
 import dev.vayou.core.ui.designsystem.components.VayouMediaThumbnail
 import dev.vayou.core.ui.designsystem.components.VayouOverflowButton
-import dev.vayou.core.ui.designsystem.components.VayouSheetDefaults
 import dev.vayou.core.ui.designsystem.components.VayouTextField
 import dev.vayou.core.ui.theme.VayouTheme
 
@@ -93,7 +93,7 @@ internal fun VideoMenuButton(video: Video, actions: VideoActions) {
                 duration = video.formattedDuration,
                 // Height, not width: a 16:10 frame and a square cover cannot share a width,
                 // and what makes two sheets look alike is that their headers are one height.
-                modifier = Modifier.height(VayouSheetDefaults.LeadingSize),
+                modifier = Modifier.height(MediaListLayoutDefaults.LeadingSize),
             )
         },
     ) {

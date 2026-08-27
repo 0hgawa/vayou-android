@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -26,7 +27,6 @@ import dev.vayou.core.ui.designsystem.components.VayouListHeader
 import dev.vayou.core.ui.designsystem.components.VayouMediaThumbnail
 import dev.vayou.core.ui.designsystem.components.VayouSegmentedListItem
 import dev.vayou.core.ui.designsystem.components.VayouSelectionMark
-import dev.vayou.core.ui.designsystem.components.VayouSheetDefaults
 import dev.vayou.core.ui.theme.VayouTheme
 
 /**
@@ -61,7 +61,10 @@ internal fun VideoRow(
                     model = video.uriString,
                     duration = video.formattedDuration,
                     playedFraction = video.playedPercentage,
-                    modifier = Modifier.width(ThumbnailWidth),
+                    // Asked for by height, as the sheet this row opens asks: a frame given a
+                    // width of its own came out 60dp tall beside every other row's 56, and the
+                    // sheet then headed itself with a smaller frame than the row that opened it.
+                    modifier = Modifier.height(MediaListLayoutDefaults.LeadingSize),
                 )
             }
         },
@@ -118,7 +121,7 @@ internal fun FolderRow(
 
 @Composable
 internal fun FolderGraphic() {
-    VayouFolderGraphic(width = FolderWidth)
+    VayouFolderGraphic(modifier = Modifier.width(MediaListLayoutDefaults.LeadingSize))
 }
 
 /** A line of a row: one line, cut with an ellipsis. Every row here wants exactly this. */
@@ -145,10 +148,6 @@ internal fun SupportingLine(text: String) {
 }
 
 /** The same box a sheet's header uses, so a row and the sheet it opens are one size. */
-private val FolderWidth = VayouSheetDefaults.LeadingSize
-
-private val ThumbnailWidth = 96.dp
-
 /**
  * One film as a card, for the grid.
  *
@@ -168,7 +167,7 @@ internal fun VideoCard(
     VayouSegmentedListItem(
         modifier = modifier,
         selected = isSelected,
-        contentPadding = MediaListLayoutDefaults.GridItemPadding,
+        contentPadding = MediaListLayoutDefaults.GridFramePadding,
         onClick = onClick,
         onLongClick = onLongClick,
         content = {
@@ -209,7 +208,7 @@ internal fun FolderCard(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 VayouSelectionMark(selected = isSelecting && isSelected) {
-                    VayouFolderGraphic(width = MediaListLayoutDefaults.gridCoverSize(FolderColumns))
+                    VayouFolderGraphic(modifier = Modifier.fillMaxWidth())
                 }
                 Text(
                     text = folder.name,

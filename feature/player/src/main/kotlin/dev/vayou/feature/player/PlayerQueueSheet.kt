@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -184,7 +183,10 @@ private fun QueueRow(
         trailingContent = dragHandle,
         leadingContent = {
             Box(contentAlignment = Alignment.Center) {
-                VayouMediaThumbnail(model = item.mediaId, modifier = Modifier.width(QueueThumbnailWidth))
+                VayouMediaThumbnail(
+                    model = item.mediaId,
+                    modifier = Modifier.height(MediaListLayoutDefaults.DenseLeadingSize),
+                )
                 // Only on the one that is playing, and small. It is a marker, not a hint that
                 // the tile is a film -- every row here is a film, so drawn on all of them it said
                 // nothing and only crowded the frames. No plate under it either: on the row that
@@ -234,8 +236,6 @@ private fun Int.nextRepeatMode(): Int = when (this) {
 
 /** Narrower than the library's row: a sheet has less width to give, and this is a reminder of which
  *  film rather than a frame to study. */
-private val QueueThumbnailWidth = 72.dp
-
 private val PlayMarkSize = 16.dp
 
 /** Quiet: the row it sits on is already lit, so this only has to confirm which frame. */

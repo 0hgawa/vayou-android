@@ -808,7 +808,8 @@ private fun GroupList(
     // would be two scrollers with two scroll positions, and switching between them would jump the
     // reader to the top.
     LazyVerticalGrid(
-        columns = GridCells.Fixed(if (isGrid) GridColumns else 1),
+        // Sized rather than counted, as the video library is: see MediaListLayoutDefaults.
+        columns = if (isGrid) GridCells.Adaptive(MediaListLayoutDefaults.GridCellWidth) else GridCells.Fixed(1),
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = if (isGrid) MediaListLayoutDefaults.GridOuterInset else 0.dp),
         verticalArrangement = Arrangement.spacedBy(MediaListLayoutDefaults.ItemSpacing),
@@ -859,9 +860,6 @@ private fun GroupList(
         }
     }
 }
-
-/** Three across, as the video grid is: the same phone and the same size of thing to look at. */
-internal const val GridColumns = 3
 
 /** Draws the waiting and the empty states, and says whether the caller still has work to do. */
 @Composable

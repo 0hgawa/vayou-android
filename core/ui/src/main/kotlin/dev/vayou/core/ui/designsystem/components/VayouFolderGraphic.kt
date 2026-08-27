@@ -3,6 +3,7 @@ package dev.vayou.core.ui.designsystem.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
@@ -15,6 +16,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import dev.vayou.core.ui.R
+import dev.vayou.core.ui.designsystem.MediaListLayoutDefaults
 import dev.vayou.core.ui.theme.VayouTheme
 
 /**
@@ -36,19 +38,22 @@ import dev.vayou.core.ui.theme.VayouTheme
  * failed to load.
  */
 @Composable
-fun VayouFolderGraphic(width: Dp, modifier: Modifier = Modifier, folderColor: Color = VayouTheme.colors.accentFixed) {
+fun VayouFolderGraphic(modifier: Modifier = Modifier, folderColor: Color = VayouTheme.colors.accentFixed) {
+    // The caller sets the width -- `Modifier.width(x)` where the size is known, `fillMaxWidth()` in
+    // a grid cell whose width the grid decides. Taken as a Dp instead, a cell that measures itself
+    // could not say what it wanted, which is what left the grid counting columns.
     Box(modifier = modifier) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.folder_thumb),
             contentDescription = null,
             tint = VayouTheme.colors.folderTabColor,
-            modifier = Modifier.width(width).aspectRatio(FolderAspectRatio),
+            modifier = Modifier.fillMaxWidth().aspectRatio(FolderAspectRatio),
         )
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.folder_thumb_front),
             contentDescription = null,
             tint = folderColor,
-            modifier = Modifier.width(width).aspectRatio(FolderAspectRatio),
+            modifier = Modifier.fillMaxWidth().aspectRatio(FolderAspectRatio),
         )
     }
 }
@@ -68,7 +73,7 @@ private const val FolderAspectRatio = 20 / 17f
  * tile. This is both halves: the tile, and the folder that is actually a folder.
  */
 @Composable
-fun VayouFolderTile(modifier: Modifier = Modifier, size: Dp = VayouSheetDefaults.LeadingSize) {
+fun VayouFolderTile(modifier: Modifier = Modifier, size: Dp = MediaListLayoutDefaults.LeadingSize) {
     Box(
         modifier = modifier
             .size(size)
@@ -76,7 +81,7 @@ fun VayouFolderTile(modifier: Modifier = Modifier, size: Dp = VayouSheetDefaults
             .background(VayouTheme.colors.surfaceContainerHigh),
         contentAlignment = Alignment.Center,
     ) {
-        VayouFolderGraphic(width = size * FolderShare)
+        VayouFolderGraphic(modifier = Modifier.width(size * FolderShare))
     }
 }
 

@@ -163,17 +163,6 @@ object VayouSheetDefaults {
     val BottomPadding = 24.dp
 
     /**
-     * How tall the thing at the head of a sheet is drawn -- a cover, a folder, a frame of film.
-     *
-     * One value, because every sheet in the app opens the same way and a header that is 45dp on one
-     * screen and 56dp on the next reads as two components. Height and not width: a square cover and
-     * a 16:10 frame cannot share a width, but they can sit on the same line.
-     *
-     * The same 56dp the rows use, so the sheet a row opens is headed by what looks like that row.
-     */
-    val LeadingSize = 56.dp
-
-    /**
      * What a row in a sheet must be tall enough to hit. The floor, stated -- rows say this and let
      * their padding stay on the grid, rather than carrying an off-grid padding chosen to add up
      * to it.

@@ -71,19 +71,66 @@ object MediaListLayoutDefaults {
      * last couple of dp is what keeps two picked plates from meeting.
      */
     /**
-     * What a cell's picture measures: the width the cell leaves it, whatever the grid's shape.
+     * The narrowest a cell in the grid may be. How many fit is then the window's answer rather than
+     * a number decided here.
      *
-     * Read from the columns rather than fixed, because the two libraries no longer lay out the
-     * same -- films are wide and go two to a line, covers are square and go three -- and a number
-     * that fitted one left the other's picture adrift in a cell built for something bigger.
+     * A count fixed in advance is a count that only suits the window it was chosen for: three
+     * across a phone held upright is a cover of some 115dp, and the same three across the same
+     * phone turned sideways is 275dp -- a folder taking a third of the screen to say what it said
+     * at a third of the size. A tablet reached 400dp. Asked for a width instead, the grid keeps the
+     * cover the size it was and lays out more of them.
+     *
+     * Three to a line on a phone, not four. The name under the card is not a caption -- for a folder
+     * it is the only thing telling one from another, since every folder is drawn the same -- and a
+     * fourth column leaves it 76dp, at which three names in four are cut to an ellipsis. A grid you
+     * cannot read finds you less per screen than the list it replaced, not more.
+     *
+     * One measure for both libraries. A film is a wide frame and a cover is a square, but they are
+     * looked through the same way and at the same arm's length, and two numbers that had come to
+     * hold the same value would only drift apart again.
      */
-    @Composable
-    @ReadOnlyComposable
-    fun gridCoverSize(columns: Int): Dp {
-        val screen = LocalConfiguration.current.screenWidthDp.dp
-        val betweenCells = ItemSpacing * (columns - 1)
-        return (screen - GridOuterInset * 2 - betweenCells) / columns - VayouTheme.spacing.sm * 2
-    }
+    val GridCellWidth: Dp
+        @Composable
+        @ReadOnlyComposable
+        get() = if (isHandheld) 108.dp else 160.dp
+
+    /**
+     * Whether this is a device held in the hand, which decides how big the target above is.
+     *
+     * Measured on the screen's shortest side, not its current width: turned sideways a phone is as
+     * wide as a small tablet, and sized by width alone it would be given a tablet's large cards on
+     * the one screen with no height to spare for them. The shortest side does not change when the
+     * phone turns, which is the point -- and 600dp is where the platform itself puts the line.
+     */
+    private val isHandheld: Boolean
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalConfiguration.current.smallestScreenWidthDp < TabletShortestSideDp
+
+    /**
+     * What the thing at the head of a row measures.
+     *
+     * One value for every list in the app -- a folder in the video library, an album, an artist, a
+     * server on the network, a playlist -- because a reader moving between the tabs is looking at
+     * one app, and a cover 48dp on one tab beside a tile of 56dp on the next reads as two. It is
+     * also what a sheet heads itself with, so the sheet a row opens looks like the row it came from.
+     *
+     * Height, and width only where the thing is square: a cover and a 16:10 frame cannot share a
+     * width, but they can sit on the same line. A frame asks for this height and takes whatever
+     * width its shape then wants.
+     *
+     * 56dp is the platform's own figure for the image at the head of a list row, and two lines of
+     * text above and below it come to the 72dp row the same spec asks for.
+     */
+    val LeadingSize: Dp = 56.dp
+
+    /**
+     * The same, for the denser lists inside a sheet -- what is playing next, and after that.
+     *
+     * Smaller because a queue is read as a queue: its rows are places in an order rather than
+     * things to be picked out by their picture, and a sheet has a screen's height to spend on them.
+     */
+    val DenseLeadingSize: Dp = 48.dp
 
     /**
      * Between a cell's picture and the words under it. Four, not eight: the name belongs to the
@@ -98,6 +145,19 @@ object MediaListLayoutDefaults {
         get() = PaddingValues(VayouTheme.spacing.sm)
 
     /**
+     * The same for a cell that is nothing but its picture.
+     *
+     * A card with a name under it needs the wider inset, or the words run to the edge of the cell.
+     * A film in the grid has no words -- the frame is the whole card -- so that inset is only air,
+     * and doubled between two cells it put 18dp between neighbouring frames: a sixth of the frame's
+     * own width, which read as a grid of things kept apart rather than a sheet of them.
+     */
+    val GridFramePadding: PaddingValues
+        @Composable
+        @ReadOnlyComposable
+        get() = PaddingValues(VayouTheme.spacing.xs)
+
+    /**
      * The gap between two neighbouring items, set on the container that lays them out rather than
      * drawn by each row. A row that inset its own paint would add to this instead of replacing it.
      */
@@ -106,3 +166,6 @@ object MediaListLayoutDefaults {
         @ReadOnlyComposable
         get() = VayouTheme.spacing.xxs
 }
+
+/** Where the platform's own resource qualifiers put the line between a handset and a tablet. */
+private const val TabletShortestSideDp = 600

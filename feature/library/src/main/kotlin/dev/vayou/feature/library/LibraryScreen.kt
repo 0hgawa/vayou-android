@@ -634,9 +634,12 @@ private fun FolderList(
     isGrid: Boolean,
     header: @Composable () -> Unit,
 ) {
-    MediaGrid(isGrid = isGrid, columns = FolderColumns, header = header, isEmpty = folders.isEmpty(), empty = {
-        VayouEmptyState(icon = VayouIcons.Folder, title = stringResource(R.string.no_folders))
-    }) {
+    MediaGrid(
+        isGrid = isGrid,
+        header = header,
+        isEmpty = folders.isEmpty(),
+        empty = { VayouEmptyState(icon = VayouIcons.Folder, title = stringResource(R.string.no_folders)) },
+    ) {
         items(folders, key = { it.path }) { folder ->
             // While marking, a tap marks: opening a folder would leave the selection behind on a
             // screen that no longer lists what is in it.
@@ -674,14 +677,15 @@ private fun FolderList(
 @Composable
 private fun MediaGrid(
     isGrid: Boolean,
-    columns: Int,
     header: @Composable () -> Unit,
     isEmpty: Boolean,
     empty: @Composable () -> Unit,
     content: LazyGridScope.() -> Unit,
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(if (isGrid) columns else 1),
+        // Sized, not counted: the grid fits as many cells of this width as the window allows, so a
+        // card is the same size in the hand upright, sideways and on a tablet.
+        columns = if (isGrid) GridCells.Adaptive(MediaListLayoutDefaults.GridCellWidth) else GridCells.Fixed(1),
         modifier = Modifier.fillMaxSize(),
         // Half the margin here and half on each cell, so a card lands on the same line a row did.
         contentPadding = PaddingValues(horizontal = if (isGrid) MediaListLayoutDefaults.GridOuterInset else 0.dp),
@@ -711,9 +715,12 @@ private fun VideoList(
     header: (@Composable () -> Unit)? = null,
     emptyMessage: String? = null,
 ) {
-    MediaGrid(isGrid = isGrid, columns = VideoColumns, header = header ?: {}, isEmpty = videos.isEmpty(), empty = {
-        VayouEmptyState(VayouIcons.Video, emptyMessage ?: stringResource(R.string.no_videos))
-    }) {
+    MediaGrid(
+        isGrid = isGrid,
+        header = header ?: {},
+        isEmpty = videos.isEmpty(),
+        empty = { VayouEmptyState(VayouIcons.Video, emptyMessage ?: stringResource(R.string.no_videos)) },
+    ) {
         items(videos, key = { it.uriString }) { video ->
             // A long press starts marking; once it has, an ordinary tap marks too. Anything else
             // would mean holding every row after the first.
@@ -749,15 +756,3 @@ private val MediaViewMode.label: Int
         MediaViewMode.VIDEOS -> R.string.videos
         MediaViewMode.PLAYLISTS -> R.string.playlists
     }
-
-/**
- * Two across for films, three for folders.
- *
- * A thumbnail is the thing itself, and at a third of the width it was smaller than the folder icon
- * in the list beside it. A folder is a mark standing for what is inside, and blown up to half the
- * screen it says nothing more than it did small -- it only fits fewer of them. Three is also what
- * the music library uses for the same kind of list, which is why the two now agree there.
- */
-internal const val VideoColumns = 2
-
-internal const val FolderColumns = 3
