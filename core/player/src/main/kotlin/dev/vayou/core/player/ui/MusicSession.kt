@@ -125,16 +125,3 @@ fun MediaController.addToQueue(songs: List<Song>) {
         addMediaItems(items)
     }
 }
-
-/**
- * Whether the session has actually said what this track is yet.
- *
- * A controller answers with an empty [MediaMetadata] between being handed a track and being told
- * about it, and empty is indistinguishable from "a track with nothing filled in" unless something
- * asks. Screens that did not ask fell straight through to their "unknown artist" wording and then
- * corrected themselves a moment later, so every track began by being wrong about itself.
- *
- * A described track always has at least one of these. Nothing carries an artist and no title.
- */
-val MediaMetadata.isDescribed: Boolean
-    get() = title != null || artist != null || albumTitle != null

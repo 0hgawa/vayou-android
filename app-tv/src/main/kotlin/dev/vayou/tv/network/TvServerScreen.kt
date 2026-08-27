@@ -351,11 +351,16 @@ private fun SignIn(hasFailed: Boolean, onSubmit: (String, String) -> Unit) {
             onClick = { onSubmit(username, password) },
             shape = ClickableSurfaceDefaults.shape(MaterialTheme.shapes.medium),
             scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
+            // Focus turns this white, as it turns every other control on the television white --
+            // the rows, the icon buttons, the transport. Taking the primary made this the one amber
+            // thing on a screen of them, which reads as a different kind of button rather than as
+            // the one that happens to be focused. On this shell primary is the mark's fixed amber,
+            // so it shouts louder here than the same choice would on the phone.
             colors = ClickableSurfaceDefaults.colors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
                 contentColor = MaterialTheme.colorScheme.onSurface,
-                focusedContainerColor = MaterialTheme.colorScheme.primary,
-                focusedContentColor = MaterialTheme.colorScheme.onPrimary,
+                focusedContainerColor = MaterialTheme.colorScheme.onSurface,
+                focusedContentColor = MaterialTheme.colorScheme.surface,
             ),
         ) {
             Text(
