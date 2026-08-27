@@ -28,10 +28,10 @@ android {
     defaultConfig {
         applicationId = "dev.vayou"
         // Carried over, not restarted: a rewrite that ships as version 1 is a different app to
-        // every phone that already has this one. 58 is what the store hands out; 59 was spent on
-        // an upload that never reached anyone, and 60 sat as a draft that was thrown away before
-        // it did.
-        versionCode = 60
+        // every phone that already has this one. 58 is what the store hands out, and 59 and 60 are
+        // gone: the store spends a number when a bundle is uploaded, not when one is released, and
+        // discarding the draft does not hand it back.
+        versionCode = 61
         // Not 0.1.2: what changed between these two is the whole of the app under the screens.
         versionName = "0.2.0"
     }
