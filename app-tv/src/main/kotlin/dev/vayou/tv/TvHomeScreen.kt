@@ -224,7 +224,10 @@ fun TvHomeScreen(
                             title = stringResource(R.string.pinned_folders),
                             items = state.folders,
                             firstCard = landing.takeIf { landingRow == HomeRow.Folders },
-                            key = { "${'$'}{it.host}/${'$'}{it.share}/${'$'}{it.path}" },
+                            // Interpolated, not escaped. Written with the dollar quoted, every folder answered with the
+                            // same literal text for a key, and a lazy row refuses two items that claim to be
+                            // the same one -- so pinning a second folder crashed the screen on open.
+                            key = { "${it.host}/${it.share}/${it.path}" },
                         ) { folder, cardModifier ->
                             Tile(
                                 title = folder.displayName,
