@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -101,11 +103,24 @@ fun TvServerScreen(
 
     var isChoosingOrder by remember { mutableStateOf(false) }
 
-    // Handed to the first card whenever a new listing arrives. A television screen with nothing
-    // focused is a screen the remote cannot use: every press goes nowhere and it reads as frozen.
+    // Handed to the card that was left from, and to the first where there is none to come back
+    // to. A television screen with nothing focused is a screen the remote cannot use: every press
+    // goes nowhere and it reads as frozen.
     val firstCard = remember { FocusRequester() }
+    val grid = rememberLazyGridState()
+    val landingKey = viewModel.lastOpened
     LaunchedEffect(state.shares, state.entries) {
-        if (state.shares.isNotEmpty() || state.entries.isNotEmpty()) runCatching { firstCard.requestFocus() }
+        if (state.shares.isEmpty() && state.entries.isEmpty()) return@LaunchedEffect
+        // Scrolled to first: a lazy grid has not composed a card four rows down, and a requester
+        // with nothing attached to it is a focus that goes nowhere at all.
+        val index = when {
+            landingKey == null -> null
+            state.shares.isNotEmpty() -> state.shares.indexOfFirst { it.name == landingKey }
+            else -> shown.indexOfFirst { it.path == landingKey }
+        }
+        index?.takeIf { it >= 0 }?.let { grid.scrollToItem(it) }
+        withFrameNanos { }
+        runCatching { firstCard.requestFocus() }
     }
 
     // Back puts the keyboard away, then walks up the folders, and only then leaves. Three steps and
@@ -217,19 +232,21 @@ fun TvServerScreen(
             state.shares.isEmpty() && shown.isEmpty() ->
                 TvMessage(stringResource(if (query == null) R.string.nothing_here else R.string.nothing_found))
             else -> LazyVerticalGrid(
+                state = grid,
                 columns = GridCells.Adaptive(TvCardWidth),
                 contentPadding = PaddingValues(horizontal = TvScreenInset, vertical = TvTitleInset),
                 horizontalArrangement = Arrangement.spacedBy(TvCardGap),
                 verticalArrangement = Arrangement.spacedBy(TvCardGap),
             ) {
                 itemsIndexed(state.shares, key = { _, share -> share.name }) { index, share ->
+                    val isLanding = if (landingKey == null) index == 0 else share.name == landingKey
                     TvTile(
                         title = share.name,
                         onClick = { viewModel.openShare(share) },
                         // Held rather than tapped, as starring a film is: what can be done to a
                         // folder is not worth a button on every card.
                         onLongClick = { acting = HeldItem(share.name, "") },
-                        modifier = if (index == 0) Modifier.focusRequester(firstCard) else Modifier,
+                        modifier = if (isLanding) Modifier.focusRequester(firstCard) else Modifier,
                     ) {
                         TvCardMark(VayouIcons.Network)
                         if (keyOf(share.name, "") in pinned) Pin()
@@ -239,16 +256,15 @@ fun TvServerScreen(
                     // A folder is a place and a file is a thing to play, so they are not the same
                     // card: one carries its name inside, the other under the mark that says what
                     // kind of file it is.
-                    val landing = if (index == 0 && state.shares.isEmpty()) {
-                        Modifier.focusRequester(firstCard)
-                    } else {
-                        Modifier
-                    }
+                    val isLanding = state.shares.isEmpty() &&
+                        if (landingKey == null) index == 0 else entry.path == landingKey
+                    val landing = if (isLanding) Modifier.focusRequester(firstCard) else Modifier
                     // Resolved before the player is opened: the address only means anything once the
                     // share is connected and open for reading. A share holds both kinds and each has
                     // a screen of its own, as it does on the phone -- a track opened in the film
                     // player is a black rectangle with a seek bar under it.
                     val open = {
+                        viewModel.rememberOpened(entry.path)
                         scope.launch {
                             val address = viewModel.addressOf(entry) ?: return@launch
                             if (entry.isAudio) onPlayAudio(address) else onPlayVideo(address)

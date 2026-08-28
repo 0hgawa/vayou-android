@@ -90,13 +90,20 @@ fun TvHomeScreen(
      * something in it.
      */
     val landing = remember { FocusRequester() }
-    val landingRow = when {
+
+    // The card the viewer left from, if its row is still on the screen. Coming back to the top of
+    // the first row meant coming back to a different card each time: play something and it is at
+    // the head of the row of things to continue, so the card just left is the one the focus is
+    // taken away from.
+    val opened = viewModel.lastOpened
+    val landingRow = opened?.first?.takeIf { it.isDrawn(state) } ?: when {
         state.recent.isNotEmpty() -> HomeRow.Recent
         state.videos.isNotEmpty() -> HomeRow.Videos
         state.folders.isNotEmpty() -> HomeRow.Folders
         else -> HomeRow.Servers
     }
-    LaunchedEffect(landingRow, state.servers) {
+    val landingKey = opened?.second?.takeIf { opened.first == landingRow }
+    LaunchedEffect(landingRow, landingKey, state.servers) {
         withFrameNanos { }
         runCatching { landing.requestFocus() }
     }
@@ -165,7 +172,9 @@ fun TvHomeScreen(
                         CardRow(
                             title = stringResource(R.string.continue_watching),
                             items = state.recent,
-                            firstCard = landing.takeIf { landingRow == HomeRow.Recent },
+                            landing = landing.takeIf { landingRow == HomeRow.Recent },
+                            landingKey = landingKey,
+                            onCardFocused = { viewModel.rememberOpened(HomeRow.Recent, it) },
                             key = TvRecent::id,
                         ) { entry, cardModifier ->
                             when (entry) {
@@ -205,7 +214,9 @@ fun TvHomeScreen(
                         CardRow(
                             title = stringResource(R.string.videos),
                             items = state.videos,
-                            firstCard = landing.takeIf { landingRow == HomeRow.Videos },
+                            landing = landing.takeIf { landingRow == HomeRow.Videos },
+                            landingKey = landingKey,
+                            onCardFocused = { viewModel.rememberOpened(HomeRow.Videos, it) },
                             key = Video::uriString,
                         ) { video, cardModifier ->
                             Card(
@@ -231,7 +242,9 @@ fun TvHomeScreen(
                         CardRow(
                             title = stringResource(R.string.pinned_folders),
                             items = state.folders,
-                            firstCard = landing.takeIf { landingRow == HomeRow.Folders },
+                            landing = landing.takeIf { landingRow == HomeRow.Folders },
+                            landingKey = landingKey,
+                            onCardFocused = { viewModel.rememberOpened(HomeRow.Folders, it) },
                             // Interpolated, not escaped. Written with the dollar quoted, every folder answered with the
                             // same literal text for a key, and a lazy row refuses two items that claim to be
                             // the same one -- so pinning a second folder crashed the screen on open.
@@ -254,12 +267,15 @@ fun TvHomeScreen(
                     CardRow(
                         title = stringResource(R.string.servers),
                         items = state.servers,
-                        firstCard = landing.takeIf { landingRow == HomeRow.Servers },
+                        landing = landing.takeIf { landingRow == HomeRow.Servers },
+                        landingKey = landingKey,
+                        onCardFocused = { viewModel.rememberOpened(HomeRow.Servers, it) },
                         key = NetworkServerEntry::host,
-                        trailing = {
+                        trailing = { cardModifier ->
                             Tile(
                                 title = stringResource(R.string.add_server),
                                 onClick = { isAddingServer = true },
+                                modifier = cardModifier,
                             ) { TvCardMark(VayouIcons.Add) }
                         },
                     ) { server, cardModifier ->
@@ -290,6 +306,9 @@ fun TvHomeScreen(
                         title = stringResource(R.string.more),
                         items = Destinations,
                         key = Destination::label,
+                        landing = landing.takeIf { landingRow == HomeRow.More },
+                        landingKey = landingKey,
+                        onCardFocused = { viewModel.rememberOpened(HomeRow.More, it) },
                     ) { destination, cardModifier ->
                         Tile(
                             title = stringResource(destination.label),
@@ -313,22 +332,27 @@ fun TvHomeScreen(
                         title = stringResource(R.string.channels),
                         items = state.playlists,
                         key = SavedPlaylist::url,
+                        landing = landing.takeIf { landingRow == HomeRow.Channels },
+                        landingKey = landingKey,
+                        onCardFocused = { viewModel.rememberOpened(HomeRow.Channels, it) },
                         // Before the lists and not inside one of them. A starred channel belongs to
                         // the viewer rather than to the file it was found in, and the screen behind
                         // this card holds the starred of every list at once -- which is the whole
                         // reason it is here and not a heading in one of them.
-                        leading = {
+                        leading = { cardModifier ->
                             if (state.favouriteChannels > 0) {
                                 Tile(
                                     title = stringResource(R.string.favourites),
                                     onClick = onOpenStarredChannels,
+                                    modifier = cardModifier,
                                 ) { TvCardMark(VayouIcons.StarFilled) }
                             }
                         },
-                        trailing = {
+                        trailing = { cardModifier ->
                             Tile(
                                 title = stringResource(R.string.add_playlist),
                                 onClick = { isAddingPlaylist = true },
+                                modifier = cardModifier,
                             ) { TvCardMark(VayouIcons.Add) }
                         },
                     ) { playlist, cardModifier ->
@@ -398,17 +422,21 @@ private fun <T> CardRow(
     items: List<T>,
     key: (T) -> Any,
     /**
-     * Handed to the first card of the first row on the screen, and null for every row below it.
+     * Handed to the row the focus is to land in, and null for every other.
      *
      * Without it the focus went to the rail, which then opened over the very screen the viewer had
      * just arrived at: a lazy column has composed nothing on the first frame, so the only thing
      * willing to take the focus was the navigation.
      */
-    firstCard: FocusRequester? = null,
+    landing: FocusRequester? = null,
+    /** Which card in it, or null to land on the first -- for a first visit, with nothing left. */
+    landingKey: Any? = null,
+    /** Called with the key of whichever card takes the focus, so the row can be come back to. */
+    onCardFocused: (Any) -> Unit = {},
     /** A card before the first of them, for a row whose most-wanted thing is not one of them. */
-    leading: (@Composable () -> Unit)? = null,
+    leading: (@Composable (Modifier) -> Unit)? = null,
     /** A card after the last of them, for a row that offers something as well as listing things. */
-    trailing: (@Composable () -> Unit)? = null,
+    trailing: (@Composable (Modifier) -> Unit)? = null,
     card: @Composable (T, Modifier) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(TvCardTitleGap)) {
@@ -422,11 +450,31 @@ private fun <T> CardRow(
             contentPadding = PaddingValues(horizontal = TvScreenInset),
             horizontalArrangement = Arrangement.spacedBy(TvCardGap),
         ) {
-            leading?.let { item { it() } }
-            itemsIndexed(items, key = { _, item -> key(item) }) { index, item ->
-                card(item, if (index == 0 && firstCard != null) Modifier.focusRequester(firstCard) else Modifier)
+            // The card that was left from, or, where there is none to come back to, the first
+            // thing in the row -- a listed one if there is one, and otherwise whatever the row
+            // offers instead. A key that no longer matches anything, a folder unpinned while away,
+            // falls through to that same first card rather than to nothing at all.
+            val defaultId: Any? = when {
+                items.isNotEmpty() -> key(items.first())
+                leading != null -> LeadingCard
+                trailing != null -> TrailingCard
+                else -> null
             }
-            trailing?.let { item { it() } }
+            fun cardModifier(id: Any): Modifier = Modifier
+                .onFocusChanged { if (it.isFocused) onCardFocused(id) }
+                .then(
+                    if (landing != null && id == (landingKey ?: defaultId)) {
+                        Modifier.focusRequester(landing)
+                    } else {
+                        Modifier
+                    },
+                )
+
+            leading?.let { content -> item(key = LeadingCard) { content(cardModifier(LeadingCard)) } }
+            itemsIndexed(items, key = { _, item -> key(item) }) { _, item ->
+                card(item, cardModifier(key(item)))
+            }
+            trailing?.let { content -> item(key = TrailingCard) { content(cardModifier(TrailingCard)) } }
         }
     }
 }
@@ -547,7 +595,26 @@ private const val BackdropMidBlend = 0.7f
 private val RowGap = 32.dp
 
 /** Which row is on top, and so which card the focus lands on when the screen opens. */
-private enum class HomeRow { Recent, Videos, Folders, Servers }
+/** The keys of the two cards a row can carry that are not one of the things it lists. */
+private const val LeadingCard = "leading"
+
+private const val TrailingCard = "trailing"
+
+internal enum class HomeRow { Recent, Videos, Folders, Servers, More, Channels }
+
+/**
+ * Whether a row is on the screen at all, which decides whether it can be come back to.
+ *
+ * The three at the foot always are: each carries something to do -- add a machine, make a list --
+ * so they are there for a television that has never been set up. The three above appear only when
+ * they have something in them.
+ */
+private fun HomeRow.isDrawn(state: TvHomeState): Boolean = when (this) {
+    HomeRow.Recent -> state.recent.isNotEmpty()
+    HomeRow.Videos -> state.videos.isNotEmpty()
+    HomeRow.Folders -> state.folders.isNotEmpty()
+    HomeRow.Servers, HomeRow.More, HomeRow.Channels -> true
+}
 
 /** Where the rest of the app is, now that there is no bar to name it. */
 private enum class Destination(val label: Int, val icon: ImageVector) {

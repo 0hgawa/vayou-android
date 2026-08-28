@@ -83,6 +83,23 @@ class TvHomeViewModel @Inject constructor(
         viewModelScope.launch { folderFavourites.remove(folder.host, folder.share, folder.path) }
     }
 
+    /**
+     * The card the viewer opened last, so coming back lands on it.
+     *
+     * Held here because the screen does not survive what it opens: navigating away takes its
+     * composition apart, and a home rebuilt from nothing puts the focus at the head of the topmost
+     * row -- which, after playing something, is a different card from the one just left.
+     *
+     * A plain field and not state: nothing on the screen is drawn from it, and making it observable
+     * would recompose every row on each move of the focus for a value read once, on the way in.
+     */
+    internal var lastOpened: Pair<HomeRow, Any>? = null
+        private set
+
+    internal fun rememberOpened(row: HomeRow, key: Any) {
+        lastOpened = row to key
+    }
+
     val state: StateFlow<TvHomeState> = combine(
         mediaRepository.getVideosFlow(),
         // Read from the table that writes down every play, rather than from the library: a film

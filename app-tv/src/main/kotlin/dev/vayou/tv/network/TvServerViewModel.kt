@@ -123,10 +123,32 @@ class TvServerViewModel @Inject constructor(
         }
     }
 
-    fun openShare(share: SmbShare) = walk(share.name, "")
+    /**
+     * What was stepped into or played last, so walking back lands on it.
+     *
+     * Held here because the screen does not survive what it opens, and neither does a listing
+     * survive being walked out of: both are rebuilt from nothing, and a grid rebuilt from nothing
+     * puts the focus on whatever is first -- which, six folders in, is never the one just left.
+     *
+     * A plain field and not state: nothing is drawn from it, and making it observable would redraw
+     * a listing of hundreds each time it changed for a value read once, as the listing arrives.
+     */
+    var lastOpened: String? = null
+        private set
+
+    /** Set by the screen for a file, which it opens itself rather than through this model. */
+    fun rememberOpened(path: String) {
+        lastOpened = path
+    }
+
+    fun openShare(share: SmbShare) {
+        lastOpened = null
+        walk(share.name, "")
+    }
 
     fun openDirectory(item: SmbFileItem) {
         val share = _state.value.share ?: return
+        lastOpened = null
         walk(share, item.path)
     }
 
@@ -140,9 +162,12 @@ class TvServerViewModel @Inject constructor(
         val current = _state.value
         val share = current.share ?: return false
         if (current.path.isEmpty()) {
+            // The share being left, so the list of shares comes back with it under the focus.
+            lastOpened = share
             viewModelScope.launch { loadShares() }
             return true
         }
+        lastOpened = current.path
         walk(share, current.path.trimEnd('\\').substringBeforeLast('\\', ""))
         return true
     }
