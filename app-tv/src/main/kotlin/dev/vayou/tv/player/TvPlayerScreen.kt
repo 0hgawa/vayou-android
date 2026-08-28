@@ -631,9 +631,12 @@ private fun Playing(
                 // Asked for when the panel opens rather than by the row that opens it: a row that
                 // leads somewhere does not answer anything, and the answer is what this one needs.
                 LaunchedEffect(selector) {
-                    if (selector == TvSelector.SubtitleSearch && onlineSubtitles == OnlineSubtitleState.Idle) {
-                        onSearchSubtitles()
-                    }
+                    // Again after a failure, because closing the panel and opening it is what
+                    // anybody does when something did not work, and finding the same apology
+                    // waiting there says the app did not even try.
+                    val isUnanswered = onlineSubtitles == OnlineSubtitleState.Idle ||
+                        onlineSubtitles == OnlineSubtitleState.Failed
+                    if (selector == TvSelector.SubtitleSearch && isUnanswered) onSearchSubtitles()
                 }
                 selector?.let { open ->
                     TvPlayerSelector(

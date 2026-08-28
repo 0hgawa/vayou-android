@@ -22,6 +22,7 @@ import dev.vayou.core.model.PlayerPreferences
 import dev.vayou.core.model.Video
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -61,6 +62,9 @@ class TvPlayerViewModel @Inject constructor(
     var onlineSubtitles: OnlineSubtitleState by mutableStateOf(OnlineSubtitleState.Idle)
         private set
 
+    /** The search in flight, so a second question can put the first one down. */
+    private var searching: Job? = null
+
     /** Which language to ask for; blank is every one, which is where a viewer starts. */
     var subtitleLanguage: String by mutableStateOf("")
         private set
@@ -84,8 +88,12 @@ class TvPlayerViewModel @Inject constructor(
      * is the fallback, and on a television it is the usual case rather than the exception.
      */
     fun searchSubtitles() {
+        // The one before it goes, as the share browser drops a listing it is walking away from. Two
+        // in flight and the slower one wins whenever it happens to land last, which after a couple
+        // of quick changes of language is a list answering a question nobody asked any more.
+        searching?.cancel()
         onlineSubtitles = OnlineSubtitleState.Searching
-        viewModelScope.launch {
+        searching = viewModelScope.launch {
             // Only while the question is still the file itself. Once the viewer has said what the
             // film is called, they have told us the name matters more than the bytes -- and the
             // hash would go on answering the question they just replaced.
