@@ -25,7 +25,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -110,10 +109,19 @@ fun TvHomeScreen(
         else -> HomeRow.More
     }
     val landingKey = opened?.second?.takeIf { opened.first == landingRow }
-    LaunchedEffect(landingRow, landingKey, state.servers) {
-        withFrameNanos { }
-        runCatching { landing.requestFocus() }
-    }
+
+    // Asked for until it is actually held, and once for the life of the screen.
+    //
+    // Asking once was not enough and the screen said so: the focus arrived on a card and was then
+    // taken off it by Compose handing out the initial focus itself, which goes to the first thing
+    // in reading order that will take it -- the search mark in the header. A viewer saw the card
+    // light up and then lose it, which reads as the app changing its mind.
+    //
+    // Once, and not on every change of state, because the rows fill in over the first second: a
+    // claim renewed each time one of them arrived would pull the focus back from wherever the
+    // viewer had already walked to.
+    var hasLanded by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { landing.claim { hasLanded } }
 
     // Boxed, so the dialog below has something to be laid over. As siblings in a column, the rows
     // took the whole height and the dialog was measured into what was left, which was nothing: the
@@ -193,7 +201,10 @@ fun TvHomeScreen(
                             items = state.recent,
                             landing = landing.takeIf { landingRow == HomeRow.Recent },
                             landingKey = landingKey,
-                            onCardFocused = { viewModel.rememberOpened(HomeRow.Recent, it) },
+                            onCardFocused = {
+                                hasLanded = true
+                                viewModel.rememberOpened(HomeRow.Recent, it)
+                            },
                             key = TvRecent::id,
                         ) { entry, cardModifier ->
                             when (entry) {
@@ -235,7 +246,10 @@ fun TvHomeScreen(
                             items = state.videos,
                             landing = landing.takeIf { landingRow == HomeRow.Videos },
                             landingKey = landingKey,
-                            onCardFocused = { viewModel.rememberOpened(HomeRow.Videos, it) },
+                            onCardFocused = {
+                                hasLanded = true
+                                viewModel.rememberOpened(HomeRow.Videos, it)
+                            },
                             key = Video::uriString,
                         ) { video, cardModifier ->
                             Card(
@@ -263,7 +277,10 @@ fun TvHomeScreen(
                             items = state.folders,
                             landing = landing.takeIf { landingRow == HomeRow.Folders },
                             landingKey = landingKey,
-                            onCardFocused = { viewModel.rememberOpened(HomeRow.Folders, it) },
+                            onCardFocused = {
+                                hasLanded = true
+                                viewModel.rememberOpened(HomeRow.Folders, it)
+                            },
                             // Interpolated, not escaped. Written with the dollar quoted, every folder answered with the
                             // same literal text for a key, and a lazy row refuses two items that claim to be
                             // the same one -- so pinning a second folder crashed the screen on open.
@@ -288,7 +305,10 @@ fun TvHomeScreen(
                         items = state.servers,
                         landing = landing.takeIf { landingRow == HomeRow.Servers },
                         landingKey = landingKey,
-                        onCardFocused = { viewModel.rememberOpened(HomeRow.Servers, it) },
+                        onCardFocused = {
+                            hasLanded = true
+                            viewModel.rememberOpened(HomeRow.Servers, it)
+                        },
                         key = NetworkServerEntry::host,
                         trailing = { cardModifier ->
                             Tile(
@@ -327,7 +347,10 @@ fun TvHomeScreen(
                         key = Destination::label,
                         landing = landing.takeIf { landingRow == HomeRow.More },
                         landingKey = landingKey,
-                        onCardFocused = { viewModel.rememberOpened(HomeRow.More, it) },
+                        onCardFocused = {
+                            hasLanded = true
+                            viewModel.rememberOpened(HomeRow.More, it)
+                        },
                     ) { destination, cardModifier ->
                         Tile(
                             title = stringResource(destination.label),
@@ -353,7 +376,10 @@ fun TvHomeScreen(
                         key = SavedPlaylist::url,
                         landing = landing.takeIf { landingRow == HomeRow.Channels },
                         landingKey = landingKey,
-                        onCardFocused = { viewModel.rememberOpened(HomeRow.Channels, it) },
+                        onCardFocused = {
+                            hasLanded = true
+                            viewModel.rememberOpened(HomeRow.Channels, it)
+                        },
                         // Before the lists and not inside one of them. A starred channel belongs to
                         // the viewer rather than to the file it was found in, and the screen behind
                         // this card holds the starred of every list at once -- which is the whole
