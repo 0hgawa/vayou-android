@@ -45,6 +45,18 @@ class TvPlayerViewModel @Inject constructor(
     @param:ApplicationScope private val applicationScope: CoroutineScope,
 ) : ViewModel() {
 
+    /** How the captions are drawn, which is the viewer's to set and the same on either device. */
+    val preferences: StateFlow<PlayerPreferences> = preferencesRepository.playerPreferences
+
+    /**
+     * As it arrived, and not decoded again.
+     *
+     * Encoded once to travel as a segment of a route and decoded once by navigation on the way in,
+     * which leaves the address as it was. A second decode would undo the escaping a file's own name
+     * needed -- a `#` in it opens the fragment of an address, and everything after would be dropped.
+     */
+    val videoUri: String = savedStateHandle[VideoUriArg] ?: error("Opened with no film to play")
+
     /** What the search has to say, from not asked yet through to a file on its way down. */
     var onlineSubtitles: OnlineSubtitleState by mutableStateOf(OnlineSubtitleState.Idle)
         private set
@@ -128,18 +140,6 @@ class TvPlayerViewModel @Inject constructor(
             onReady(Uri.fromFile(file))
         }
     }
-
-    /** How the captions are drawn, which is the viewer's to set and the same on either device. */
-    val preferences: StateFlow<PlayerPreferences> = preferencesRepository.playerPreferences
-
-    /**
-     * As it arrived, and not decoded again.
-     *
-     * Encoded once to travel as a segment of a route and decoded once by navigation on the way in,
-     * which leaves the address as it was. A second decode would undo the escaping a file's own name
-     * needed -- a `#` in it opens the fragment of an address, and everything after would be dropped.
-     */
-    val videoUri: String = savedStateHandle[VideoUriArg] ?: error("Opened with no film to play")
 
     /**
      * Whether this is a channel, known before a single byte has arrived.
