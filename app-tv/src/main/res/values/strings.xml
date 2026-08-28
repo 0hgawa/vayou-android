@@ -133,4 +133,8 @@
     <string name="equalizer">Equalizer</string>
     <string name="equalizer_off">Off</string>
     <string name="opening_media">Opening…</string>
+    <plurals name="n_channels">
+        <item quantity="one">%1$d channel</item>
+        <item quantity="other">%1$d channels</item>
+    </plurals>
 </resources>

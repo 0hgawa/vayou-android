@@ -33,6 +33,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -98,7 +99,7 @@ fun TvChannelsScreen(
     val landing = remember { FocusRequester() }
     val grid = rememberLazyGridState()
     val landingUrl = viewModel.lastOpened
-    val landingIndex = remember(state.sections, state.favourites, landingUrl) {
+    val landingIndex = remember(state.sections, state.starred, landingUrl) {
         state.indexOf(landingUrl)
     }
     LaunchedEffect(state.sections, isSearching) {
@@ -144,6 +145,7 @@ fun TvChannelsScreen(
                         onPlay(channel)
                     },
                     onOptions = { acting = it },
+                    onShowStarred = viewModel::showOnlyStarred,
                 )
             }
         }
@@ -262,6 +264,7 @@ private fun ChannelGrid(
     landingUrl: String?,
     onPlay: (PlaylistChannel) -> Unit,
     onOptions: (PlaylistChannel) -> Unit,
+    onShowStarred: () -> Unit,
 ) {
     LazyVerticalGrid(
         state = grid,
@@ -270,22 +273,25 @@ private fun ChannelGrid(
         horizontalArrangement = Arrangement.spacedBy(TvCardGap),
         verticalArrangement = Arrangement.spacedBy(TvCardGap),
     ) {
-        // The starred ones first, under their own heading, before the alphabet starts. They are
-        // where an evening begins; walking to them past four hundred names is not.
-        if (state.favourites.isNotEmpty()) {
-            heading(starredLabel)
-            itemsIndexed(state.favourites, key = { _, channel -> "star:" + channel.url }) { index, channel ->
-                ChannelCard(
-                    channel = channel,
-                    isStarred = true,
-                    onPlay = { onPlay(channel) },
-                    onOptions = { onOptions(channel) },
-                    modifier = if (channel.url.isLanding(landingUrl, isFirst = index == 0)) {
-                        Modifier.focusRequester(landing)
-                    } else {
-                        Modifier
-                    },
-                )
+        // The starred, reached rather than stacked on top.
+        //
+        // They were a block above the alphabet, which put every one of them on the screen twice --
+        // once under its own heading and again under its letter -- and held only the ones belonging
+        // to the list in hand. A card is one press away, appears once, and opens on the starred of
+        // every list this television knows, which is what a favourite is: the viewer's, not the
+        // list's. Nothing is fetched to show them; each was written down whole when it was starred.
+        //
+        // Absent while they are what is being shown, where it would be a way into the screen the
+        // viewer is already on.
+        if (!state.onlyStarred && state.starred.isNotEmpty()) {
+            item(key = "starred") {
+                TvCard(
+                    title = starredLabel,
+                    subtitle = pluralStringResource(R.plurals.n_channels, state.starred.size, state.starred.size),
+                    onClick = onShowStarred,
+                ) {
+                    TvCardMark(VayouIcons.StarFilled)
+                }
             }
         }
         state.sections.forEachIndexed { sectionIndex, section ->
@@ -299,7 +305,7 @@ private fun ChannelGrid(
                     modifier = if (
                         channel.url.isLanding(
                             landingUrl,
-                            isFirst = sectionIndex == 0 && index == 0 && state.favourites.isEmpty(),
+                            isFirst = sectionIndex == 0 && index == 0,
                         )
                     ) {
                         Modifier.focusRequester(landing)
@@ -324,12 +330,8 @@ private fun String.isLanding(landingUrl: String?, isFirst: Boolean): Boolean =
  */
 private fun TvChannelsState.indexOf(url: String?): Int? {
     if (url == null) return null
-    var index = 0
-    if (favourites.isNotEmpty()) {
-        index++
-        favourites.forEachIndexed { position, channel -> if (channel.url == url) return index + position }
-        index += favourites.size
-    }
+    // The card for the starred is an item like any other, and the grid counts it.
+    var index = if (!onlyStarred && starred.isNotEmpty()) 1 else 0
     sections.forEach { section ->
         index++
         section.channels.forEachIndexed { position, channel -> if (channel.url == url) return index + position }

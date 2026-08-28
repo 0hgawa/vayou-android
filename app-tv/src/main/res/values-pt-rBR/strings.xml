@@ -132,4 +132,8 @@
     <string name="equalizer">Equalizador</string>
     <string name="equalizer_off">Desligado</string>
     <string name="opening_media">Abrindo…</string>
+    <plurals name="n_channels">
+        <item quantity="one">%1$d canal</item>
+        <item quantity="other">%1$d canais</item>
+    </plurals>
 </resources>

@@ -120,15 +120,6 @@ class TvChannelsViewModel @Inject constructor(
             group = group,
             query = query,
             starred = starred,
-            // Read from the store rather than from what the narrowing left, which is the whole
-            // point of them: a viewer who marked a channel wants it to hand whatever they are
-            // looking at. Drawn from the filtered list, the block emptied itself the moment a
-            // country or a group was chosen -- the marks were still there, and the shelf that was
-            // meant to hold them was showing a slice of itself.
-            //
-            // Absent when the starred are all that is being shown: a block of them above a grid of
-            // them would be the same list twice.
-            favourites = if (onlyStarred) emptyList() else starredList,
             onlyStarred = onlyStarred,
             saved = saved,
             listName = saved.firstOrNull { it.url == address }?.name.orEmpty(),
@@ -285,8 +276,6 @@ data class TvChannelsState(
     val onlyStarred: Boolean = false,
     val query: String = "",
     val starred: Set<String> = emptySet(),
-    /** The starred ones of whatever is being shown, drawn before the first letter. */
-    val favourites: List<PlaylistChannel> = emptyList(),
     /** Every list this television knows, for the chooser in the header. */
     val saved: List<SavedPlaylist> = emptyList(),
     val listName: String = "",

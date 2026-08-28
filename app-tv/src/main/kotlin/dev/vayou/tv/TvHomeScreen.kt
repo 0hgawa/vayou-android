@@ -350,7 +350,7 @@ fun TvHomeScreen(
                 title = action.name,
                 options = listOf(option),
                 onDismiss = { acting = null },
-                face = { TvCardMark(action.mark) },
+                face = action.face,
             )
         }
 
@@ -545,20 +545,26 @@ private sealed interface HomeAction {
     /** What the menu is about, at the head of it. */
     val name: String
 
-    /** The card's own mark, so the menu shows the thing that was held rather than a blank plate. */
-    val mark: ImageVector
+    /**
+     * Drawn the way the card drew it, and not described so the menu can draw its own likeness.
+     *
+     * A mark named here is a second answer to what a thing looks like, and the two drifted: the row
+     * showed the folder this app uses everywhere and the menu showed a grey outline of one. Carrying
+     * the face itself, there is one answer and the menu cannot disagree with the card it came from.
+     */
+    val face: @Composable BoxScope.() -> Unit
 
     class Forget(val host: String, override val name: String) : HomeAction {
-        override val mark = VayouIcons.Network
+        override val face: @Composable BoxScope.() -> Unit = { TvCardMark(VayouIcons.Network) }
     }
 
     class Unpin(val folder: FavoriteFolder) : HomeAction {
         override val name = folder.displayName
-        override val mark = VayouIcons.Folder
+        override val face: @Composable BoxScope.() -> Unit = { TvCardFolder() }
     }
 
     class RemoveList(val playlist: SavedPlaylist) : HomeAction {
         override val name = playlist.name
-        override val mark = VayouIcons.Tv
+        override val face: @Composable BoxScope.() -> Unit = { TvCardMark(VayouIcons.Tv) }
     }
 }
