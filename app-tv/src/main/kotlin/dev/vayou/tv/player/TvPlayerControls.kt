@@ -81,9 +81,11 @@ internal fun TvPlayerControls(
                 .padding(horizontal = SideInset, vertical = FootInset),
             verticalArrangement = Arrangement.spacedBy(RowGap),
         ) {
-            if (isLive) {
-                LiveBadge()
-            } else {
+            // Nothing above the buttons for a channel: what would be there is a line saying where
+            // in the film you are, and a broadcast has no such place. The badge that says so sits
+            // beside the play mark instead, where it annotates the one control that still means
+            // something rather than standing in for a seek bar that is not there.
+            if (!isLive) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -119,6 +121,9 @@ internal fun TvPlayerControls(
                     onClick = onPlayPause,
                     modifier = Modifier.focusRequester(playPauseFocus),
                 )
+                if (isLive) {
+                    LiveBadge()
+                }
                 // The two of them in one capsule, the way a television's own player draws them: they
                 // are two halves of one question -- which item -- and a bubble each would read as
                 // two more buttons in a row that already has six. Focus fills the half it is on.
