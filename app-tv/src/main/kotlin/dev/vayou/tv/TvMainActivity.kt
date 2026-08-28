@@ -37,6 +37,7 @@ import dev.vayou.tv.library.TvLibraryScreen
 import dev.vayou.tv.music.TvMusicScreen
 import dev.vayou.tv.music.TvNetworkAudioScreen
 import dev.vayou.tv.music.TvNetworkAudioViewModel
+import dev.vayou.tv.network.StarredArg
 import dev.vayou.tv.network.TvChannelsScreen
 import dev.vayou.tv.network.TvServerScreen
 import dev.vayou.tv.network.TvServerViewModel
@@ -116,7 +117,7 @@ private fun TvNavigation() {
                 onOpenPlaylist = { playlist -> navController.navigate(channelsRoute(playlist.url)) },
                 // No address: the screen falls back to whatever list it has, and what it shows is
                 // the starred of all of them regardless.
-                onOpenStarredChannels = { navController.navigate("channels") },
+                onOpenStarredChannels = { navController.navigate(starredChannelsRoute()) },
                 onOpenLibrary = { navController.navigate(libraryRoute()) },
                 onOpenMusic = { navController.navigate(RouteMusic) },
                 onOpenSettings = { navController.navigate(RouteSettings) },
@@ -165,7 +166,7 @@ private fun TvNavigation() {
             )
         }
         composable(
-            route = "channels?$UrlArg={$UrlArg}",
+            route = "channels?$UrlArg={$UrlArg}&$StarredArg={$StarredArg}",
             // Optional, because the row of saved lists opens one by name and the card at the foot of
             // the home screen opens whichever was last used. The screen falls back to the first list
             // it has when it is handed nothing.
@@ -173,6 +174,10 @@ private fun TvNavigation() {
                 navArgument(UrlArg) {
                     type = NavType.StringType
                     defaultValue = ""
+                },
+                navArgument(StarredArg) {
+                    type = NavType.BoolType
+                    defaultValue = false
                 },
             ),
         ) {
@@ -250,6 +255,9 @@ private fun serverRoute(host: String, share: String = "", path: String = ""): St
 private fun audioRoute(uri: String): String = "audio/${Uri.encode(uri)}"
 
 private fun channelsRoute(url: String): String = "channels?$UrlArg=${Uri.encode(url)}"
+
+/** The starred of every list, which is a place and not a setting of the screen that lists one. */
+private fun starredChannelsRoute(): String = "channels?$StarredArg=true"
 
 /**
  * What the screen says when it may not read anything.

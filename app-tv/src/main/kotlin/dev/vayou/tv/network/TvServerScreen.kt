@@ -1,6 +1,7 @@
 package dev.vayou.tv.network
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -178,7 +179,14 @@ fun TvServerScreen(
         )
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    // Opaque, because the screen it is pushed over is still drawn underneath while the two are
+    // being swapped: through a transparent one, the cards of the screen behind show as a shadow
+    // across this one.
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface),
+    ) {
         TvSearchHeader(
             title = state.here(viewModel.host),
             query = query,

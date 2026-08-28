@@ -1,6 +1,7 @@
 package dev.vayou.tv.music
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.session.MediaController
+import androidx.tv.material3.MaterialTheme
 import dev.vayou.core.media.MusicSort
 import dev.vayou.core.media.Song
 import dev.vayou.core.model.SmartPlaylist
@@ -127,7 +129,14 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
         )
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    // Opaque, because the screen it is pushed over is still drawn underneath while the two are
+    // being swapped: through a transparent one, the cards of the screen behind show as a shadow
+    // across this one.
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface),
+    ) {
         // Only for what the listener walked into. At the top the bar above already says "Music".
         val opening = when {
             isInFavourites -> stringResource(R.string.favourites)

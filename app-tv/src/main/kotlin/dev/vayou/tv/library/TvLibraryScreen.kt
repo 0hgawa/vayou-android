@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,6 +29,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.tv.material3.MaterialTheme
 import coil3.compose.AsyncImage
 import dev.vayou.core.model.SmartPlaylist
 import dev.vayou.core.model.Sort
@@ -199,7 +201,14 @@ fun TvLibraryScreen(
         )
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    // Opaque, because the screen it is pushed over is still drawn underneath while the two are
+    // being swapped: through a transparent one, the cards of the screen behind show as a shadow
+    // across this one.
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface),
+    ) {
         // Only for what the viewer walked into. At the top the bar above already says "Videos", and
         // a heading repeating it is a line of screen spent saying nothing.
         val opening = when {

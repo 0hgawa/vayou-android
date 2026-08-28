@@ -41,17 +41,6 @@ class TvHomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     /**
-     * Turns the channels screen over to the starred before opening it.
-     *
-     * Written to the store rather than carried in the address, because the screen already reads it
-     * from there and keeps it between evenings: two ways of saying the same thing would be one to
-     * forget. [dev.vayou.core.smb.ChannelFavouritesStore.isOnlyStarred]
-     */
-    fun showOnlyStarredChannels() {
-        viewModelScope.launch { channelFavourites.setOnlyStarred(true) }
-    }
-
-    /**
      * Keeps a machine somebody typed the address of, before going to it.
      *
      * Kept rather than merely visited, which is where this differs from the phone. An address typed

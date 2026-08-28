@@ -62,14 +62,14 @@ class TvChannelsViewModel @Inject constructor(
     private val group = MutableStateFlow<String?>(null)
 
     /**
-     * Not held here, unlike the search and the group.
+     * Whether this screen was opened as the starred rather than as a list.
      *
-     * Those two belong to the file they were typed against and go when the screen does. Looking at
-     * the starred alone outlives it, as the chosen country does -- so it is read from the store,
-     * and the first drawing of the screen is already the answer rather than a thousand channels
-     * turning into twelve a frame later.
+     * Read off the address and never written. It was a flag kept on disc, which made the starred a
+     * setting of the channels screen rather than a place of their own: opening a list afterwards
+     * found the filter still turned to the starred, because the two were the same switch. A
+     * favourite belongs to the viewer and a group belongs to a file; they are not one question.
      */
-    private val onlyStarred = favourites.isOnlyStarred
+    private val isStarredOnly: Boolean = savedStateHandle.get<Boolean>(StarredArg) ?: false
 
     /**
      * The file, filtered and blocked by letter -- the expensive half, and the half that only three
@@ -103,27 +103,27 @@ class TvChannelsViewModel @Inject constructor(
 
     val state: StateFlow<TvChannelsState> = combine(
         narrowed,
-        combine(query, group, onlyStarred, ::Triple),
+        combine(query, group, ::Pair),
         favourites.favourites,
         combine(url, playlists.playlists, ::Pair),
-    ) { found, (query, group, onlyStarred), starredList, (address, saved) ->
+    ) { found, (query, group), starredList, (address, saved) ->
         val starred = starredList.mapTo(HashSet(), PlaylistChannel::url)
         TvChannelsState(
             // Neither answer belongs to the starred: they were written down whole when they were
             // starred and are read off disc. A viewer who came here for them would otherwise wait
             // on a file being fetched for a grid they are not looking at -- and see it fail.
-            isLoading = found.isLoading && !onlyStarred,
-            hasFailed = found.hasFailed && !onlyStarred,
+            isLoading = found.isLoading && !isStarredOnly,
+            hasFailed = found.hasFailed && !isStarredOnly,
             // Narrowed to the starred here rather than upstream, where the letters are worked out
             // for thousands of channels: that answer does not change when a star is toggled, and
             // re-deriving it every time somebody marked a channel would be the whole cost again for
             // a list the viewer can count.
-            sections = if (onlyStarred) starredList.byLetter() else found.sections,
+            sections = if (isStarredOnly) starredList.matching(query).byLetter() else found.sections,
             groups = found.groups,
             group = group,
             query = query,
             starred = starred,
-            onlyStarred = onlyStarred,
+            onlyStarred = isStarredOnly,
             saved = saved,
             listName = saved.firstOrNull { it.url == address }?.name.orEmpty(),
             listUrl = address,
@@ -141,7 +141,11 @@ class TvChannelsViewModel @Inject constructor(
                 if (saved.none { it.url == url.value }) url.value = saved.firstOrNull()?.url
             }
         }
-        viewModelScope.launch { url.filterNotNull().distinctUntilChanged().collect(::fetch) }
+        // Nothing is fetched for the starred: they were written down whole when they were
+        // starred, and the file they came from has nothing left to say about them.
+        if (!isStarredOnly) {
+            viewModelScope.launch { url.filterNotNull().distinctUntilChanged().collect(::fetch) }
+        }
     }
 
     private suspend fun fetch(address: String) {
@@ -191,19 +195,6 @@ class TvChannelsViewModel @Inject constructor(
     /** Null is every group, which is what the first row of the chooser stands for. */
     fun selectGroup(name: String?) {
         group.value = name
-        viewModelScope.launch { favourites.setOnlyStarred(false) }
-    }
-
-    /**
-     * Only the channels the viewer marked.
-     *
-     * One of the answers the filter gives rather than a switch beside it: a switch is a press to
-     * turn on and another to remember to turn off, and this is the same kind of question as "which
-     * group" -- what am I looking at.
-     */
-    fun showOnlyStarred() {
-        group.value = null
-        viewModelScope.launch { favourites.setOnlyStarred(true) }
     }
 
     /**
@@ -228,7 +219,6 @@ class TvChannelsViewModel @Inject constructor(
     private fun clearNarrowing() {
         query.value = ""
         group.value = null
-        viewModelScope.launch { favourites.setOnlyStarred(false) }
     }
 }
 
@@ -296,6 +286,9 @@ data class TvChannelsState(
 
 const val UrlArg = "url"
 
+/** Whether the screen is the starred of every list rather than one list. */
+const val StarredArg = "starred"
+
 /** Numbers and symbols, under one heading at the end. */
 const val OtherLetter = "#"
 
@@ -307,6 +300,10 @@ private const val IdleTimeoutMs = 5_000L
  * Letters in their order, and the block of numbers and symbols after them rather than before: it is
  * the leftovers, and leftovers go at the end.
  */
+/** The same test the file itself is narrowed by, so a search means one thing on either screen. */
+private fun List<PlaylistChannel>.matching(query: String): List<PlaylistChannel> =
+    if (query.isBlank()) this else filter { it.name.contains(query, ignoreCase = true) }
+
 private fun List<PlaylistChannel>.byLetter(): List<TvChannelSection> = groupBy { it.name.initial() }
     .map { (letter, found) -> TvChannelSection(letter, found) }
     .sortedWith(compareBy({ it.letter == OtherLetter }, { it.letter }))

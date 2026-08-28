@@ -321,10 +321,7 @@ fun TvHomeScreen(
                             if (state.favouriteChannels > 0) {
                                 Tile(
                                     title = stringResource(R.string.favourites),
-                                    onClick = {
-                                        viewModel.showOnlyStarredChannels()
-                                        onOpenStarredChannels()
-                                    },
+                                    onClick = onOpenStarredChannels,
                                 ) { TvCardMark(VayouIcons.StarFilled) }
                             }
                         },

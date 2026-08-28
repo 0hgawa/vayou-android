@@ -1,6 +1,7 @@
 package dev.vayou.tv.network
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -116,7 +117,14 @@ fun TvChannelsScreen(
         isSearching = false
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    // Opaque, because the screen it is pushed over is still drawn underneath while the
+    // two are being swapped: through a transparent one, the cards of the screen behind
+    // show as a shadow across this one.
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface),
+    ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Header(
                 state = state,
@@ -212,32 +220,27 @@ fun TvChannelsScreen(
             // groups are inside the file that is already open.
             // The starred sit at the head of both lists, because "only the ones I marked" is the
             // one narrowing that means the same thing whatever the list underneath is.
-            val starredOption = stringResource(R.string.favourites)
+            // No answer here about the starred any more: they are a screen of their own, reached
+            // from the home, and offering them as one of a file's groups is what tied the two
+            // together -- a viewer who looked at their favourites found the next list they opened
+            // still filtered to them.
             if (state.isByCountry) {
                 TvChoiceList(
                     title = stringResource(R.string.country),
-                    options = listOf(null to starredOption) + IptvCountries.map { it to it.name },
-                    selected = if (state.onlyStarred) null else state.country,
-                    onChoose = { country -> country?.let(viewModel::selectCountry) ?: viewModel.showOnlyStarred() },
+                    options = IptvCountries.map { it to it.name },
+                    selected = state.country,
+                    // Never null in practice: the list only holds countries. Typed to match the
+                    // selected one, which is null for a list that is not held by country at all.
+                    onChoose = { country -> country?.let(viewModel::selectCountry) },
                     onDismiss = { isFiltering = false },
                 )
             } else {
                 TvChoiceList(
                     title = stringResource(R.string.group),
                     options = listOf(AllGroups to stringResource(R.string.group_all)) +
-                        (StarredOnly to starredOption) +
                         state.groups.map { it to it },
-                    selected = when {
-                        state.onlyStarred -> StarredOnly
-                        else -> state.group ?: AllGroups
-                    },
-                    onChoose = { choice ->
-                        if (choice == StarredOnly) {
-                            viewModel.showOnlyStarred()
-                        } else {
-                            viewModel.selectGroup(choice.takeIf { it != AllGroups })
-                        }
-                    },
+                    selected = state.group ?: AllGroups,
+                    onChoose = { choice -> viewModel.selectGroup(choice.takeIf { it != AllGroups }) },
                     onDismiss = { isFiltering = false },
                 )
             }
@@ -380,6 +383,14 @@ private fun Header(
         )
         if (!state.hasList) return@Row
 
+        // Neither of these belongs to the starred: one names the file being read and the other
+        // narrows it, and the starred are not one file. What is left is the search, which does
+        // narrow them.
+        if (state.onlyStarred) {
+            TvIconButton(icon = VayouIcons.Search, label = stringResource(R.string.search), onClick = onOpenSearch)
+            return@Row
+        }
+
         // Only where there is a choice to make. One list and this pill says what the title already
         // says, and costs a press to reach on the way to the ones that do something.
         if (state.saved.size > 1) {
@@ -490,10 +501,8 @@ private val PillIcon = 18.dp
 /** A group's name can run to a sentence; the pill says what it can and stops. */
 private val PillLabelWidth = 220.dp
 
-/** The two answers in the group chooser that are not a group: everything, and only the starred. */
+/** The one answer in the group chooser that is not a group. */
 private const val AllGroups = ""
-
-private const val StarredOnly = "\u0000starred"
 
 /** What a station is known by, on its card and in the menu of what can be done to it. */
 @Composable
