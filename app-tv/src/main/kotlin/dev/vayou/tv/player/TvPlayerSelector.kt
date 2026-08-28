@@ -45,6 +45,8 @@ internal enum class TvSelector {
     Audio,
     Subtitle,
     SubtitleTracks,
+    SubtitleSearch,
+    SubtitleLanguage,
     SubtitleDelay,
     Translation,
     SubtitleStyle,
@@ -96,6 +98,13 @@ internal fun TvPlayerSelector(
     options: List<TvSelectorOption>,
     onOpen: (TvSelector) -> Unit,
     onDismiss: () -> Unit,
+    /**
+     * Said instead of the list, for a panel with nothing to offer yet.
+     *
+     * A row that answers nothing is worse than no row -- the viewer presses it, the screen does not
+     * move, and they press it again -- so a search still running says so in words.
+     */
+    message: String? = null,
 ) {
     val listState = rememberLazyListState()
     val focus = remember { FocusRequester() }
@@ -127,6 +136,14 @@ internal fun TvPlayerSelector(
                 style = MaterialTheme.typography.titleLarge,
                 color = Color.White,
             )
+            if (message != null) {
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                return@Column
+            }
             LazyColumn(
                 state = listState,
                 verticalArrangement = Arrangement.spacedBy(TvRowGap),

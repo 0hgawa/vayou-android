@@ -115,11 +115,11 @@
     <string name="settings_seek_increment">How far a skip moves</string>
 
     <string name="settings_decoder_priority">Which decoder first</string>
-    <string name="settings_decoder_device">The phone’s own</string>
+    <string name="settings_decoder_device">The device’s own</string>
     <string name="settings_decoder_device_description">Coolest and fastest, falling back when a file will not open</string>
     <string name="settings_decoder_app">The bundled one</string>
     <string name="settings_decoder_app_description">For formats the phone opens badly rather than not at all</string>
-    <string name="settings_decoder_device_only">The phone’s own, and nothing else</string>
+    <string name="settings_decoder_device_only">The device’s own, and nothing else</string>
     <string name="settings_decoder_device_only_description">No fallback, for finding out which of the two is at fault</string>
 
     <string name="settings_audio_focus">Give way to other apps</string>
@@ -131,7 +131,7 @@
     <string name="settings_delete">Delete</string>
     <string name="settings_clear_thumbnails">Clear the thumbnails</string>
     <string name="settings_clear_thumbnails_description">Throw away the frames the library has saved</string>
-    <string name="settings_clear_thumbnails_confirmation">They will be made again as you scroll. Nothing is removed from your phone.</string>
+    <string name="settings_clear_thumbnails_confirmation">They will be made again as you scroll. Nothing is removed from this device.</string>
     <string name="settings_reset_all">Reset every setting</string>
     <string name="settings_reset_all_description">Put everything back to how it shipped</string>
     <string name="settings_reset_all_confirmation">Every setting goes back to its default. Your videos, playlists and positions are untouched.</string>

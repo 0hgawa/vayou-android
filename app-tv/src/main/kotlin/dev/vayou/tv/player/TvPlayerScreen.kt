@@ -73,6 +73,9 @@ import androidx.media3.ui.compose.modifiers.resizeWithContentScale
 import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import dev.vayou.core.data.models.OnlineSubtitleState
+import dev.vayou.core.data.models.OpenSubtitleResult
+import dev.vayou.core.data.models.SubtitleLanguages
 import dev.vayou.core.model.PlayerPreferences
 import dev.vayou.core.player.MaxVolumeBoostMillibels
 import dev.vayou.core.player.NoVolumeBoost
@@ -128,6 +131,7 @@ import kotlinx.coroutines.launch
 fun TvPlayerScreen(onBack: () -> Unit, viewModel: TvPlayerViewModel = hiltViewModel()) {
     val opening by viewModel.opening.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var controller by remember { mutableStateOf<MediaController?>(null) }
     var connected by remember { mutableStateOf<MediaController?>(null) }
 
@@ -228,7 +232,23 @@ fun TvPlayerScreen(onBack: () -> Unit, viewModel: TvPlayerViewModel = hiltViewMo
                 color = Color.White,
             )
 
-            else -> Playing(player, player, preferences, viewModel.isLive, viewModel::updatePreferences, onBack)
+            else -> Playing(
+                controller = player,
+                player = player,
+                preferences = preferences,
+                isKnownLive = viewModel.isLive,
+                onStyle = viewModel::updatePreferences,
+                onlineSubtitles = viewModel.onlineSubtitles,
+                subtitleLanguage = viewModel.subtitleLanguage,
+                onSearchSubtitles = viewModel::searchSubtitles,
+                onDownloadSubtitle = { result ->
+                    viewModel.downloadSubtitle(result) { file ->
+                        scope.launch { player.addSubtitle(context.externalSubtitle(file)) }
+                    }
+                },
+                onChooseSubtitleLanguage = viewModel::chooseSubtitleLanguage,
+                onBack = onBack,
+            )
         }
     }
 }
@@ -328,6 +348,12 @@ private fun Playing(
     /** True from the first frame drawn, because the caller knew before the stream answered. */
     isKnownLive: Boolean,
     onStyle: ((PlayerPreferences) -> PlayerPreferences) -> Unit,
+    /** The search for captions this film shipped without, which the model runs and this draws. */
+    onlineSubtitles: OnlineSubtitleState,
+    subtitleLanguage: String,
+    onSearchSubtitles: () -> Unit,
+    onDownloadSubtitle: (OpenSubtitleResult) -> Unit,
+    onChooseSubtitleLanguage: (String) -> Unit,
     onBack: () -> Unit,
 ) {
     var isPlaying by remember { mutableStateOf(player.isPlaying) }
@@ -583,9 +609,17 @@ private fun Playing(
                     .weight(panelWeight)
                     .padding(vertical = SplitInset, horizontal = if (isSplit) SplitInset else 0.dp),
             ) {
+                // Asked for when the panel opens rather than by the row that opens it: a row that
+                // leads somewhere does not answer anything, and the answer is what this one needs.
+                LaunchedEffect(selector) {
+                    if (selector == TvSelector.SubtitleSearch && onlineSubtitles == OnlineSubtitleState.Idle) {
+                        onSearchSubtitles()
+                    }
+                }
                 selector?.let { open ->
                     TvPlayerSelector(
                         title = stringResource(open.title),
+                        message = subtitleSearchMessage(open, onlineSubtitles),
                         options = open.optionsFor(
                             player = player,
                             audio = audioTracks,
@@ -602,6 +636,10 @@ private fun Playing(
                             onStyle = onStyle,
                             onBoost = { boostMillibels = it },
                             onPickSubtitle = { pickSubtitle.launch(SubtitleMimeTypes) }.takeIf { canPickFile },
+                            onlineSubtitles = onlineSubtitles,
+                            subtitleLanguage = subtitleLanguage,
+                            onDownloadSubtitle = onDownloadSubtitle,
+                            onChooseSubtitleLanguage = onChooseSubtitleLanguage,
                             onScale = { scale = it },
                             onNightMode = { isNightMode = it },
                             onSleep = { sleepMinutes = it },
@@ -671,6 +709,8 @@ private val TvSelector.title: Int
         TvSelector.Audio -> R.string.audio_track
         TvSelector.Subtitle -> R.string.subtitles
         TvSelector.SubtitleTracks -> R.string.subtitle_track
+        TvSelector.SubtitleSearch -> R.string.search_subtitle
+        TvSelector.SubtitleLanguage -> R.string.subtitle_language
         TvSelector.SubtitleDelay -> R.string.subtitle_delay
         TvSelector.Translation -> R.string.translation
         TvSelector.SubtitleStyle -> R.string.subtitle_style
@@ -709,6 +749,10 @@ private fun TvSelector.optionsFor(
     onBoost: (Int) -> Unit,
     /** Null where nothing on this device can open a file, for the same reason [boostMillibels] is. */
     onPickSubtitle: (() -> Unit)?,
+    onlineSubtitles: OnlineSubtitleState,
+    subtitleLanguage: String,
+    onDownloadSubtitle: (OpenSubtitleResult) -> Unit,
+    onChooseSubtitleLanguage: (String) -> Unit,
     onScale: (VideoContentScale) -> Unit,
     onNightMode: (Boolean) -> Unit,
     onSleep: (Int?) -> Unit,
@@ -734,6 +778,15 @@ private fun TvSelector.optionsFor(
         onPickSubtitle?.let { pick ->
             add(TvSelectorOption(stringResource(R.string.subtitle_file), icon = VayouIcons.FileOpen, onChoose = pick))
         }
+        // No file manager needed for this one, so it is offered whether or not the last row was.
+        // Most of what a television plays comes off a share and arrives with no captions at all.
+        add(
+            TvSelectorOption(
+                label = stringResource(R.string.search_subtitle),
+                icon = VayouIcons.Search,
+                opens = TvSelector.SubtitleSearch,
+            ),
+        )
         add(
             TvSelectorOption(
                 label = stringResource(R.string.subtitle_delay),
@@ -783,6 +836,42 @@ private fun TvSelector.optionsFor(
     TvSelector.SubtitleSize -> SubtitleSizePreset.entries.map { size ->
         TvSelectorOption(stringResource(size.tvLabel), size.textSize == preferences.subtitleTextSize) {
             onStyle { it.copy(subtitleTextSize = size.textSize) }
+        }
+    }
+
+    // The results, with the language filter at the head of them: a viewer who got English for a
+    // Brazilian film wants to narrow it, and that is the next thing they reach for.
+    TvSelector.SubtitleSearch -> buildList {
+        add(
+            TvSelectorOption(
+                label = stringResource(R.string.subtitle_language),
+                subLabel = SubtitleLanguages.firstOrNull { it.id == subtitleLanguage }?.label,
+                icon = VayouIcons.Language,
+                opens = TvSelector.SubtitleLanguage,
+            ),
+        )
+        val found = onlineSubtitles as? OnlineSubtitleState.Found ?: onlineSubtitles as? OnlineSubtitleState.Downloading
+        val results = when (found) {
+            is OnlineSubtitleState.Found -> found.results
+            is OnlineSubtitleState.Downloading -> found.results
+            else -> emptyList()
+        }
+        results.forEach { result ->
+            add(
+                TvSelectorOption(
+                    label = result.subFileName,
+                    // What release it matched and how many people took it, which between them are
+                    // the whole of what tells one line of this list from the next.
+                    subLabel = "${result.subLanguageId.uppercase()} · ${result.subDownloadsCnt}",
+                    icon = VayouIcons.Caption,
+                ) { onDownloadSubtitle(result) },
+            )
+        }
+    }
+
+    TvSelector.SubtitleLanguage -> SubtitleLanguages.map { language ->
+        TvSelectorOption(language.label, isSelected = language.id == subtitleLanguage) {
+            onChooseSubtitleLanguage(language.id)
         }
     }
 
@@ -984,3 +1073,20 @@ private const val FilmShare = 0.58f
 private const val PanelShare = 0.42f
 
 private val SplitInset = 24.dp
+
+/**
+ * What a search panel says while it has no list to show.
+ *
+ * Null once there are results, which is when the list itself is the answer.
+ */
+@Composable
+private fun subtitleSearchMessage(open: TvSelector, state: OnlineSubtitleState): String? {
+    if (open != TvSelector.SubtitleSearch) return null
+    return when (state) {
+        OnlineSubtitleState.Idle, OnlineSubtitleState.Searching -> stringResource(R.string.searching)
+        OnlineSubtitleState.Failed -> stringResource(R.string.subtitle_search_failed)
+        is OnlineSubtitleState.Found ->
+            stringResource(R.string.no_subtitles_found).takeIf { state.results.isEmpty() }
+        is OnlineSubtitleState.Downloading -> null
+    }
+}

@@ -1,6 +1,4 @@
-package dev.vayou.feature.player
-
-import androidx.compose.runtime.Immutable
+package dev.vayou.core.data.models
 
 /**
  * What language to ask OpenSubtitles for.
@@ -12,7 +10,6 @@ import androidx.compose.runtime.Immutable
  * The blank id means every language, and leads because a viewer who has not said otherwise wants
  * whatever exists for the film in front of them.
  */
-@Immutable
 data class SubtitleLanguage(val id: String, val label: String)
 
 val SubtitleLanguages: List<SubtitleLanguage> = listOf(

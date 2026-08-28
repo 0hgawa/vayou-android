@@ -20,6 +20,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.vayou.core.common.OpenSubtitlesHasher
 import dev.vayou.core.common.di.ApplicationScope
+import dev.vayou.core.data.models.OnlineSubtitleState
 import dev.vayou.core.data.models.OpenSubtitleResult
 import dev.vayou.core.data.repository.MediaRepository
 import dev.vayou.core.data.repository.OpenSubtitlesRepository

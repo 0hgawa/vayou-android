@@ -1,11 +1,21 @@
 package dev.vayou.tv.player
 
+import android.content.Context
+import android.net.Uri
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.vayou.core.common.OpenSubtitlesHasher
 import dev.vayou.core.common.di.ApplicationScope
+import dev.vayou.core.data.models.OnlineSubtitleState
+import dev.vayou.core.data.models.OpenSubtitleResult
 import dev.vayou.core.data.repository.MediaRepository
+import dev.vayou.core.data.repository.OpenSubtitlesRepository
 import dev.vayou.core.data.repository.PreferencesRepository
 import dev.vayou.core.domain.GetSortedVideosUseCase
 import dev.vayou.core.model.PlayerPreferences
@@ -30,8 +40,73 @@ class TvPlayerViewModel @Inject constructor(
     private val mediaRepository: MediaRepository,
     private val getSortedVideos: GetSortedVideosUseCase,
     private val preferencesRepository: PreferencesRepository,
+    private val openSubtitles: OpenSubtitlesRepository,
+    @param:ApplicationContext private val context: Context,
     @param:ApplicationScope private val applicationScope: CoroutineScope,
 ) : ViewModel() {
+
+    /** What the search has to say, from not asked yet through to a file on its way down. */
+    var onlineSubtitles: OnlineSubtitleState by mutableStateOf(OnlineSubtitleState.Idle)
+        private set
+
+    /** Which language to ask for; blank is every one, which is where a viewer starts. */
+    var subtitleLanguage: String by mutableStateOf("")
+        private set
+
+    /**
+     * Looks for a subtitle, by the file's own fingerprint where there is a file to fingerprint.
+     *
+     * That fingerprint is the size and two 64KB chunks, and it matches a *release* rather than a
+     * title: the same film cut two ways needs two different timings, and only the hash tells them
+     * apart. It needs a path on this machine, which a film on a share does not have -- so the name
+     * is the fallback, and on a television it is the usual case rather than the exception.
+     */
+    fun searchSubtitles() {
+        onlineSubtitles = OnlineSubtitleState.Searching
+        viewModelScope.launch {
+            val hashed = mediaRepository.getVideoByUri(videoUri)?.path?.let {
+                OpenSubtitlesHasher.computeHash(it)
+            }
+            val found = if (hashed == null) {
+                openSubtitles.searchByQuery(searchTerm(), subtitleLanguage)
+            } else {
+                openSubtitles.searchByHash(hashed.first, hashed.second, subtitleLanguage)
+            }
+            onlineSubtitles = found.fold(
+                onSuccess = { OnlineSubtitleState.Found(it) },
+                onFailure = { OnlineSubtitleState.Failed },
+            )
+        }
+    }
+
+    /** The name the file goes by, which is all there is to search on for anything off a share. */
+    private fun searchTerm(): String = Uri.decode(videoUri.substringAfterLast('/')).substringBeforeLast('.')
+
+    /** Asking again in another language, which is a different question about the same film. */
+    fun chooseSubtitleLanguage(id: String) {
+        subtitleLanguage = id
+        searchSubtitles()
+    }
+
+    /**
+     * Fetches one of them and hands back the file, for the screen to put on the film.
+     *
+     * The list stays up behind it: a viewer who picked the wrong release wants the next one, not
+     * the search again.
+     */
+    fun downloadSubtitle(result: OpenSubtitleResult, onReady: (Uri) -> Unit) {
+        val shown = onlineSubtitles as? OnlineSubtitleState.Found ?: return
+        onlineSubtitles = OnlineSubtitleState.Downloading(shown.results, result)
+        viewModelScope.launch {
+            val file = openSubtitles.downloadSubtitle(result, context.cacheDir).getOrNull()
+            if (file == null) {
+                onlineSubtitles = OnlineSubtitleState.Failed
+                return@launch
+            }
+            onlineSubtitles = shown
+            onReady(Uri.fromFile(file))
+        }
+    }
 
     /** How the captions are drawn, which is the viewer's to set and the same on either device. */
     val preferences: StateFlow<PlayerPreferences> = preferencesRepository.playerPreferences

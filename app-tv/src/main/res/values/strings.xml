@@ -37,7 +37,7 @@
     <string name="night_mode">Night mode</string>
     <string name="on">On</string>
     <string name="reaching_server">Reaching the server…</string>
-    <string name="server_unreachable">That server is not answering, or it needs a password the phone has not saved</string>
+    <string name="server_unreachable">That server is not answering, or it needs a password this television has not saved</string>
     <string name="nothing_here">Nothing here to play</string>
     <string name="sign_in">This server wants a name and a password</string>
     <string name="sign_in_failed">That name and password were not accepted</string>
@@ -133,4 +133,9 @@
     <string name="equalizer">Equalizer</string>
     <string name="equalizer_off">Off</string>
     <string name="opening_media">Opening…</string>
+    <string name="search_subtitle">Search for a subtitle</string>
+    <string name="subtitle_language">Subtitle language</string>
+    <string name="searching">Looking…</string>
+    <string name="subtitle_search_failed">Could not reach the subtitle service</string>
+    <string name="no_subtitles_found">Nothing found for this film</string>
 </resources>

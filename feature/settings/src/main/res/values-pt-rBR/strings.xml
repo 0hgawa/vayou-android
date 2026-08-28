@@ -111,11 +111,11 @@
     <string name="settings_seek_increment">Quanto um pulo avança</string>
 
     <string name="settings_decoder_priority">Qual decodificador primeiro</string>
-    <string name="settings_decoder_device">O do próprio telefone</string>
+    <string name="settings_decoder_device">O do próprio aparelho</string>
     <string name="settings_decoder_device_description">Mais rápido e mais frio, recuando quando um arquivo não abre</string>
     <string name="settings_decoder_app">O que vem no app</string>
     <string name="settings_decoder_app_description">Para formatos que o telefone abre mal em vez de não abrir</string>
-    <string name="settings_decoder_device_only">Só o do telefone</string>
+    <string name="settings_decoder_device_only">Só o do aparelho</string>
     <string name="settings_decoder_device_only_description">Sem recuo, para descobrir qual dos dois está falhando</string>
 
     <string name="settings_audio_focus">Ceder a outros apps</string>
@@ -127,7 +127,7 @@
     <string name="settings_delete">Excluir</string>
     <string name="settings_clear_thumbnails">Limpar as miniaturas</string>
     <string name="settings_clear_thumbnails_description">Descartar os quadros que a biblioteca guardou</string>
-    <string name="settings_clear_thumbnails_confirmation">Elas serão refeitas conforme você rolar. Nada é removido do telefone.</string>
+    <string name="settings_clear_thumbnails_confirmation">Elas serão refeitas conforme você rolar. Nada é removido do aparelho.</string>
     <string name="settings_reset_all">Restaurar todos os ajustes</string>
     <string name="settings_reset_all_description">Voltar tudo ao estado de fábrica</string>
     <string name="settings_reset_all_confirmation">Cada ajuste volta ao padrão. Seus vídeos, playlists e posições ficam intactos.</string>

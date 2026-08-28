@@ -1,10 +1,6 @@
-package dev.vayou.feature.player
-
-import androidx.compose.runtime.Immutable
-import dev.vayou.core.data.models.OpenSubtitleResult
+package dev.vayou.core.data.models
 
 /** Where a search has got to, for the sheet to draw. */
-@Immutable
 sealed interface OnlineSubtitleState {
     data object Idle : OnlineSubtitleState
 

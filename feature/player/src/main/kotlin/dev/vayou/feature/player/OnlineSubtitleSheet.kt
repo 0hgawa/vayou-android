@@ -30,7 +30,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import dev.vayou.core.data.models.OnlineSubtitleState
 import dev.vayou.core.data.models.OpenSubtitleResult
+import dev.vayou.core.data.models.SubtitleLanguages
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.VayouBottomSheet
 import dev.vayou.core.ui.designsystem.components.VayouBottomSheetTitle

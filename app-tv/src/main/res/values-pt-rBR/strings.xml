@@ -36,7 +36,7 @@
     <string name="night_mode">Modo noturno</string>
     <string name="on">Ativado</string>
     <string name="reaching_server">Conectando ao servidor…</string>
-    <string name="server_unreachable">Esse servidor não responde, ou pede uma senha que o celular não salvou</string>
+    <string name="server_unreachable">Esse servidor não responde, ou pede uma senha que esta televisão não salvou</string>
     <string name="nothing_here">Nada para reproduzir aqui</string>
     <string name="sign_in">Esse servidor pede nome e senha</string>
     <string name="sign_in_failed">Nome ou senha não aceitos</string>
@@ -132,4 +132,9 @@
     <string name="equalizer">Equalizador</string>
     <string name="equalizer_off">Desligado</string>
     <string name="opening_media">Abrindo…</string>
+    <string name="search_subtitle">Buscar legenda</string>
+    <string name="subtitle_language">Idioma da legenda</string>
+    <string name="searching">Procurando…</string>
+    <string name="subtitle_search_failed">Não foi possível alcançar o serviço de legendas</string>
+    <string name="no_subtitles_found">Nada encontrado para este filme</string>
 </resources>
