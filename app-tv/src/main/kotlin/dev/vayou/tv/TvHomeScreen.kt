@@ -29,13 +29,13 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.compositeOver
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -124,21 +124,33 @@ fun TvHomeScreen(
     // nothing to read: a row of folders and servers lets the screen settle rather than inventing
     // a colour for a glyph.
     val surface = MaterialTheme.colorScheme.surface
-    val tint = rememberArtworkTint(model = focused, fallback = BackdropLift.compositeOver(surface))
+    val tint = rememberArtworkTint(model = focused, fallback = surface)
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            // Down and not across, unlike the sleeve: this screen is rows stacked downwards, and a
-            // wash that follows them is one the eye reads as depth rather than as a second element.
-            // Gone by two thirds, so the lower rows keep the contrast the titles were chosen for.
-            .background(
-                Brush.verticalGradient(
-                    0f to tint,
-                    BackdropMidpoint to lerp(tint, surface, BackdropMidBlend),
-                    1f to surface,
-                ),
-            ),
+            // A light above the corner where the screen begins, and only where a picture has
+            // lit it.
+            //
+            // Nothing is laid on for its own sake: with no artwork under the focus this draws the
+            // ground on the ground and the screen is black, which is what a wall of cards wants
+            // behind it and what every television player settles on. A wash held up by nothing is
+            // decoration a viewer either cannot see or asks to be turned down.
+            //
+            // Round rather than straight, for when it does appear. A band is uniform along its
+            // whole width, which reads as fog rather than as anything lighting a room, and it
+            // spends its few levels of grey over the height of the screen alone -- a step of
+            // banding every fifteen pixels on a large panel in the dark. Spread round a circle
+            // wider than the screen, the same levels cover twice the distance in two directions.
+            .drawBehind {
+                drawRect(
+                    Brush.radialGradient(
+                        colors = listOf(tint, surface),
+                        center = Offset(x = size.width * GlowCentre, y = 0f),
+                        radius = size.height * GlowRadius,
+                    ),
+                )
+            },
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             // The two marks the phone keeps in its header, here for the same reason: they are things
@@ -611,22 +623,16 @@ private fun Modifier.reporting(artwork: Any?, onFocused: (Any?) -> Unit): Modifi
     onFocusChanged { if (it.isFocused) onFocused(artwork) }
 
 /**
- * What the screen sits on where the card under the focus has no picture to take a colour from.
+ * Where the light comes from, and how far it carries.
  *
- * Black was honest and dead: most of this screen is marks rather than pictures, so the wash the
- * artwork drives had nothing to drive it and the home was a grid of grey on nothing.
- *
- * White at almost nothing, laid over the ground rather than a colour of its own. The names on the
- * cards are white and the gradient is what they stand on, so anything with a hue in it is a tint
- * that eats a title from three metres -- and a neutral one lifts the top of the screen without
- * ever being a thing the eye has to account for. Where there is artwork it still wins, as it did.
+ * Over the head of the first card rather than the middle of the screen: centred, a glow is a lamp
+ * behind the television and the eye finds it; off to the side it is only the room being lit. Its
+ * middle sits on the top edge, so what is on screen is the lower half of it and never the bright
+ * point itself.
  */
-private val BackdropLift = Color.White.copy(alpha = 0.12f)
+private const val GlowCentre = 0.28f
 
-/** Where the wash has given way, and how far it has gone by then. */
-private const val BackdropMidpoint = 0.45f
-
-private const val BackdropMidBlend = 0.7f
+private const val GlowRadius = 1.5f
 
 private val RowGap = 32.dp
 
