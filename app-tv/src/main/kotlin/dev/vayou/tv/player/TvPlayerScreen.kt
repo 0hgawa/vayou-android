@@ -36,6 +36,7 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -106,11 +107,13 @@ import dev.vayou.tv.SplitMs
 import dev.vayou.tv.TvAction
 import dev.vayou.tv.TvActions
 import dev.vayou.tv.TvCardTitleGap
+import dev.vayou.tv.TvDialog
 import dev.vayou.tv.TvDialogWidth
 import dev.vayou.tv.TvMessage
 import dev.vayou.tv.TvRowGap
 import dev.vayou.tv.TvRowInset
 import dev.vayou.tv.TvScreenInset
+import dev.vayou.tv.TvTextField
 import dev.vayou.tv.TvTickMs
 import dev.vayou.tv.TvTitleInset
 import dev.vayou.tv.WholeScreen
@@ -240,6 +243,7 @@ fun TvPlayerScreen(onBack: () -> Unit, viewModel: TvPlayerViewModel = hiltViewMo
                 onStyle = viewModel::updatePreferences,
                 onlineSubtitles = viewModel.onlineSubtitles,
                 subtitleLanguage = viewModel.subtitleLanguage,
+                subtitleQuery = viewModel.subtitleQuery,
                 onSearchSubtitles = viewModel::searchSubtitles,
                 onDownloadSubtitle = { result ->
                     viewModel.downloadSubtitle(result) { file ->
@@ -247,6 +251,7 @@ fun TvPlayerScreen(onBack: () -> Unit, viewModel: TvPlayerViewModel = hiltViewMo
                     }
                 },
                 onChooseSubtitleLanguage = viewModel::chooseSubtitleLanguage,
+                onSearchSubtitlesFor = viewModel::searchSubtitlesFor,
                 onBack = onBack,
             )
         }
@@ -351,11 +356,25 @@ private fun Playing(
     /** The search for captions this film shipped without, which the model runs and this draws. */
     onlineSubtitles: OnlineSubtitleState,
     subtitleLanguage: String,
+    subtitleQuery: String,
     onSearchSubtitles: () -> Unit,
     onDownloadSubtitle: (OpenSubtitleResult) -> Unit,
     onChooseSubtitleLanguage: (String) -> Unit,
+    onSearchSubtitlesFor: (String) -> Unit,
     onBack: () -> Unit,
 ) {
+    // Up over the film rather than in the column beside it: a keyboard is drawn by the television
+    // across the foot of the screen, and a box in a panel a third of the width would be typed into
+    // from behind it.
+    var isNamingSubtitle by remember { mutableStateOf(false) }
+
+    if (isNamingSubtitle) {
+        NameSubtitle(
+            term = subtitleQuery,
+            onSearch = onSearchSubtitlesFor,
+            onDismiss = { isNamingSubtitle = false },
+        )
+    }
     var isPlaying by remember { mutableStateOf(player.isPlaying) }
     var positionMs by remember { mutableLongStateOf(player.currentPosition.coerceAtLeast(0)) }
     var durationMs by remember { mutableLongStateOf(player.duration.coerceAtLeast(0)) }
@@ -638,8 +657,10 @@ private fun Playing(
                             onPickSubtitle = { pickSubtitle.launch(SubtitleMimeTypes) }.takeIf { canPickFile },
                             onlineSubtitles = onlineSubtitles,
                             subtitleLanguage = subtitleLanguage,
+                            subtitleQuery = subtitleQuery,
                             onDownloadSubtitle = onDownloadSubtitle,
                             onChooseSubtitleLanguage = onChooseSubtitleLanguage,
+                            onEditSubtitleQuery = { isNamingSubtitle = true },
                             onScale = { scale = it },
                             onNightMode = { isNightMode = it },
                             onSleep = { sleepMinutes = it },
@@ -751,8 +772,10 @@ private fun TvSelector.optionsFor(
     onPickSubtitle: (() -> Unit)?,
     onlineSubtitles: OnlineSubtitleState,
     subtitleLanguage: String,
+    subtitleQuery: String,
     onDownloadSubtitle: (OpenSubtitleResult) -> Unit,
     onChooseSubtitleLanguage: (String) -> Unit,
+    onEditSubtitleQuery: () -> Unit,
     onScale: (VideoContentScale) -> Unit,
     onNightMode: (Boolean) -> Unit,
     onSleep: (Int?) -> Unit,
@@ -842,6 +865,14 @@ private fun TvSelector.optionsFor(
     // The results, with the language filter at the head of them: a viewer who got English for a
     // Brazilian film wants to narrow it, and that is the next thing they reach for.
     TvSelector.SubtitleSearch -> buildList {
+        add(
+            TvSelectorOption(
+                label = stringResource(R.string.subtitle_search_term),
+                subLabel = subtitleQuery,
+                icon = VayouIcons.Search,
+                onChoose = onEditSubtitleQuery,
+            ),
+        )
         add(
             TvSelectorOption(
                 label = stringResource(R.string.subtitle_language),
@@ -1073,6 +1104,36 @@ private const val FilmShare = 0.58f
 private const val PanelShare = 0.42f
 
 private val SplitInset = 24.dp
+
+/**
+ * The name to look the film up by, when the one on the file is not one anybody would recognise.
+ *
+ * Starts from whatever was searched last rather than empty: most of the time it wants a word
+ * added or a release tag taken off, not typing from nothing on a D-pad.
+ */
+@Composable
+private fun NameSubtitle(term: String, onSearch: (String) -> Unit, onDismiss: () -> Unit) {
+    var text by rememberSaveable(term) { mutableStateOf(term) }
+    val field = remember { FocusRequester() }
+    LaunchedEffect(Unit) { runCatching { field.requestFocus() } }
+
+    TvDialog(title = stringResource(R.string.subtitle_search_term), onDismiss = onDismiss) {
+        TvTextField(
+            value = text,
+            onValueChange = { text = it },
+            label = stringResource(R.string.subtitle_search_term),
+            modifier = Modifier.focusRequester(field),
+        )
+        Spacer(modifier = Modifier.height(TvRowGap))
+        TvActions {
+            TvAction(stringResource(R.string.cancel), onClick = onDismiss)
+            TvAction(stringResource(R.string.search)) {
+                onSearch(text)
+                onDismiss()
+            }
+        }
+    }
+}
 
 /**
  * What a search panel says while it has no list to show.

@@ -137,4 +137,5 @@
     <string name="searching">Procurando…</string>
     <string name="subtitle_search_failed">Não foi possível alcançar o serviço de legendas</string>
     <string name="no_subtitles_found">Nada encontrado para este filme</string>
+    <string name="subtitle_search_term">Procurar por outro nome</string>
 </resources>

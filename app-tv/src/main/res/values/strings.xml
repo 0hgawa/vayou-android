@@ -138,4 +138,5 @@
     <string name="searching">Looking…</string>
     <string name="subtitle_search_failed">Could not reach the subtitle service</string>
     <string name="no_subtitles_found">Nothing found for this film</string>
+    <string name="subtitle_search_term">Search by name</string>
 </resources>

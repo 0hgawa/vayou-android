@@ -54,6 +54,16 @@ class TvPlayerViewModel @Inject constructor(
         private set
 
     /**
+     * What to search for, starting from the file's own name.
+     *
+     * A name is a poor question on a television: what a share holds is called `S02E05 - Historia`
+     * as often as it is called anything a subtitle site has heard of. So it is a starting point
+     * rather than the whole of it, and the viewer can say what the film is actually called.
+     */
+    var subtitleQuery: String by mutableStateOf(searchTerm())
+        private set
+
+    /**
      * Looks for a subtitle, by the file's own fingerprint where there is a file to fingerprint.
      *
      * That fingerprint is the size and two 64KB chunks, and it matches a *release* rather than a
@@ -64,11 +74,16 @@ class TvPlayerViewModel @Inject constructor(
     fun searchSubtitles() {
         onlineSubtitles = OnlineSubtitleState.Searching
         viewModelScope.launch {
-            val hashed = mediaRepository.getVideoByUri(videoUri)?.path?.let {
-                OpenSubtitlesHasher.computeHash(it)
+            // Only while the question is still the file itself. Once the viewer has said what the
+            // film is called, they have told us the name matters more than the bytes -- and the
+            // hash would go on answering the question they just replaced.
+            val hashed = if (subtitleQuery != searchTerm()) {
+                null
+            } else {
+                mediaRepository.getVideoByUri(videoUri)?.path?.let { OpenSubtitlesHasher.computeHash(it) }
             }
             val found = if (hashed == null) {
-                openSubtitles.searchByQuery(searchTerm(), subtitleLanguage)
+                openSubtitles.searchByQuery(subtitleQuery, subtitleLanguage)
             } else {
                 openSubtitles.searchByHash(hashed.first, hashed.second, subtitleLanguage)
             }
@@ -81,6 +96,12 @@ class TvPlayerViewModel @Inject constructor(
 
     /** The name the file goes by, which is all there is to search on for anything off a share. */
     private fun searchTerm(): String = Uri.decode(videoUri.substringAfterLast('/')).substringBeforeLast('.')
+
+    /** Asked again under another name, which is the viewer correcting what the file is called. */
+    fun searchSubtitlesFor(query: String) {
+        subtitleQuery = query.trim().ifBlank { searchTerm() }
+        searchSubtitles()
+    }
 
     /** Asking again in another language, which is a different question about the same film. */
     fun chooseSubtitleLanguage(id: String) {
