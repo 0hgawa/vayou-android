@@ -65,7 +65,6 @@ fun TvLibraryScreen(
     onPlayVideo: (Video, isFromStart: Boolean) -> Unit,
     onBack: () -> Unit,
     /** True when the viewer pressed the magnifier on the home screen rather than the shelf itself. */
-    startSearching: Boolean = false,
     viewModel: TvLibraryViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -82,7 +81,7 @@ fun TvLibraryScreen(
     var openList by rememberSaveable { mutableStateOf<String?>(null) }
 
     /** What is being looked for, or null while the viewer is browsing rather than searching. */
-    var query by rememberSaveable { mutableStateOf(if (startSearching) "" else null) }
+    var query by rememberSaveable { mutableStateOf<String?>(null) }
 
     /** The film whose options are up, or null while the grid is just a grid. */
     var acting by remember { mutableStateOf<Video?>(null) }

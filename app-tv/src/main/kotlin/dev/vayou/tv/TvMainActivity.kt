@@ -121,24 +121,16 @@ private fun TvNavigation() {
                 onOpenLibrary = { navController.navigate(libraryRoute()) },
                 onOpenMusic = { navController.navigate(RouteMusic) },
                 onOpenSettings = { navController.navigate(RouteSettings) },
-                onSearch = { navController.navigate(libraryRoute(startSearching = true)) },
             )
         }
         composable(
-            route = "$RouteLibrary?$SearchArg={$SearchArg}",
-            arguments = listOf(
-                navArgument(SearchArg) {
-                    type = NavType.BoolType
-                    defaultValue = false
-                },
-            ),
+            route = RouteLibrary,
         ) { entry ->
             TvLibraryScreen(
                 onPlayVideo = { video, isFromStart ->
                     navController.navigate(playerRoute(video.uriString, isFromStart = isFromStart))
                 },
                 onBack = { navController.popBackStack() },
-                startSearching = entry.arguments?.getBoolean(SearchArg) == true,
             )
         }
         composable(RouteMusic) { TvMusicScreen(onBack = { navController.popBackStack() }) }
@@ -222,10 +214,7 @@ private const val RouteHome = "home"
 
 private const val RouteLibrary = "library"
 
-private const val SearchArg = "search"
-
-/** [startSearching] opens the shelf with its box already up, for the magnifier on the home screen. */
-private fun libraryRoute(startSearching: Boolean = false): String = "$RouteLibrary?$SearchArg=$startSearching"
+private fun libraryRoute(): String = RouteLibrary
 
 private const val RouteMusic = "music"
 

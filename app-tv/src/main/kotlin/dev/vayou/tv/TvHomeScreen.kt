@@ -72,7 +72,6 @@ fun TvHomeScreen(
     /** The starred channels of every list, which is a place of its own and not part of one. */
     onOpenStarredChannels: () -> Unit,
     onOpenSettings: () -> Unit,
-    onSearch: () -> Unit,
     viewModel: TvHomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -171,10 +170,7 @@ fun TvHomeScreen(
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
-                Row(horizontalArrangement = Arrangement.spacedBy(TvRowGap)) {
-                    TvIconButton(VayouIcons.Search, stringResource(R.string.search), onSearch)
-                    TvIconButton(VayouIcons.Settings, stringResource(R.string.settings), onOpenSettings)
-                }
+                TvIconButton(VayouIcons.Settings, stringResource(R.string.settings), onOpenSettings)
             }
 
             LazyColumn(
