@@ -136,13 +136,17 @@ internal fun TvPlayerSelector(
                 style = MaterialTheme.typography.titleLarge,
                 color = Color.White,
             )
+            // Above the rows and not instead of them. Put in their place, it left the panel with
+            // nothing that could take the focus: the remote went dead, the key that closes this
+            // never reached it, and the viewer had to leave the film to get out. It also took away
+            // the two rows they most want while a search is running -- the name and the language,
+            // which are what they would change if it were taking too long or came back empty.
             if (message != null) {
                 Text(
                     text = message,
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                return@Column
             }
             LazyColumn(
                 state = listState,
