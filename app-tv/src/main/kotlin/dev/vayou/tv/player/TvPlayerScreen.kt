@@ -40,6 +40,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Size
@@ -599,7 +600,12 @@ private fun Playing(
                 modifier = Modifier
                     .fillMaxHeight()
                     .weight(filmWeight)
-                    .padding(filmInset),
+                    .padding(filmInset)
+                    // Kept inside its half. A scale that fills or crops makes the surface larger
+                    // than the box it was given, and nothing was cutting it off: the picture grew
+                    // out over the panel beside it, so choosing how the film should sit painted
+                    // over the list being chosen from.
+                    .clipToBounds(),
                 contentAlignment = Alignment.Center,
             ) {
                 PlayerSurface(
