@@ -1,6 +1,7 @@
 package dev.vayou.tv
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
@@ -164,7 +166,19 @@ fun TvHomeScreen(
                 )
             },
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            // Answering where the focus goes, rather than racing whatever gives it out.
+            //
+            // Compose hands the initial focus to the first thing in reading order that will take
+            // it, which here is the search mark in the header -- so a card asked for it, got it,
+            // and had it taken away a frame later. Asking again does not help: by then the card is
+            // holding it, and the override has not happened yet. A group that says where entering
+            // it should land is not a race at all; it is the answer to the question being asked.
+            modifier = Modifier
+                .fillMaxSize()
+                .focusGroup()
+                .focusProperties { onEnter = { landing.requestFocus() } },
+        ) {
             // The two marks the phone keeps in its header, here for the same reason: they are things
             // to do rather than places to go. A place belongs in a row with the others; a thing to do
             // belongs above them, out of the way of the walk.
