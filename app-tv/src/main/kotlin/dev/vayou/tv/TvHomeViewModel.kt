@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.vayou.core.data.repository.MediaRepository
 import dev.vayou.core.model.Video
+import dev.vayou.core.smb.ChannelFavouritesStore
 import dev.vayou.core.smb.FavoriteFolder
 import dev.vayou.core.smb.FolderFavouritesStore
 import dev.vayou.core.smb.NetworkServerEntry
@@ -36,7 +37,19 @@ class TvHomeViewModel @Inject constructor(
     private val playlistStore: PlaylistStore,
     discovery: SmbDiscovery,
     private val folderFavourites: FolderFavouritesStore,
+    private val channelFavourites: ChannelFavouritesStore,
 ) : ViewModel() {
+
+    /**
+     * Turns the channels screen over to the starred before opening it.
+     *
+     * Written to the store rather than carried in the address, because the screen already reads it
+     * from there and keeps it between evenings: two ways of saying the same thing would be one to
+     * forget. [dev.vayou.core.smb.ChannelFavouritesStore.isOnlyStarred]
+     */
+    fun showOnlyStarredChannels() {
+        viewModelScope.launch { channelFavourites.setOnlyStarred(true) }
+    }
 
     /**
      * Keeps a machine somebody typed the address of, before going to it.
@@ -92,9 +105,9 @@ class TvHomeViewModel @Inject constructor(
         // nothing saved, and a row that waits for the phone to save something first would never
         // appear at all.
         combine(smbServerStore.savedServers, discovery.discover(), ::mergeNetworkServers),
-        playlistStore.playlists,
+        combine(playlistStore.playlists, channelFavourites.favouriteUrls, ::Pair),
         folderFavourites.favourites,
-    ) { videos, played, servers, playlists, folders ->
+    ) { videos, played, servers, (playlists, starredChannels), folders ->
         val byUri = videos.associateBy { it.uriString }
         TvHomeState(
             // Films, and only films, in the order they were watched. A local one is drawn from
@@ -124,6 +137,7 @@ class TvHomeViewModel @Inject constructor(
             videos = videos.asSequence().sortedByDescending { it.dateModified }.take(MaxRow).toList(),
             servers = servers.take(MaxRow),
             playlists = playlists.take(MaxRow),
+            favouriteChannels = starredChannels.size,
             folders = folders.take(MaxRow),
         )
     }.stateIn(
@@ -177,6 +191,8 @@ data class TvHomeState(
     val videos: List<Video> = emptyList(),
     val servers: List<NetworkServerEntry> = emptyList(),
     val playlists: List<SavedPlaylist> = emptyList(),
+    /** How many channels are starred, across every list -- nought hides the card that opens them. */
+    val favouriteChannels: Int = 0,
     val folders: List<FavoriteFolder> = emptyList(),
 )
 

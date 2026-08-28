@@ -33,7 +33,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -137,7 +136,6 @@ fun TvChannelsScreen(
                 else -> ChannelGrid(
                     state = state,
                     grid = grid,
-                    starredLabel = stringResource(R.string.starred),
                     landing = landing,
                     landingUrl = landingUrl,
                     onPlay = { channel ->
@@ -145,7 +143,6 @@ fun TvChannelsScreen(
                         onPlay(channel)
                     },
                     onOptions = { acting = it },
-                    onShowStarred = viewModel::showOnlyStarred,
                 )
             }
         }
@@ -215,7 +212,7 @@ fun TvChannelsScreen(
             // groups are inside the file that is already open.
             // The starred sit at the head of both lists, because "only the ones I marked" is the
             // one narrowing that means the same thing whatever the list underneath is.
-            val starredOption = stringResource(R.string.starred)
+            val starredOption = stringResource(R.string.favourites)
             if (state.isByCountry) {
                 TvChoiceList(
                     title = stringResource(R.string.country),
@@ -258,13 +255,11 @@ fun TvChannelsScreen(
 private fun ChannelGrid(
     state: TvChannelsState,
     grid: LazyGridState,
-    starredLabel: String,
     landing: FocusRequester,
     /** The channel to come back to, or null to come back to the first one. */
     landingUrl: String?,
     onPlay: (PlaylistChannel) -> Unit,
     onOptions: (PlaylistChannel) -> Unit,
-    onShowStarred: () -> Unit,
 ) {
     LazyVerticalGrid(
         state = grid,
@@ -273,27 +268,6 @@ private fun ChannelGrid(
         horizontalArrangement = Arrangement.spacedBy(TvCardGap),
         verticalArrangement = Arrangement.spacedBy(TvCardGap),
     ) {
-        // The starred, reached rather than stacked on top.
-        //
-        // They were a block above the alphabet, which put every one of them on the screen twice --
-        // once under its own heading and again under its letter -- and held only the ones belonging
-        // to the list in hand. A card is one press away, appears once, and opens on the starred of
-        // every list this television knows, which is what a favourite is: the viewer's, not the
-        // list's. Nothing is fetched to show them; each was written down whole when it was starred.
-        //
-        // Absent while they are what is being shown, where it would be a way into the screen the
-        // viewer is already on.
-        if (!state.onlyStarred && state.starred.isNotEmpty()) {
-            item(key = "starred") {
-                TvCard(
-                    title = starredLabel,
-                    subtitle = pluralStringResource(R.plurals.n_channels, state.starred.size, state.starred.size),
-                    onClick = onShowStarred,
-                ) {
-                    TvCardMark(VayouIcons.StarFilled)
-                }
-            }
-        }
         state.sections.forEachIndexed { sectionIndex, section ->
             heading(section.letter)
             itemsIndexed(section.channels, key = { _, channel -> channel.url }) { index, channel ->
@@ -330,8 +304,7 @@ private fun String.isLanding(landingUrl: String?, isFirst: Boolean): Boolean =
  */
 private fun TvChannelsState.indexOf(url: String?): Int? {
     if (url == null) return null
-    // The card for the starred is an item like any other, and the grid counts it.
-    var index = if (!onlyStarred && starred.isNotEmpty()) 1 else 0
+    var index = 0
     sections.forEach { section ->
         index++
         section.channels.forEachIndexed { position, channel -> if (channel.url == url) return index + position }
@@ -390,10 +363,14 @@ private fun Header(
         }
 
         TvBackButton(label = stringResource(R.string.back), onBack = onBack)
+        // The one place that says what is on the screen. It used to say only which list was
+        // open, and the filter beside it repeated the answer for a list held by country -- the same
+        // word twice across one header -- while saying nothing the title did not for the others.
         Text(
             text = when {
-                state.onlyStarred -> stringResource(R.string.starred)
-                else -> state.country?.name ?: state.listName
+                state.onlyStarred -> stringResource(R.string.favourites)
+                state.isByCountry -> state.country?.name ?: state.listName
+                else -> state.group ?: state.listName
             },
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface,
@@ -413,19 +390,10 @@ private fun Header(
                 onClick = onOpenLists,
             )
         }
-        // The word stays; the bubble it was in does not. What it is set to is worth reading before
-        // it is pressed -- that is the whole use of a filter -- but a coloured plate around it made
-        // it the loudest thing in a header whose job is to stay out of the way.
-        TvIconButton(
-            icon = VayouIcons.Filter,
-            label = stringResource(R.string.group),
-            onClick = onOpenFilter,
-            caption = when {
-                state.onlyStarred -> stringResource(R.string.starred)
-                state.isByCountry -> state.country?.name ?: stringResource(R.string.country)
-                else -> state.group ?: stringResource(R.string.group_all)
-            },
-        )
+        // A mark and no word. What the filter is set to is worth knowing, which is why the
+        // title now carries it; carried here as well it was the same answer written twice, three
+        // inches apart, in a header whose job is to stay out of the way.
+        TvIconButton(icon = VayouIcons.Filter, label = stringResource(R.string.group), onClick = onOpenFilter)
         // A mark rather than a pill, as the back and the gear are: the pills beside it each carry a
         // word and stand for a choice the viewer has made, and this one is a thing to do.
         TvIconButton(icon = VayouIcons.Search, label = stringResource(R.string.search), onClick = onOpenSearch)

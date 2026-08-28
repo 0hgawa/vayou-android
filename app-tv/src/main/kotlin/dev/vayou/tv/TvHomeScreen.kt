@@ -66,6 +66,8 @@ fun TvHomeScreen(
     onOpenPlaylist: (SavedPlaylist) -> Unit,
     onOpenLibrary: () -> Unit,
     onOpenMusic: () -> Unit,
+    /** The starred channels of every list, which is a place of its own and not part of one. */
+    onOpenStarredChannels: () -> Unit,
     onOpenSettings: () -> Unit,
     onSearch: () -> Unit,
     viewModel: TvHomeViewModel = hiltViewModel(),
@@ -311,6 +313,21 @@ fun TvHomeScreen(
                         title = stringResource(R.string.channels),
                         items = state.playlists,
                         key = SavedPlaylist::url,
+                        // Before the lists and not inside one of them. A starred channel belongs to
+                        // the viewer rather than to the file it was found in, and the screen behind
+                        // this card holds the starred of every list at once -- which is the whole
+                        // reason it is here and not a heading in one of them.
+                        leading = {
+                            if (state.favouriteChannels > 0) {
+                                Tile(
+                                    title = stringResource(R.string.favourites),
+                                    onClick = {
+                                        viewModel.showOnlyStarredChannels()
+                                        onOpenStarredChannels()
+                                    },
+                                ) { TvCardMark(VayouIcons.StarFilled) }
+                            }
+                        },
                         trailing = {
                             Tile(
                                 title = stringResource(R.string.add_playlist),
@@ -391,6 +408,8 @@ private fun <T> CardRow(
      * willing to take the focus was the navigation.
      */
     firstCard: FocusRequester? = null,
+    /** A card before the first of them, for a row whose most-wanted thing is not one of them. */
+    leading: (@Composable () -> Unit)? = null,
     /** A card after the last of them, for a row that offers something as well as listing things. */
     trailing: (@Composable () -> Unit)? = null,
     card: @Composable (T, Modifier) -> Unit,
@@ -406,6 +425,7 @@ private fun <T> CardRow(
             contentPadding = PaddingValues(horizontal = TvScreenInset),
             horizontalArrangement = Arrangement.spacedBy(TvCardGap),
         ) {
+            leading?.let { item { it() } }
             itemsIndexed(items, key = { _, item -> key(item) }) { index, item ->
                 card(item, if (index == 0 && firstCard != null) Modifier.focusRequester(firstCard) else Modifier)
             }

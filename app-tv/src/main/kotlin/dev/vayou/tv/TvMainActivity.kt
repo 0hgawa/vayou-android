@@ -114,6 +114,9 @@ private fun TvNavigation() {
                     navController.navigate(serverRoute(folder.host, folder.share, folder.path))
                 },
                 onOpenPlaylist = { playlist -> navController.navigate(channelsRoute(playlist.url)) },
+                // No address: the screen falls back to whatever list it has, and what it shows is
+                // the starred of all of them regardless.
+                onOpenStarredChannels = { navController.navigate("channels") },
                 onOpenLibrary = { navController.navigate(libraryRoute()) },
                 onOpenMusic = { navController.navigate(RouteMusic) },
                 onOpenSettings = { navController.navigate(RouteSettings) },

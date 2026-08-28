@@ -109,8 +109,11 @@ class TvChannelsViewModel @Inject constructor(
     ) { found, (query, group, onlyStarred), starredList, (address, saved) ->
         val starred = starredList.mapTo(HashSet(), PlaylistChannel::url)
         TvChannelsState(
-            isLoading = found.isLoading,
-            hasFailed = found.hasFailed,
+            // Neither answer belongs to the starred: they were written down whole when they were
+            // starred and are read off disc. A viewer who came here for them would otherwise wait
+            // on a file being fetched for a grid they are not looking at -- and see it fail.
+            isLoading = found.isLoading && !onlyStarred,
+            hasFailed = found.hasFailed && !onlyStarred,
             // Narrowed to the starred here rather than upstream, where the letters are worked out
             // for thousands of channels: that answer does not change when a star is toggled, and
             // re-deriving it every time somebody marked a channel would be the whole cost again for
