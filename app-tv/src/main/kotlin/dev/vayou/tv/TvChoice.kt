@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -72,7 +73,14 @@ fun TvRow(
         ),
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = TvRowInset, vertical = TvRowGap),
+            // As tall as everything else that can be pressed. A row was the last thing left at its
+            // own height: the marks in a header, the controls over a film and the ways out of a
+            // question all stand at [TvControlHeight], and a list of them beside those was a list
+            // of thinner things. Given as a floor rather than a height, so a row carrying two lines
+            // still grows to hold them.
+            modifier = Modifier
+                .defaultMinSize(minHeight = TvControlHeight)
+                .padding(horizontal = TvRowInset, vertical = TvRowGap),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(TvRowInset),
         ) {
