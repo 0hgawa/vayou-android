@@ -79,7 +79,10 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
     val openPlaylist = remember(state, openList) { state.playlists.firstOrNull { it.id == openList } }
     val isInFavourites = openList == SmartPlaylist.Favourites
 
-    BackHandler {
+    // One way out, and the mark in the header presses it too. The key on the remote walked out of
+    // what was opened before leaving the section; the mark, where there was one, went straight home
+    // -- so standing in a folder, the two things that mean "back" did different things.
+    val goBack = {
         when {
             query != null -> query = null
             isShowingSleeve -> isShowingSleeve = false
@@ -88,6 +91,7 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
             else -> onBack()
         }
     }
+    BackHandler(onBack = goBack)
 
     if (isShowingSleeve && nowPlaying != null && controller != null) {
         // The library knows the title, the artist and the cover before a byte of the file has been
@@ -136,7 +140,7 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
             query = query,
             onSearch = { query = it },
             onOpenSearch = { query = "" },
-            onBack = onBack,
+            onBack = goBack,
             // Not over starred or a built list: those keep the order they were built in, and a
             // button that quietly does nothing is worse than no button at all.
             action = if (openList != null) {

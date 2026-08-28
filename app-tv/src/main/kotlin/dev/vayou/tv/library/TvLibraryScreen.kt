@@ -112,9 +112,10 @@ fun TvLibraryScreen(
         else -> openPlaylist?.items
     }
 
-    // Back walks out of what was opened first and only then leaves the library. Anything else and a
-    // viewer inside a folder is thrown to the home screen for pressing it once.
-    BackHandler {
+    // One way out, and the mark in the header presses it too. The key on the remote walked out of
+    // what was opened before leaving the section; the mark, where there was one, went straight home
+    // -- so standing in a folder, the two things that mean "back" did different things.
+    val goBack = {
         when {
             query != null -> query = null
             openFolderPath != null -> openFolderPath = null
@@ -123,6 +124,7 @@ fun TvLibraryScreen(
             else -> onBack()
         }
     }
+    BackHandler(onBack = goBack)
 
     // Over the whole library and not over whatever is open. A viewer who types a name is asking
     // where a film is, and answering only from the folder they happen to be standing in would be
@@ -213,6 +215,7 @@ fun TvLibraryScreen(
             query = query,
             onSearch = { query = it },
             onOpenSearch = { query = "" },
+            onBack = goBack,
             // Only over the listings that obey it, as on the phone. Starred and the built lists keep
             // the order they were built in, and a button that quietly does nothing is worse than no
             // button: the viewer presses it twice and concludes the television is broken.
