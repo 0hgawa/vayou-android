@@ -144,6 +144,11 @@ fun TvChannelsScreen(
                     TvMessage(stringResource(R.string.no_channel_lists))
                 state.isLoading -> TvMessage(stringResource(R.string.loading_channels))
                 state.hasFailed -> TvMessage(stringResource(R.string.channels_unreachable))
+                // The two ways of having nothing are not the same sentence. A list can be empty
+                // because the file is; the starred are empty because nobody has starred anything,
+                // and that one has an answer the viewer can act on.
+                state.sections.isEmpty() && state.onlyStarred ->
+                    TvMessage(stringResource(R.string.no_favourite_channels))
                 state.sections.isEmpty() -> TvMessage(stringResource(R.string.no_channels))
                 else -> ChannelGrid(
                     state = state,

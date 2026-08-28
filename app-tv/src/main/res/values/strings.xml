@@ -139,4 +139,5 @@
     <string name="subtitle_search_failed">Could not reach the subtitle service</string>
     <string name="no_subtitles_found">Nothing found for this film</string>
     <string name="subtitle_search_term">Search by name</string>
+    <string name="no_favourite_channels">No favourites yet — hold on a channel to star it</string>
 </resources>

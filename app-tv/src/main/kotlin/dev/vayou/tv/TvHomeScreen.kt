@@ -355,13 +355,14 @@ fun TvHomeScreen(
                         // this card holds the starred of every list at once -- which is the whole
                         // reason it is here and not a heading in one of them.
                         leading = { cardModifier ->
-                            if (state.favouriteChannels > 0) {
-                                Tile(
-                                    title = stringResource(R.string.favourites),
-                                    onClick = onOpenStarredChannels,
-                                    modifier = cardModifier,
-                                ) { TvCardMark(VayouIcons.StarFilled) }
-                            }
+                            // Always, even with nothing starred yet. A door that appears once you
+                            // have found what is behind it is a door nobody finds: the card is how
+                            // a viewer learns that starring a channel puts it somewhere.
+                            Tile(
+                                title = stringResource(R.string.favourites),
+                                onClick = onOpenStarredChannels,
+                                modifier = cardModifier,
+                            ) { TvCardMark(VayouIcons.StarFilled) }
                         },
                         trailing = { cardModifier ->
                             Tile(
