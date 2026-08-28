@@ -363,14 +363,6 @@ fun TvNowPlaying(controller: MediaController, known: TrackFacts? = null, sleeve:
                         isGrouped = true,
                     )
                 }
-                // Absent for a single track: a queue of one is a list with nothing to choose in.
-                if (trackCount > 1) {
-                    TvControlButton(
-                        icon = VayouIcons.MusicPlaylist,
-                        label = stringResource(R.string.queue),
-                        onClick = { panel = panel.toggled(TvSleevePanel.Queue) },
-                    )
-                }
                 // Only where there are words to read. A button that opens an empty panel is a
                 // button that teaches the viewer to stop pressing it.
                 // The button toggles rather than only opening, and for the words it is the only
@@ -389,6 +381,16 @@ fun TvNowPlaying(controller: MediaController, known: TrackFacts? = null, sleeve:
                     label = stringResource(R.string.equalizer),
                     onClick = { panel = panel.toggled(TvSleevePanel.Equalizer) },
                 )
+
+                // Last of them, and absent for a single track: a queue of one is a list with nothing
+                // to choose in.
+                if (trackCount > 1) {
+                    TvControlButton(
+                        icon = VayouIcons.MusicPlaylist,
+                        label = stringResource(R.string.queue),
+                        onClick = { panel = panel.toggled(TvSleevePanel.Queue) },
+                    )
+                }
             }
         }
     }
