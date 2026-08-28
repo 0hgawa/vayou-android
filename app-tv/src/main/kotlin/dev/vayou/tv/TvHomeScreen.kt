@@ -460,10 +460,21 @@ private fun <T> CardRow(
                 trailing != null -> TrailingCard
                 else -> null
             }
+            // Resolved once, and only for the row that owns the landing. A key that no longer
+            // matches anything -- a folder unpinned while away, a machine forgotten, a film that
+            // fell off the end of the row -- would otherwise attach the requester to nothing at
+            // all, which is a screen the remote cannot use.
+            val target = when {
+                landing == null || landingKey == null -> defaultId
+                landingKey == LeadingCard && leading != null -> landingKey
+                landingKey == TrailingCard && trailing != null -> landingKey
+                items.any { key(it) == landingKey } -> landingKey
+                else -> defaultId
+            }
             fun cardModifier(id: Any): Modifier = Modifier
                 .onFocusChanged { if (it.isFocused) onCardFocused(id) }
                 .then(
-                    if (landing != null && id == (landingKey ?: defaultId)) {
+                    if (landing != null && id == target) {
                         Modifier.focusRequester(landing)
                     } else {
                         Modifier

@@ -108,7 +108,12 @@ fun TvServerScreen(
     // goes nowhere and it reads as frozen.
     val firstCard = remember { FocusRequester() }
     val grid = rememberLazyGridState()
-    val landingKey = viewModel.lastOpened
+    // Resolved against what is actually listed. A folder renamed on the machine, or a file
+    // deleted while the television was away, would otherwise leave the requester attached to
+    // nothing and the screen with no focus at all.
+    val landingKey = viewModel.lastOpened?.takeIf { key ->
+        state.shares.any { it.name == key } || shown.any { it.path == key }
+    }
     LaunchedEffect(state.shares, state.entries) {
         if (state.shares.isEmpty() && state.entries.isEmpty()) return@LaunchedEffect
         // Scrolled to first: a lazy grid has not composed a card four rows down, and a requester
