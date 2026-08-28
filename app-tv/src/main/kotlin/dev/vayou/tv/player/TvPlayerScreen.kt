@@ -433,9 +433,13 @@ private fun Playing(
             }
 
             override fun onVideoSizeChanged(videoSize: VideoSize) {
-                sourceSize = videoSize.width
-                    .takeIf { it > 0 && videoSize.height > 0 }
-                    ?.let { Size(it.toFloat(), videoSize.height.toFloat()) }
+                // Nothing is unlearned by a report of nothing. A film is re-prepared whenever a
+                // caption file is put on it -- the item is rebuilt with the new track and swapped
+                // for the old one -- and the renderer says "size unknown" in the gap. Read as an
+                // answer, that threw the fitting away and the picture stretched to the box for as
+                // long as it took the real size to come back.
+                if (videoSize.width <= 0 || videoSize.height <= 0) return
+                sourceSize = Size(videoSize.width.toFloat(), videoSize.height.toFloat())
             }
 
             override fun onTimelineChanged(timeline: Timeline, reason: Int) {
