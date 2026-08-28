@@ -123,7 +123,7 @@ fun TvHomeScreen(
     // nothing to read: a row of folders and servers lets the screen settle rather than inventing
     // a colour for a glyph.
     val surface = MaterialTheme.colorScheme.surface
-    val tint = rememberArtworkTint(model = focused, fallback = surface)
+    val tint = rememberArtworkTint(model = focused, fallback = backdropOfTheDay())
 
     Box(
         modifier = Modifier
@@ -608,6 +608,41 @@ private const val BarTrackAlpha = 0.4f
  */
 private fun Modifier.reporting(artwork: Any?, onFocused: (Any?) -> Unit): Modifier =
     onFocusChanged { if (it.isFocused) onFocused(artwork) }
+
+/**
+ * What the screen sits on where the card under the focus has no picture to take a colour from.
+ *
+ * Black was honest and dead: most of this screen is marks rather than pictures, so the wash the
+ * artwork drives had nothing to drive it and the home was a grid of grey on nothing.
+ *
+ * All of them are deep and nearly grey. The names on the cards are white, and the gradient is the
+ * ground under them: a tint with any life in it is a tint that eats a title from three metres.
+ */
+private val TvBackdropTints = listOf(
+    Color(0xFF141A26),
+    Color(0xFF1E1524),
+    Color(0xFF121E19),
+    Color(0xFF241A14),
+    Color(0xFF1C1C22),
+)
+
+/**
+ * One of them, chosen by the day.
+ *
+ * Not by a clock and not by each opening. A colour that changes while it is being looked at is
+ * movement that means nothing, and on a television that reads as a fault rather than as a mood; one
+ * that changes on every return would make coming back from a film feel like arriving somewhere
+ * else. A day keeps its colour, and a week has a few.
+ *
+ * Worked out once and then held: it is the same answer all evening, so recomputing it on every
+ * recomposition of the screen would be a division per frame for a value that cannot have changed.
+ */
+@Composable
+private fun backdropOfTheDay(): Color = remember {
+    TvBackdropTints[((System.currentTimeMillis() / DayMs) % TvBackdropTints.size).toInt()]
+}
+
+private const val DayMs = 24L * 60 * 60 * 1000
 
 /** Where the wash has given way, and how far it has gone by then. */
 private const val BackdropMidpoint = 0.45f
