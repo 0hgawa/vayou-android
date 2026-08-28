@@ -19,6 +19,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -108,7 +109,16 @@ class TvHomeViewModel @Inject constructor(
         // Saved and found on the wire as one list. A television that has never been set up has
         // nothing saved, and a row that waits for the phone to save something first would never
         // appear at all.
-        combine(smbServerStore.savedServers, discovery.discover(), ::mergeNetworkServers),
+        // The search of the wire says "nothing yet" before it says anything else. It only speaks
+        // when it finds a machine, and a combine waits for every source to have spoken once -- so
+        // the whole screen sat at its empty value until some server answered a broadcast, with the
+        // films, the pinned folders and the channel lists all read from disc and ready. On a
+        // network with no server at all it waited for ever.
+        combine(
+            smbServerStore.savedServers,
+            discovery.discover().onStart { emit(emptyList()) },
+            ::mergeNetworkServers,
+        ),
         playlistStore.playlists,
         folderFavourites.favourites,
     ) { videos, played, servers, playlists, folders ->

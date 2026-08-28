@@ -98,11 +98,16 @@ fun TvHomeScreen(
     // the head of the row of things to continue, so the card just left is the one the focus is
     // taken away from.
     val opened = viewModel.lastOpened
+    // In the order a television is opened for: what was being watched, then the folders somebody
+    // put there on purpose, then the machines those folders live on. The films on the set itself
+    // come near the end, because on a television they are the rare case rather than the usual one,
+    // and the channels are the floor -- a set with nothing else has those.
     val landingRow = opened?.first?.takeIf { it.isDrawn(state) } ?: when {
         state.recent.isNotEmpty() -> HomeRow.Recent
-        state.videos.isNotEmpty() -> HomeRow.Videos
         state.folders.isNotEmpty() -> HomeRow.Folders
-        else -> HomeRow.Servers
+        state.servers.isNotEmpty() -> HomeRow.Servers
+        state.videos.isNotEmpty() -> HomeRow.Videos
+        else -> HomeRow.Channels
     }
     val landingKey = opened?.second?.takeIf { opened.first == landingRow }
     LaunchedEffect(landingRow, landingKey, state.servers) {
@@ -469,7 +474,9 @@ private fun <T> CardRow(
             val defaultId: Any? = when {
                 items.isNotEmpty() -> key(items.first())
                 leading != null -> LeadingCard
-                trailing != null -> TrailingCard
+                // Never the card at the end: those are the ones that add a machine or make a list,
+                // and a screen that opens with the focus on one of them is a dialog waiting for the
+                // second press of anybody who thought the first had not registered.
                 else -> null
             }
             // Resolved once, and only for the row that owns the landing. A key that no longer
