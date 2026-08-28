@@ -1,6 +1,6 @@
 package dev.vayou.tv.music
 
-import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -55,7 +55,7 @@ class TvNetworkAudioViewModel @Inject constructor(
      * gave: a queue's order is the listener's, and by name is the order the folder was written in.
      */
     private suspend fun siblings(): TvAudioQueue? {
-        val address = Uri.parse(trackUri)
+        val address = trackUri.toUri()
         val host = address.host ?: return null
         val (share, path) = address.smbSharePath()
         val folder = path.substringBeforeLast('\\', "")

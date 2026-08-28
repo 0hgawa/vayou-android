@@ -497,6 +497,14 @@ private class Chooser {
         open = null
     }
 
+    /**
+     * The requester, for the row that is owed the focus back.
+     *
+     * A member and not an extension on [Modifier], which is what the convention asks of anything
+     * that makes one: the two things it needs -- which row is owed and the requester to hand it --
+     * belong to this holder, and an extension would have to be given both at every call.
+     */
+    @Suppress("ModifierFactoryExtensionFunction")
     fun rowModifier(setting: String): Modifier = if (returning == setting) Modifier.focusRequester(focus) else Modifier
 
     fun settled() {
@@ -540,7 +548,7 @@ private fun Rows(content: LazyListScope.() -> Unit) {
  * the sofa is checking values, not opening them one at a time to find out.
  */
 @Composable
-private fun SettingRow(title: String, value: String? = null, modifier: Modifier = Modifier, onClick: () -> Unit) {
+private fun SettingRow(title: String, modifier: Modifier = Modifier, value: String? = null, onClick: () -> Unit) {
     val heading = LocalHeadingFocus.current
     TvRow(
         onClick = onClick,

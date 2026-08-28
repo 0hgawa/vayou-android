@@ -13,6 +13,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Reaching a share on the same network, which is most of what a television plays. -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- Asking for that permission is otherwise read as needing the radio, and a set wired to the
+         wall would be told the app does not run on it. Most televisions are wired to the wall. -->
+    <uses-feature
+        android:name="android.hardware.wifi"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  What lint says about a phone and this is not one.
+
+  Anything genuinely wrong is left to be reported. These two are checks whose whole subject is
+  absent on a television, and left on they are three lines of noise in every report -- which is how
+  a real finding comes to be scrolled past.
+-->
+<lint>
+    <!--
+      About the photo picker Android 14 gives a viewer who wants to grant access to some pictures
+      rather than all of them. This app asks for video and audio and never for images, and a
+      television has no picker to show anyway: the permission screen there is a yes or a no.
+    -->
+    <issue id="SelectedPhotoAccess" severity="ignore" />
+
+    <!--
+      The mark this app is listed by exists at xhdpi, which is the density a television panel
+      reports. Copies at the densities of a phone would be bytes in the download for screens that
+      cannot be a television.
+    -->
+    <issue id="IconMissingDensityFolder" severity="ignore" />
+</lint>
