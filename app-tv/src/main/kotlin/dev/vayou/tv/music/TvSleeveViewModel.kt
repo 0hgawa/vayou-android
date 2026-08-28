@@ -92,5 +92,3 @@ sealed interface LyricsState {
 
     data class Found(val lyrics: Lyrics) : LyricsState
 }
-
-private const val EndOfTrackSlackMs = 5_000L

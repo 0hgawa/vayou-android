@@ -137,7 +137,11 @@ fun TvChannelsScreen(
             )
 
             when {
-                state.listUrl == null -> TvMessage(stringResource(R.string.no_channel_lists))
+                // Only where a list is what is being shown. The starred are drawn from disc and owe
+                // nothing to a saved list -- a viewer who threw the last one away would otherwise be
+                // told they have no lists while looking at the very channels they starred.
+                !state.onlyStarred && state.listUrl == null ->
+                    TvMessage(stringResource(R.string.no_channel_lists))
                 state.isLoading -> TvMessage(stringResource(R.string.loading_channels))
                 state.hasFailed -> TvMessage(stringResource(R.string.channels_unreachable))
                 state.sections.isEmpty() -> TvMessage(stringResource(R.string.no_channels))
