@@ -311,34 +311,6 @@ fun TvHomeScreen(
                         }
                     }
                 }
-
-                // The places, last and as cards, which is the whole of what the navigation used to be.
-                //
-                // A bar is a second thing to learn and a press to reach before anything can be chosen; four
-                // cards at the foot of the rows a viewer is already walking cost nothing to find and nothing
-                // to explain. What is above them is what this television has; this row is where the rest is.
-                item {
-                    CardRow(
-                        title = stringResource(R.string.more),
-                        items = Destinations,
-                        key = Destination::label,
-                        landing = landing.takeIf { landingRow == HomeRow.More },
-                        landingKey = landingKey,
-                        onCardFocused = { viewModel.rememberOpened(HomeRow.More, it) },
-                    ) { destination, cardModifier ->
-                        Tile(
-                            title = stringResource(destination.label),
-                            onClick = {
-                                when (destination) {
-                                    Destination.Library -> onOpenLibrary()
-                                    Destination.Music -> onOpenMusic()
-                                }
-                            },
-                            modifier = cardModifier.reporting(null) { focused = it },
-                        ) { TvCardMark(destination.icon) }
-                    }
-                }
-
                 // Always, and with the way to add one on the end, exactly as the servers row has
                 // it. Hidden when empty, the row went missing precisely when a viewer had no list
                 // and needed to make one -- and the answer to that used to be a second Channels card
@@ -380,6 +352,34 @@ fun TvHomeScreen(
                         ) {
                             TvCardMark(VayouIcons.Tv)
                         }
+                    }
+                }
+
+                // The places, as cards, which is the whole of what the navigation used to be.
+                //
+                // A bar is a second thing to learn and a press to reach before anything can be chosen; four
+                // cards at the foot of the rows a viewer is already walking cost nothing to find and nothing
+                // to explain. Under the channels, because on a television the files on the set itself are the
+                // rare case: what is above this row is what a viewer reaches for, and this is the rest.
+                item {
+                    CardRow(
+                        title = stringResource(R.string.more),
+                        items = Destinations,
+                        key = Destination::label,
+                        landing = landing.takeIf { landingRow == HomeRow.More },
+                        landingKey = landingKey,
+                        onCardFocused = { viewModel.rememberOpened(HomeRow.More, it) },
+                    ) { destination, cardModifier ->
+                        Tile(
+                            title = stringResource(destination.label),
+                            onClick = {
+                                when (destination) {
+                                    Destination.Library -> onOpenLibrary()
+                                    Destination.Music -> onOpenMusic()
+                                }
+                            },
+                            modifier = cardModifier.reporting(null) { focused = it },
+                        ) { TvCardMark(destination.icon) }
                     }
                 }
             }
