@@ -99,11 +99,15 @@ fun TvHomeScreen(
     // the head of the row of things to continue, so the card just left is the one the focus is
     // taken away from.
     val opened = viewModel.lastOpened
+    // Downwards to the first row that holds something to open, and never to a row whose only
+    // card is an invitation to add one. A television with nothing watched yet used to land on
+    // "add a machine" while Videos, Music and the channels sat under it, already full.
     val landingRow = opened?.first?.takeIf { it.isDrawn(state) } ?: when {
         state.recent.isNotEmpty() -> HomeRow.Recent
         state.videos.isNotEmpty() -> HomeRow.Videos
         state.folders.isNotEmpty() -> HomeRow.Folders
-        else -> HomeRow.Servers
+        state.servers.isNotEmpty() -> HomeRow.Servers
+        else -> HomeRow.More
     }
     val landingKey = opened?.second?.takeIf { opened.first == landingRow }
     LaunchedEffect(landingRow, landingKey, state.servers) {
