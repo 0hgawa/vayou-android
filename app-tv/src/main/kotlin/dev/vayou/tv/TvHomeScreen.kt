@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -570,8 +572,14 @@ private fun BoxScope.WatchedBar(watched: Float?) {
     Box(
         modifier = Modifier
             .align(Alignment.BottomStart)
+            // Off the edges rather than along them, as the television's own home draws it. Flush
+            // with the corners, a bar on a rounded card is a straight line running out from under
+            // two curves; lifted, it reads as something laid on the picture. The inset comes before
+            // the width, so the bar is shortened rather than merely having its ground moved.
+            .padding(BarInset)
             .fillMaxWidth()
             .height(BarHeight)
+            .clip(CircleShape)
             // Translucent white under the fill, as the phone draws it: this lies on a frame nobody
             // chose, and a colour from the palette reads as a block on some of them.
             .background(Color.White.copy(alpha = BarTrackAlpha)),
@@ -586,6 +594,9 @@ private fun BoxScope.WatchedBar(watched: Float?) {
 }
 
 private val BarHeight = 4.dp
+
+/** How far off the corners it sits, which is about what the curve of a card takes up. */
+private val BarInset = 8.dp
 
 private const val BarTrackAlpha = 0.4f
 
