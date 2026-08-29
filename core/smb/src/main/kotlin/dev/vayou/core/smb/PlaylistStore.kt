@@ -22,11 +22,11 @@ private val SeedVersionKey = intPreferencesKey("seed_version")
 
 private val IptvCountryKey = stringPreferencesKey("iptv_country")
 
-private const val CurrentSeedVersion = 4
+private const val CurrentSeedVersion = 5
 
 private const val LegacyFreeTvUrl = "https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8"
 
-private const val DefaultPlaylistName = "Canais ao vivo"
+private const val DefaultPlaylistName = "Channels"
 
 @Serializable
 data class SavedPlaylist(val name: String, val url: String)

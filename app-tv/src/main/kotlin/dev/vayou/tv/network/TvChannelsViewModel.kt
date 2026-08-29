@@ -245,7 +245,7 @@ private val String.iptvCountry: IptvCountry?
     }
 
 /** What the seeded list is called, so switching country does not rename the tile it came from. */
-private const val LivePlaylistName = "Canais ao vivo"
+private const val LivePlaylistName = "Channels"
 
 private const val CodeLength = 2
 

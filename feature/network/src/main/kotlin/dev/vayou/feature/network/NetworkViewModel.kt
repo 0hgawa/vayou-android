@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /** What the app arrives with, and what the country picker keeps calling the list it swaps. */
-private const val LivePlaylistName = "Canais ao vivo"
+private const val LivePlaylistName = "Channels"
 
 /**
  * Everything that is not on this phone: the shares on the network, and the channel lists.
