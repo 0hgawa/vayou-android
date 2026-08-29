@@ -1,5 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- The field the mark sits on, so the amber belongs to the mark and not the square. -->
-    <color name="ic_launcher_background">#FFFFFF</color>
 </resources>

@@ -10,6 +10,6 @@
   Left out, the tile is the mark on white wherever it is drawn.
 -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@color/ic_launcher_background" />
-    <foreground android:drawable="@drawable/vayou_mark" />
+    <background android:drawable="@drawable/vayou_field" />
+    <foreground android:drawable="@drawable/vayou_mark_on_field" />
 </adaptive-icon>
