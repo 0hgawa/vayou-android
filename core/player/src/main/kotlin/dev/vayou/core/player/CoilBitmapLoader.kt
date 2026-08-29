@@ -86,8 +86,12 @@ class CoilBitmapLoader(
             }
             canvas.drawColor(PlateColour)
             glyph.setTint(MarkColour)
-            val margin = (MarkSize * MarkInset).toInt()
-            glyph.setBounds(margin, margin, MarkSize - margin, MarkSize - margin)
+            // Drawn larger than the plate on purpose, so that the mark inside it lands at the size
+            // wanted. What is pushed past the edges is the drawable's own air, and the canvas
+            // clips it away.
+            val span = (MarkSize * MarkFraction / MarkWithinDrawable).toInt()
+            val offset = (MarkSize - span) / 2
+            glyph.setBounds(offset, offset, offset + span, offset + span)
             glyph.draw(canvas)
         }
     }
@@ -132,6 +136,19 @@ private const val PlateColour = 0xFFEDEDED.toInt()
 
 private const val MarkColour = 0xFF6B6B6B.toInt()
 
-/** A sixth of the square on each side. Enough margin that the mark reads as a mark rather than as
- *  a cropped picture, and no more: at a quarter it was a small sign in a large empty plate. */
-private const val MarkInset = 0.16f
+/** How much of the plate the mark itself covers, edge to edge of its own drawing. */
+private const val MarkFraction = 0.60f
+
+/**
+ * How much of [MonochromeMark]'s own square its drawing actually fills.
+ *
+ * The vector scales itself to 0.4446 and its path spans 944 of a 1024 viewport, so four tenths of
+ * what it hands over is the mark and the rest is air. That scale is the adaptive icon's safe zone
+ * -- the circle a launcher may crop a foreground to -- and it means nothing on a plate nobody
+ * crops. Divided back out here rather than taken out there, because there is where the launcher
+ * still needs it.
+ *
+ * Left as a number because the drawing is ours and is not going to move on its own. If it ever
+ * does, this is the line that has to move with it.
+ */
+private const val MarkWithinDrawable = 0.41f
