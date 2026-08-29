@@ -1,6 +1,10 @@
 package dev.vayou.tv.music
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,10 +38,12 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.session.MediaController
 import androidx.tv.material3.MaterialTheme
+import dev.vayou.core.common.Utils
 import dev.vayou.core.media.MusicSort
 import dev.vayou.core.media.Song
 import dev.vayou.core.player.ui.musicMediaItem
 import dev.vayou.core.player.ui.rememberMusicController
+import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.graphics.rememberArtworkTint
 import dev.vayou.tv.R
 import dev.vayou.tv.TvCard
@@ -45,7 +51,10 @@ import dev.vayou.tv.TvCardGap
 import dev.vayou.tv.TvCardStar
 import dev.vayou.tv.TvCardWidth
 import dev.vayou.tv.TvChoiceList
+import dev.vayou.tv.TvDetails
 import dev.vayou.tv.TvMessage
+import dev.vayou.tv.TvOptionItem
+import dev.vayou.tv.TvOptions
 import dev.vayou.tv.TvOrderButton
 import dev.vayou.tv.TvScreenInset
 import dev.vayou.tv.TvSearchHeader
@@ -67,6 +76,21 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
     var isInFavourites by rememberSaveable { mutableStateOf(false) }
 
     var isChoosingOrder by remember { mutableStateOf(false) }
+
+    /** The track whose options are up, or null while the grid is just a grid. */
+    var acting by remember { mutableStateOf<Song?>(null) }
+
+    /** The track whose details are up. Read only: nothing there is a thing to press. */
+    var showing by remember { mutableStateOf<Song?>(null) }
+
+    // The system's own dialog, which on this Android is what asks before a file goes. Only a screen
+    // can raise one, and only the listener can answer it.
+    val confirmDelete = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+        viewModel.onDeleteAnswered(it.resultCode == Activity.RESULT_OK)
+    }
+    viewModel.pendingDelete?.let { asked ->
+        LaunchedEffect(asked) { confirmDelete.launch(IntentSenderRequest.Builder(asked.request).build()) }
+    }
 
     /** What is being looked for, or null while the listener is browsing rather than searching. */
     var query by rememberSaveable { mutableStateOf<String?>(null) }
@@ -129,6 +153,43 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
     // Opaque, because the screen it is pushed over is still drawn underneath while the two are
     // being swapped: through a transparent one, the cards of the screen behind show as a shadow
     // across this one.
+    showing?.let { song ->
+        TvDetails(
+            title = song.title,
+            lines = listOfNotNull(
+                stringResource(R.string.info_file) to song.fileName,
+                song.artist.takeIf { it.isNotBlank() }?.let { stringResource(R.string.info_artist) to it },
+                song.album.takeIf { it.isNotBlank() }?.let { stringResource(R.string.info_album) to it },
+                song.folderPath.takeIf { it.isNotBlank() }?.let { stringResource(R.string.info_location) to it },
+                stringResource(R.string.info_size) to Utils.formatFileSize(song.sizeBytes),
+                stringResource(R.string.info_duration) to Utils.formatDurationMillis(song.durationMs),
+                song.mimeType.takeIf { it.isNotBlank() }?.let { stringResource(R.string.info_format) to it },
+            ),
+            onDismiss = { showing = null },
+        )
+    }
+
+    acting?.let { song ->
+        val isStarred = state.favourites.any { it.uriString == song.uriString }
+        TvOptions(
+            face = { TvCover(song.artworkUri) },
+            title = song.title,
+            subtitle = song.artist.takeIf { it.isNotBlank() },
+            onDismiss = { acting = null },
+            options = listOf(
+                TvOptionItem(
+                    // The state it is in, not the state it will be in, as the film library has it.
+                    icon = if (isStarred) VayouIcons.StarFilled else VayouIcons.StarOutlined,
+                    label = stringResource(if (isStarred) R.string.remove_favourite else R.string.add_favourite),
+                ) { viewModel.toggleFavourite(song) },
+                TvOptionItem(VayouIcons.Info, stringResource(R.string.details)) { showing = song },
+                // Last, and the only one here that cannot be undone. Android puts its own dialog in
+                // the way, which is the confirmation; a second one of ours would be two questions.
+                TvOptionItem(VayouIcons.Delete, stringResource(R.string.delete)) { viewModel.deleteSong(song) },
+            ),
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -174,7 +235,7 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
                     isShowingSleeve = true
                 },
                 onOpenSleeve = { isShowingSleeve = true },
-                onToggleFavourite = viewModel::toggleFavourite,
+                onOptions = { acting = it },
                 emptyMessage = stringResource(R.string.nothing_found).takeIf { found.isEmpty() },
             )
             isInFavourites && listed.isEmpty() -> TvMessage(stringResource(R.string.no_favourites))
@@ -190,7 +251,7 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
                     isShowingSleeve = true
                 },
                 onOpenSleeve = { isShowingSleeve = true },
-                onToggleFavourite = viewModel::toggleFavourite,
+                onOptions = { acting = it },
             )
         }
     }
@@ -213,7 +274,7 @@ private fun Grid(
     onOpenFavourites: () -> Unit,
     onPlay: (Int) -> Unit,
     onOpenSleeve: () -> Unit,
-    onToggleFavourite: (Song) -> Unit,
+    onOptions: (Song) -> Unit,
     /** What to say instead of the grid: a search that found nothing, and nothing else. */
     emptyMessage: String? = null,
 ) {
@@ -247,9 +308,11 @@ private fun Grid(
                 // Pressing the one already playing opens its sleeve rather than starting it again,
                 // which would drop a listener back to the top of the track they are in the middle of.
                 onClick = { if (song.uriString == nowPlayingId) onOpenSleeve() else onPlay(index) },
-                // Held rather than tapped, as the channel list has it: starring is the second thing
-                // anyone does to a track, and it does not deserve a button on every card.
-                onLongClick = { onToggleFavourite(song) },
+                // Held rather than tapped, as every other grid in this app has it. It used to star
+                // the track outright, which made one gesture mean "show me the options" on four
+                // screens and "favourite this" on the fifth -- and left a track with no way to
+                // reach its details or to be deleted at all.
+                onLongClick = { onOptions(song) },
                 modifier = if (index == 0 && !heads) Modifier.focusRequester(first) else Modifier,
             ) {
                 Sleeve(song.artworkUri)

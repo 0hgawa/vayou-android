@@ -118,6 +118,8 @@
     <string name="details">Detalhes</string>
     <string name="delete">Excluir</string>
     <string name="info_file">Arquivo</string>
+    <string name="info_artist">Artista</string>
+    <string name="info_album">Álbum</string>
     <string name="info_location">Local</string>
     <string name="info_size">Tamanho</string>
     <string name="info_duration">Duração</string>

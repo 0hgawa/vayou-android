@@ -1,12 +1,19 @@
 package dev.vayou.tv.music
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.vayou.core.data.repository.MediaPlaylistRepository
+import dev.vayou.core.media.MediaActions
+import dev.vayou.core.media.MediaWrite
 import dev.vayou.core.media.MusicLibrary
 import dev.vayou.core.media.MusicSort
 import dev.vayou.core.media.Song
+import dev.vayou.tv.library.PendingDelete
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -28,7 +35,18 @@ import kotlinx.coroutines.launch
 class TvMusicViewModel @Inject constructor(
     private val library: MusicLibrary,
     private val playlistRepository: MediaPlaylistRepository,
+    private val mediaActions: MediaActions,
 ) : ViewModel() {
+
+    /**
+     * The track the system is being asked about, or null when it is being asked nothing.
+     *
+     * The same arrangement the film library uses, and for the same reason: from Android 11 an app
+     * may only delete what it wrote itself, so the asking is the system's own dialog, which only a
+     * screen can raise. Held here because the answer outlives the card that was held down.
+     */
+    var pendingDelete: PendingDelete? by mutableStateOf(null)
+        private set
 
     /** Null until MediaStore has answered, which is what tells an empty library from a slow one. */
     private val scanned = MutableStateFlow<List<Song>?>(null)
@@ -82,6 +100,24 @@ class TvMusicViewModel @Inject constructor(
     }
 
     /** The same axis twice reverses it, which is what the arrow beside it is saying. */
+    fun deleteSong(song: Song) {
+        viewModelScope.launch {
+            when (val write = mediaActions.delete(listOf(song.uriString.toUri()))) {
+                MediaWrite.Done -> playlistRepository.forgetItems(listOf(song.uriString))
+                is MediaWrite.NeedsPermission -> pendingDelete = PendingDelete(write.request, song.uriString)
+                MediaWrite.Failed -> Unit
+            }
+        }
+    }
+
+    /** Refused is not a failure to report: they were asked, they said no, and nothing has changed. */
+    fun onDeleteAnswered(isAllowed: Boolean) {
+        val asked = pendingDelete ?: return
+        pendingDelete = null
+        if (!isAllowed) return
+        viewModelScope.launch { playlistRepository.forgetItems(listOf(asked.uri)) }
+    }
+
     fun selectSort(by: MusicSort) {
         order.update {
             if (it.by == by) it.copy(isAscending = !it.isAscending) else TvMusicOrder(by)
