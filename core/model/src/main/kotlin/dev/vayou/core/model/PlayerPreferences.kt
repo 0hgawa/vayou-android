@@ -89,7 +89,12 @@ data class PlayerPreferences(
     val subtitleBackground: Boolean = false,
     val subtitleOutlineEnabled: Boolean = true,
     val subtitleOutlineColor: Int = Black,
-    val subtitleShadow: Boolean = true,
+    // False, where the old app had it true, and this is the one default deliberately not inherited.
+    // The two flags do not stack: outline and shadow together resolve to EDGE_TYPE_RAISED, which is
+    // an embossed letter and not an outline at all, so the app shipped showing none of the black
+    // outline it was configured for. Alone, the outline is the outline, which is what a caption
+    // over film needs and what every tile in the sheet is drawn against.
+    val subtitleShadow: Boolean = false,
     /** 0f at the foot of the picture, 1f at its top. */
     val subtitleVerticalPosition: Float = 0f,
     /** True to hand the whole question to Android's own captioning settings. */

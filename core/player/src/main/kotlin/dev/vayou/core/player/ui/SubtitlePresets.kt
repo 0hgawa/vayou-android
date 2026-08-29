@@ -13,6 +13,11 @@ import dev.vayou.core.model.PlayerPreferences
  * this having changed nothing finds the tile that is already lit at the top left rather than hunting
  * for it. The four that leave the picture alone come before the two that lay a plate behind the
  * words -- a plate is the answer to a scene that defeats an outline, not the place to start.
+ *
+ * [Outlined] leads, where [Raised] used to. Raised is the two edge flags set at once, and media3
+ * resolves that pair to an embossed letter rather than to an outline with a shadow behind it -- so
+ * the tile at the top left was the one look here that shows no outline, on an app whose default is
+ * named for having one.
  */
 enum class SubtitlePreset(
     private val textColor: Int,
@@ -21,18 +26,18 @@ enum class SubtitlePreset(
     private val outlineEnabled: Boolean,
     private val textBold: Boolean,
 ) {
-    Raised(
-        textColor = White,
-        background = false,
-        shadow = true,
-        outlineEnabled = true,
-        textBold = true,
-    ),
-
     Outlined(
         textColor = White,
         background = false,
         shadow = false,
+        outlineEnabled = true,
+        textBold = true,
+    ),
+
+    Raised(
+        textColor = White,
+        background = false,
+        shadow = true,
         outlineEnabled = true,
         textBold = true,
     ),
