@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
@@ -11,7 +12,9 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.provider.Settings
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.core.text.isDigitsOnly
 import java.io.File
 import kotlin.coroutines.suspendCoroutine
@@ -182,6 +185,23 @@ suspend fun ContentResolver.deleteMedia(uri: Uri): Boolean = withContext(Dispatc
         Log.w("MediaOps", "deleteMedia failed", e)
         false
     }
+}
+
+/**
+ * Opens this app's own page in the system settings.
+ *
+ * The only way back from a permission refused for good. Android stops drawing the dialog once that
+ * has happened -- asking again returns refused without showing anything -- so a screen that needs
+ * one has nowhere to send anybody except here.
+ *
+ * NEW_TASK because the caller is as often a service or a composable holding the application context
+ * as it is an activity, and settings started from a non-activity context without it throws.
+ */
+fun Context.openAppSettings() {
+    startActivity(
+        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, "package:$packageName".toUri())
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+    )
 }
 
 fun Context.getStorageVolumes() = try {

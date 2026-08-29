@@ -48,6 +48,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import dev.vayou.core.common.audioPermission
+import dev.vayou.core.common.extensions.openAppSettings
 import dev.vayou.core.media.MusicSort
 import dev.vayou.core.media.Song
 import dev.vayou.core.model.MediaLayoutMode
@@ -432,7 +433,20 @@ fun MusicScreen(onPlaySong: (Song, List<Song>) -> Unit, viewModel: MusicViewMode
         },
     ) {
         if (!isGranted) {
-            VayouEmptyState(VayouIcons.Audio, stringResource(R.string.audio_permission_needed))
+            // A way out, because past a certain point there is no other one. Android stops showing
+            // the dialog once a viewer has refused for good -- the request then returns refused
+            // without drawing anything -- and until this button the screen said what it needed and
+            // offered nothing, which is a dead end the app cannot be talked out of. Reopening it
+            // does not help either: the refusal outlives the process.
+            //
+            // The system's own page for this app rather than a second request, since a second
+            // request is the thing that no longer works.
+            VayouEmptyState(
+                icon = VayouIcons.Audio,
+                title = stringResource(R.string.audio_permission_needed),
+                actionLabel = stringResource(R.string.audio_permission_open_settings),
+                onAction = context::openAppSettings,
+            )
             return@VayouScaffold
         }
 

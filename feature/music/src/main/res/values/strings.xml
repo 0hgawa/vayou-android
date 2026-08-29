@@ -79,4 +79,5 @@
     <string name="tags_not_saved">Could not write the tags</string>
     <string name="delete_failed">Could not delete</string>
     <string name="lyrics">Lyrics</string>
+    <string name="audio_permission_open_settings">Open settings</string>
 </resources>
