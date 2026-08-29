@@ -282,6 +282,51 @@ private val BarInset = 8.dp
 
 private const val BarTrackAlpha = 0.4f
 
+/**
+ * How long the film runs, in the corner of its own frame.
+ *
+ * On the picture rather than under it, as every set that shows this does it: read against the
+ * frame, the length is a fact about the thing being looked at, while a line below the card is a
+ * second name competing with the first. It also gives the line back -- in the library grid the
+ * length was the subtitle, and the card is a name and a picture again.
+ *
+ * The foot of the frame, lifted clear of the bar that says how far in a viewer got. Lifted by a
+ * fixed amount and not only where there is a bar to clear: a mark that sits at one height on a film
+ * begun and another on a film untouched is a mark that moves as the eye travels along the row.
+ *
+ * On a plate of its own, translucent black rather than a colour from the palette. This lies on a
+ * frame nobody chose -- white text alone is unreadable over half the scenes a film has, and a
+ * palette colour reads as a block stuck on the picture.
+ */
+@Composable
+fun BoxScope.TvCardDuration(text: String) {
+    if (text.isBlank()) return
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelSmall,
+        color = Color.White,
+        modifier = Modifier
+            .align(Alignment.BottomEnd)
+            // The same inset the bar takes at the side, and above it by the bar's own height and a
+            // gap, so the two read as stacked rather than as touching.
+            .padding(end = BarInset, bottom = BarInset + BarHeight + BadgeLift)
+            // A stamped label and not a pill. A bar is a line, and rounding the ends of a line is
+            // what a line wants; this is a plate with a word on it, and fully round it reads as a
+            // chip -- something to press -- when a length is a fact about the film.
+            .background(Color.Black.copy(alpha = BadgeGround), MaterialTheme.shapes.small)
+            .padding(horizontal = BadgeSideRoom, vertical = BadgeHeadRoom),
+    )
+}
+
+private const val BadgeGround = 0.6f
+
+/** The gap between the plate and the bar under it. */
+private val BadgeLift = 4.dp
+
+private val BadgeSideRoom = 6.dp
+
+private val BadgeHeadRoom = 2.dp
+
 /** One width everywhere, so a row of films and a grid of folders read as the same library. */
 val TvCardWidth = 200.dp
 

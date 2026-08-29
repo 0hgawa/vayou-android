@@ -243,6 +243,7 @@ fun TvHomeScreen(
                                         modifier = Modifier.fillMaxSize(),
                                     )
                                     TvWatchedBar(entry.watched)
+                                    TvCardDuration(entry.video.formattedDuration)
                                 }
                                 // A mark and not a frame. Taking a frame out of a file on a share
                                 // means opening it over the network, and doing that for a row that
@@ -287,6 +288,7 @@ fun TvHomeScreen(
                                 // watched is the same picture as one never opened, and this row
                                 // holds the same films the row above holds when they are recent.
                                 TvWatchedBar(video.playedPercentage.takeIf { it > 0f })
+                                TvCardDuration(video.formattedDuration)
                             }
                         }
                     }

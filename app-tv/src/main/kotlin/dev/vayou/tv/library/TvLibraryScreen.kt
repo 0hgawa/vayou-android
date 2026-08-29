@@ -37,6 +37,7 @@ import dev.vayou.core.model.Video
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.tv.R
 import dev.vayou.tv.TvCard
+import dev.vayou.tv.TvCardDuration
 import dev.vayou.tv.TvCardFolder
 import dev.vayou.tv.TvCardGap
 import dev.vayou.tv.TvCardMark
@@ -315,7 +316,6 @@ private fun LazyGridScope.videos(
     itemsIndexed(videos, key = { _, video -> video.uriString }) { index, video ->
         TvCard(
             title = video.displayName,
-            subtitle = video.formattedDuration,
             onClick = { onPlay(video) },
             // Held rather than tapped, as the channel list has it: what can be done to a film is
             // not worth a button on every card, and a remote has only the one button.
@@ -332,6 +332,7 @@ private fun LazyGridScope.videos(
             // half watched looks exactly like one never opened, and how far in you are is the one
             // thing the frame itself cannot say.
             TvWatchedBar(video.playedPercentage.takeIf { it > 0f })
+            TvCardDuration(video.formattedDuration)
         }
     }
 }
