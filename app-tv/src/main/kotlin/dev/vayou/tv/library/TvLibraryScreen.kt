@@ -52,6 +52,7 @@ import dev.vayou.tv.TvScreenInset
 import dev.vayou.tv.TvSearchHeader
 import dev.vayou.tv.TvTile
 import dev.vayou.tv.TvTitleInset
+import dev.vayou.tv.TvWatchedBar
 
 /**
  * The films on this television, by folder, flat, or in the lists the viewer built.
@@ -327,6 +328,10 @@ private fun LazyGridScope.videos(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
             )
+            // Here as on the home, and for the reason the phone gives: in a grid of frames, a film
+            // half watched looks exactly like one never opened, and how far in you are is the one
+            // thing the frame itself cannot say.
+            TvWatchedBar(video.playedPercentage.takeIf { it > 0f })
         }
     }
 }

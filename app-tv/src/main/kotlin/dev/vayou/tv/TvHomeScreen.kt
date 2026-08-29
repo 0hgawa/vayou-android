@@ -1,6 +1,5 @@
 package dev.vayou.tv
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -36,6 +32,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -123,35 +120,75 @@ fun TvHomeScreen(
     // card has the focus, wherever that card is.
     var focused: Any? by remember { mutableStateOf(null) }
 
+    // The last picture the focus crossed, kept while it stands on things that have none.
+    //
+    // A folder, a server and a channel list have no colour to give, and letting the room fall back
+    // to its own ground for them meant the light came on and went out again on the way down the
+    // screen -- which is the background flickering rather than the content being lit. Held, the
+    // room keeps the colour until another picture changes it.
+    //
+    // The picture is held rather than the colour it gave: the reader below is keyed on the model
+    // and answers from cache, so holding it costs one comparison and no second copy of anything.
+    // It is also less work than before, not more -- the colour now changes when a picture is
+    // crossed rather than twice for every row.
+    var lit: Any? by remember { mutableStateOf(null) }
+    LaunchedEffect(focused) { if (focused != null) lit = focused }
+
     // The colour is read from a 24-pixel copy of a picture that is already on screen, so it is a
-    // cache hit and a scan of a few hundred pixels off the main thread. Surface where there is
-    // nothing to read: a row of folders and servers lets the screen settle rather than inventing
-    // a colour for a glyph.
+    // cache hit and a scan of a few hundred pixels off the main thread.
     val surface = MaterialTheme.colorScheme.surface
-    val tint = rememberArtworkTint(model = focused, fallback = surface)
+    // What the room is before any picture has spoken, and on a set whose whole library is on a
+    // share it may be that for good: a film on a share is never opened to draw a row, so there is
+    // no frame to take a colour from.
+    //
+    // Neutral, and well under the tone of a card: the pools below peak at this colour, and a ground
+    // that reached the cards' own grey would be a ground the cards sink into at the top of the
+    // screen. A sixteenth of the foreground is enough to say the panel is lit and not enough to be
+    // read as a colour.
+    val base = MaterialTheme.colorScheme.onSurface.copy(alpha = BaseGlow).compositeOver(surface)
+    val tint = rememberArtworkTint(model = lit, fallback = base)
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            // A light above the corner where the screen begins, and only where a picture has
-            // lit it.
+            // Two pools of light set across the screen's diagonal, in the colour of whatever the
+            // focus last found a picture on.
             //
-            // Nothing is laid on for its own sake: with no artwork under the focus this draws the
-            // ground on the ground and the screen is black, which is what a wall of cards wants
-            // behind it and what every television player settles on. A wash held up by nothing is
-            // decoration a viewer either cannot see or asks to be turned down.
+            // Round rather than straight: a band is uniform along its whole width, which reads as
+            // fog rather than as anything lighting a room, and it spends its few levels of grey
+            // over the height of the screen alone -- a step of banding every fifteen pixels on a
+            // large panel in the dark. Spread round a circle wider than the screen, the same levels
+            // cover twice the distance in two directions.
             //
-            // Round rather than straight, for when it does appear. A band is uniform along its
-            // whole width, which reads as fog rather than as anything lighting a room, and it
-            // spends its few levels of grey over the height of the screen alone -- a step of
-            // banding every fifteen pixels on a large panel in the dark. Spread round a circle
-            // wider than the screen, the same levels cover twice the distance in two directions.
+            // Two rather than one, and the second is why: a single pool reads as a lamp left on in
+            // a corner, while two facing each other read as a room that is lit. It also costs the
+            // banding rather than adding to it -- each pool spreads its steps over a different
+            // distance, so where they overlap the steps of one fall between the steps of the other.
+            //
+            // Part of the colour and not all of it. What comes back from a cover has already been
+            // pushed towards a dark, half-saturated version of itself, and it is still too much for
+            // a wall behind text: a red sleeve lit the room like a warning lamp. Carrying about half
+            // of it leaves the hue -- which is the whole of what a viewer reads at three metres --
+            // and takes the intensity out. Where there is no cover the pools carry the ground's own
+            // colour, which is the ground, so nothing is drawn twice for nothing.
+            //
+            // Three draws where there was one, and all three are a full screen of blended pixels a
+            // television does without noticing. The layer is kept between changes anyway: it is
+            // drawn again when the colour moves and not once in the seconds between.
             .drawBehind {
+                drawRect(base)
                 drawRect(
                     Brush.radialGradient(
-                        colors = listOf(tint, surface),
+                        colors = listOf(tint.copy(alpha = FirstStrength), Color.Transparent),
                         center = Offset(x = size.width * GlowCentre, y = 0f),
                         radius = size.height * GlowRadius,
+                    ),
+                )
+                drawRect(
+                    Brush.radialGradient(
+                        colors = listOf(tint.copy(alpha = SecondStrength), Color.Transparent),
+                        center = Offset(x = size.width * SecondCentre, y = size.height),
+                        radius = size.height * SecondRadius,
                     ),
                 )
             },
@@ -205,7 +242,7 @@ fun TvHomeScreen(
                                         contentScale = ContentScale.Crop,
                                         modifier = Modifier.fillMaxSize(),
                                     )
-                                    WatchedBar(entry.watched)
+                                    TvWatchedBar(entry.watched)
                                 }
                                 // A mark and not a frame. Taking a frame out of a file on a share
                                 // means opening it over the network, and doing that for a row that
@@ -218,7 +255,7 @@ fun TvHomeScreen(
                                     cardModifier.reporting(null) { focused = it },
                                 ) {
                                     TvCardMark(VayouIcons.Video)
-                                    WatchedBar(entry.watched)
+                                    TvWatchedBar(entry.watched)
                                 }
                             }
                         }
@@ -246,6 +283,10 @@ fun TvHomeScreen(
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier.fillMaxSize(),
                                 )
+                                // As in the row above and in the section itself: a film half
+                                // watched is the same picture as one never opened, and this row
+                                // holds the same films the row above holds when they are recent.
+                                TvWatchedBar(video.playedPercentage.takeIf { it > 0f })
                             }
                         }
                     }
@@ -575,49 +616,6 @@ private fun Card(
 }
 
 /**
- * How far into a thing the viewer got, along the bottom edge of its card.
- *
- * Drawn on the card and not under it, where a row of them would push the titles down and change
- * the height of every card in the row for the sake of the few that have been started.
- *
- * Nothing at all where the fraction is not known -- a film watched before lengths were written
- * down has a position and no total, and a bar guessed from that would be a bar that lies.
- */
-@Composable
-private fun BoxScope.WatchedBar(watched: Float?) {
-    if (watched == null || watched <= 0f) return
-    Box(
-        modifier = Modifier
-            .align(Alignment.BottomStart)
-            // Off the edges rather than along them, as the television's own home draws it. Flush
-            // with the corners, a bar on a rounded card is a straight line running out from under
-            // two curves; lifted, it reads as something laid on the picture. The inset comes before
-            // the width, so the bar is shortened rather than merely having its ground moved.
-            .padding(BarInset)
-            .fillMaxWidth()
-            .height(BarHeight)
-            .clip(CircleShape)
-            // Translucent white under the fill, as the phone draws it: this lies on a frame nobody
-            // chose, and a colour from the palette reads as a block on some of them.
-            .background(Color.White.copy(alpha = BarTrackAlpha)),
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(watched)
-                .fillMaxHeight()
-                .background(MaterialTheme.colorScheme.primary),
-        )
-    }
-}
-
-private val BarHeight = 4.dp
-
-/** How far off the corners it sits, which is about what the curve of a card takes up. */
-private val BarInset = 8.dp
-
-private const val BarTrackAlpha = 0.4f
-
-/**
  * Says what this card looks like when the focus arrives on it, and nothing when it leaves.
  *
  * Only on arrival: a focus move is one card losing it and another taking it, and clearing on the
@@ -634,6 +632,19 @@ private fun Modifier.reporting(artwork: Any?, onFocused: (Any?) -> Unit): Modifi
  * middle sits on the top edge, so what is on screen is the lower half of it and never the bright
  * point itself.
  */
+/** How lit the room is before any picture has given it a colour. */
+private const val BaseGlow = 0.06f
+
+/** How much of a cover's colour the near pool carries, and the far one after it. */
+private const val FirstStrength = 0.55f
+
+private const val SecondStrength = 0.25f
+
+/** The second pool, set against the first across the diagonal. */
+private const val SecondCentre = 0.88f
+
+private const val SecondRadius = 1.2f
+
 private const val GlowCentre = 0.28f
 
 private const val GlowRadius = 1.5f

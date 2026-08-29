@@ -7,15 +7,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -234,6 +238,49 @@ val TvScreenInset = 48.dp
 val TvTitleInset = 24.dp
 
 val TvCardGap = 16.dp
+
+/**
+ * How far into a thing the viewer got, along the bottom edge of its card.
+ *
+ * Drawn on the card and not under it, where a row of them would push the titles down and change
+ * the height of every card in the row for the sake of the few that have been started.
+ *
+ * Nothing at all where the fraction is not known -- a film watched before lengths were written
+ * down has a position and no total, and a bar guessed from that would be a bar that lies.
+ */
+@Composable
+fun BoxScope.TvWatchedBar(watched: Float?) {
+    if (watched == null || watched <= 0f) return
+    Box(
+        modifier = Modifier
+            .align(Alignment.BottomStart)
+            // Off the edges rather than along them, as the television's own home draws it. Flush
+            // with the corners, a bar on a rounded card is a straight line running out from under
+            // two curves; lifted, it reads as something laid on the picture. The inset comes before
+            // the width, so the bar is shortened rather than merely having its ground moved.
+            .padding(BarInset)
+            .fillMaxWidth()
+            .height(BarHeight)
+            .clip(CircleShape)
+            // Translucent white under the fill, as the phone draws it: this lies on a frame nobody
+            // chose, and a colour from the palette reads as a block on some of them.
+            .background(Color.White.copy(alpha = BarTrackAlpha)),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(watched)
+                .fillMaxHeight()
+                .background(MaterialTheme.colorScheme.primary),
+        )
+    }
+}
+
+private val BarHeight = 4.dp
+
+/** How far off the corners it sits, which is about what the curve of a card takes up. */
+private val BarInset = 8.dp
+
+private const val BarTrackAlpha = 0.4f
 
 /** One width everywhere, so a row of films and a grid of folders read as the same library. */
 val TvCardWidth = 200.dp
