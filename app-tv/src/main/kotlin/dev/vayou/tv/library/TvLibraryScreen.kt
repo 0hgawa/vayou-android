@@ -206,13 +206,17 @@ fun TvLibraryScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface),
     ) {
-        // Only for what the viewer walked into. At the top the bar above already says "Videos", and
-        // a heading repeating it is a line of screen spent saying nothing.
+        // Where the viewer is, and never nothing.
+        //
+        // A television has no bar above this one to carry the name, so a screen that leaves the
+        // heading out is a back arrow beside an empty line: it says what to press to leave and not
+        // what you would be leaving. Obvious in the second after the card was pressed, and not
+        // obvious coming back from a film, or to whoever picks the remote up next.
         val opening = when {
             openFolder != null -> openFolder.name
             isInFavourites -> stringResource(R.string.favourites)
             openList == AllVideos -> stringResource(R.string.all_videos)
-            else -> null
+            else -> stringResource(R.string.videos)
         }
         TvSearchHeader(
             title = opening,

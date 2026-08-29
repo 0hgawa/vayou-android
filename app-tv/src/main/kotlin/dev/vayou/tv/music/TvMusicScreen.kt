@@ -134,8 +134,9 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface),
     ) {
-        // Only for what the listener walked into. At the top the bar above already says "Music".
-        val opening = stringResource(R.string.favourites).takeIf { isInFavourites }
+        // Where the listener is, and never nothing -- for the reason the film library gives: on a
+        // television there is no bar above this one to carry the name.
+        val opening = stringResource(if (isInFavourites) R.string.favourites else R.string.music)
         TvSearchHeader(
             title = opening,
             query = query,
