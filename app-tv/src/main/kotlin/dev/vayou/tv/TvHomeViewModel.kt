@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.vayou.core.data.repository.MediaRepository
+import dev.vayou.core.data.repository.PreferencesRepository
 import dev.vayou.core.model.Video
 import dev.vayou.core.smb.FavoriteFolder
 import dev.vayou.core.smb.FolderFavouritesStore
@@ -37,6 +38,7 @@ class TvHomeViewModel @Inject constructor(
     private val playlistStore: PlaylistStore,
     discovery: SmbDiscovery,
     private val folderFavourites: FolderFavouritesStore,
+    preferencesRepository: PreferencesRepository,
 ) : ViewModel() {
 
     /**
@@ -105,7 +107,14 @@ class TvHomeViewModel @Inject constructor(
         // watched off a share is not in MediaStore and never could be, so the library's own list
         // cannot answer "what did I watch last" for the half of the viewing that happens over the
         // network. Eleven rows with an index on the address -- it costs nothing to ask.
-        mediaRepository.getRecentlyPlayed(MaxRow),
+        // Gated here rather than where the row is drawn, because the switch that turns it off is
+        // about this list and nothing else: emptied at the source, the row is not built, the
+        // addresses are not resolved against the library, and the home lands its focus on whatever
+        // is first without a row that was made only to be hidden.
+        combine(
+            mediaRepository.getRecentlyPlayed(MaxRow),
+            preferencesRepository.applicationPreferences,
+        ) { played, preferences -> if (preferences.showRecentVideos) played else emptyList() },
         // Saved and found on the wire as one list. A television that has never been set up has
         // nothing saved, and a row that waits for the phone to save something first would never
         // appear at all.
