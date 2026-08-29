@@ -91,6 +91,7 @@
     <string name="opening">Abrindo…</string>
     <string name="playback_failed">Não foi possível reproduzir</string>
     <string name="playback_failed_network">Não foi possível alcançar o compartilhamento. Ele pode estar desligado ou fora da rede.</string>
+    <string name="playback_failed_file">Não foi possível ler este arquivo. Ele pode estar danificado ou incompleto.</string>
     <string name="playback_failed_format">Este arquivo está em um formato que esta TV não consegue decodificar.</string>
     <string name="try_again">Tentar de novo</string>
     <string name="go_back">Voltar</string>

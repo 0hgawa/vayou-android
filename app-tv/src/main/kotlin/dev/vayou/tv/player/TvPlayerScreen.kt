@@ -101,6 +101,7 @@ import dev.vayou.core.player.ui.TranslationLookaheadMs
 import dev.vayou.core.player.ui.VideoContentScale
 import dev.vayou.core.player.ui.asSpeedLabel
 import dev.vayou.core.player.ui.rememberTracksState
+import dev.vayou.core.smb.SmbScheme
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.tv.Hairline
 import dev.vayou.tv.R
@@ -220,6 +221,7 @@ fun TvPlayerScreen(onBack: () -> Unit, viewModel: TvPlayerViewModel = hiltViewMo
         when {
             failed != null -> PlaybackFailed(
                 failure = failed,
+                isOnNetwork = viewModel.videoUri.startsWith("$SmbScheme:"),
                 onRetry = {
                     connected?.prepare()
                     connected?.play()
@@ -302,7 +304,13 @@ private val SleeveMark = 72.dp
  * that out is the app punishing them for its own network.
  */
 @Composable
-private fun PlaybackFailed(failure: PlaybackException, onRetry: () -> Unit, onBack: () -> Unit) {
+private fun PlaybackFailed(
+    failure: PlaybackException,
+    /** Where the film lives, because the same failure means different things off a wire and off a disc. */
+    isOnNetwork: Boolean,
+    onRetry: () -> Unit,
+    onBack: () -> Unit,
+) {
     val retry = remember { FocusRequester() }
     LaunchedEffect(Unit) { runCatching { retry.requestFocus() } }
     BackHandler(onBack = onBack)
@@ -318,7 +326,7 @@ private fun PlaybackFailed(failure: PlaybackException, onRetry: () -> Unit, onBa
             modifier = Modifier.padding(horizontal = TvRowInset),
         )
         Text(
-            text = stringResource(failure.explanation),
+            text = stringResource(failure.explain(isOnNetwork)),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = TvRowInset, vertical = TvCardTitleGap),
@@ -333,15 +341,22 @@ private fun PlaybackFailed(failure: PlaybackException, onRetry: () -> Unit, onBa
 }
 
 /**
- * Which of two sentences to show: the network's fault, or the file's.
+ * Which sentence to show, from what went wrong and where the film was.
  *
- * Two and not the exception's own message, which is a class name and a byte offset. The distinction
- * is the one that decides what a viewer does next -- try again, or try something else. Read off the
- * range rather than off a list of codes: everything the player counts as getting at the bytes is
- * numbered in the two thousands, and everything about making sense of them starts at the three.
+ * Not the exception's own message, which is a class name and a byte offset. What a viewer needs is
+ * whether to try again or try something else, and that turns on two things rather than one: the
+ * player reports a file it could not finish reading with the same code whether the bytes were
+ * coming down a wire or off the disc in the set, and telling somebody a share is unreachable when
+ * the file is sitting in their own Movies folder sends them to look at a router for nothing.
+ *
+ * Read off the range and not a list of codes: everything the player counts as getting at the bytes
+ * is numbered in the two thousands, and making sense of them starts at the three.
  */
-private val PlaybackException.explanation: Int
-    get() = if (errorCode in IoErrorCodes) R.string.playback_failed_network else R.string.playback_failed_format
+private fun PlaybackException.explain(isOnNetwork: Boolean): Int = when {
+    errorCode !in IoErrorCodes -> R.string.playback_failed_format
+    isOnNetwork -> R.string.playback_failed_network
+    else -> R.string.playback_failed_file
+}
 
 private val IoErrorCodes =
     PlaybackException.ERROR_CODE_IO_UNSPECIFIED until PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED

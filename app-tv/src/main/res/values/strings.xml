@@ -92,6 +92,7 @@
     <string name="opening">Opening…</string>
     <string name="playback_failed">This could not be played</string>
     <string name="playback_failed_network">The share could not be reached. It may be off, or off the network.</string>
+    <string name="playback_failed_file">This file could not be read. It may be damaged or incomplete.</string>
     <string name="playback_failed_format">This file is in a format this television cannot decode.</string>
     <string name="try_again">Try again</string>
     <string name="go_back">Go back</string>
