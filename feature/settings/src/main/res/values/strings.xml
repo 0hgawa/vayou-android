@@ -138,4 +138,6 @@
 
     <string name="settings_material_you">Discs behind the controls</string>
     <string name="settings_material_you_description">A translucent circle under each button, so a white glyph stays legible over a bright scene</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_system">Follow the system</string>
 </resources>

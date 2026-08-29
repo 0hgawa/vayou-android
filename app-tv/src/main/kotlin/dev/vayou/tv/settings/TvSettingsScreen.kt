@@ -2,6 +2,7 @@ package dev.vayou.tv.settings
 
 import android.content.Context
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +44,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import dev.vayou.core.common.AppLanguages
+import dev.vayou.core.common.SystemLanguage
+import dev.vayou.core.common.appLanguage
+import dev.vayou.core.common.setAppLanguage
 import dev.vayou.core.model.ApplicationPreferences
 import dev.vayou.core.model.DecoderPriority
 import dev.vayou.core.model.PlayerPreferences
@@ -388,8 +393,41 @@ private fun LibraryRows(
 @Composable
 private fun GeneralRows(onReset: () -> Unit) {
     val context = LocalContext.current
+    val activity = LocalActivity.current
+    val chooser = rememberChooser()
     var pending by remember { mutableStateOf<String?>(null) }
+    // Read once rather than on every pass: it can only change by way of a fresh activity, and this
+    // whole composition goes with it.
+    val spoken = remember { context.appLanguage() }
+    val spokenLabel = AppLanguages[spoken] ?: stringResource(SettingsR.string.settings_language_system)
+
+    if (chooser.open == LanguageChoice) {
+        ChoicePane(
+            title = stringResource(SettingsR.string.settings_language),
+            options = buildList {
+                add(SystemLanguage to stringResource(SettingsR.string.settings_language_system))
+                AppLanguages.forEach { (tag, name) -> add(tag to name) }
+            },
+            selected = spoken,
+            onChoose = { tag ->
+                context.setAppLanguage(tag)
+                // Nothing short of a new activity will do: every string on screen was resolved
+                // against the old one, and there is no asking them to resolve again.
+                activity?.recreate()
+            },
+            onDismiss = chooser::close,
+        )
+        return
+    }
+
     Rows {
+        item {
+            SettingRow(
+                title = stringResource(SettingsR.string.settings_language),
+                value = spokenLabel,
+                modifier = chooser.rowModifier(LanguageChoice),
+            ) { chooser.open(LanguageChoice) }
+        }
         item {
             SettingRow(title = stringResource(SettingsR.string.settings_clear_thumbnails)) {
                 pending = ThumbnailsChoice
@@ -419,7 +457,15 @@ private fun GeneralRows(onReset: () -> Unit) {
                 },
             ),
             onConfirm = {
-                if (action == ThumbnailsChoice) context.clearThumbnailCache() else onReset()
+                if (action == ThumbnailsChoice) {
+                    context.clearThumbnailCache()
+                } else {
+                    // The language as well: "settings" to a reader is one thing, whatever number of
+                    // files it takes here.
+                    context.setAppLanguage(SystemLanguage)
+                    onReset()
+                    if (spoken != SystemLanguage) activity?.recreate()
+                }
                 pending = null
             },
             onDismiss = { pending = null },
@@ -630,6 +676,8 @@ private const val SeekChoice = "seek"
 private const val SizeChoice = "size"
 
 private const val DecoderChoice = "decoder"
+
+private const val LanguageChoice = "language"
 
 private const val ThumbnailsChoice = "thumbnails"
 

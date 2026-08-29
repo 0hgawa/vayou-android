@@ -1,5 +1,6 @@
 package dev.vayou.tv
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -31,6 +32,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import dagger.hilt.android.AndroidEntryPoint
 import dev.vayou.core.common.audioPermission
+import dev.vayou.core.common.inAppLanguage
 import dev.vayou.core.common.storagePermission
 import dev.vayou.core.media.sync.MediaSynchronizer
 import dev.vayou.tv.library.TvLibraryScreen
@@ -58,6 +60,10 @@ class TvMainActivity : ComponentActivity() {
 
     @Inject
     lateinit var synchronizer: MediaSynchronizer
+
+    // Applied here because here is the earliest there is anything to apply it to. A locale set
+    // any later is a screen already built in the wrong language and thrown away again.
+    override fun attachBaseContext(newBase: Context) = super.attachBaseContext(newBase.inAppLanguage())
 
     @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {

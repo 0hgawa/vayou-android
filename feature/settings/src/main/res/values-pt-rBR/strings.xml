@@ -138,4 +138,6 @@
     <string name="settings_ambient_glow_description">Tingir as barras ao lado do filme com a cor dele</string>
     <string name="settings_volume_boost">Reforço de volume</string>
     <string name="settings_volume_boost_description">Deixa o gesto de volume ir ao dobro do que este aparelho entrega. Filmes baixos ficam audíveis; os altos distorcem.</string>
+    <string name="settings_language">Idioma</string>
+    <string name="settings_language_system">Seguir o sistema</string>
 </resources>
