@@ -7,8 +7,6 @@ import dev.vayou.core.data.repository.MediaPlaylistRepository
 import dev.vayou.core.media.MusicLibrary
 import dev.vayou.core.media.MusicSort
 import dev.vayou.core.media.Song
-import dev.vayou.core.model.MediaLibrary
-import dev.vayou.tv.TvMediaList
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -69,9 +67,6 @@ class TvMusicViewModel @Inject constructor(
                 order = order,
                 songs = songs,
                 favourites = songs.filter { it.uriString in starred },
-                playlists = playlists.of(MediaLibrary.Music).map { list ->
-                    TvMediaList(list.id, list.name, list.itemUris.mapNotNull(byUri::get))
-                },
             )
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(IdleTimeoutMs), TvMusicState())
@@ -102,7 +97,6 @@ data class TvMusicState(
     val order: TvMusicOrder = TvMusicOrder(),
     val songs: List<Song> = emptyList(),
     val favourites: List<Song> = emptyList(),
-    val playlists: List<TvMediaList<Song>> = emptyList(),
 )
 
 private const val IdleTimeoutMs = 5_000L

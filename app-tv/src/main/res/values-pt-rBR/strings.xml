@@ -55,11 +55,9 @@
     <string name="subtitle_size_small">Pequeno</string>
     <string name="subtitle_size_medium">Médio</string>
     <string name="subtitle_size_large">Grande</string>
-    <string name="folders">Pastas</string>
     <string name="favourites">Favoritos</string>
     <string name="loading_library">Lendo os vídeos desta TV…</string>
     <string name="no_videos">Nenhum vídeo aqui</string>
-    <string name="no_folders">Nenhuma pasta aqui</string>
     <plurals name="n_videos">
         <item quantity="one">%1$d vídeo</item>
         <item quantity="other">%1$d vídeos</item>        <item quantity="many">%1$d de vídeos</item>
@@ -78,8 +76,6 @@
         <item quantity="one">%1$d música</item>
         <item quantity="other">%1$d músicas</item>        <item quantity="many">%1$d de músicas</item>
     </plurals>
-    <string name="playlists">Listas</string>
-    <string name="no_playlists">Nenhuma lista ainda — monte no celular</string>
     <string name="search">Buscar</string>
     <string name="group_all">Todos</string>
     <string name="country">País</string>
@@ -139,4 +135,5 @@
     <string name="no_subtitles_found">Nada encontrado para este filme</string>
     <string name="subtitle_search_term">Procurar por outro nome</string>
     <string name="no_favourite_channels">Nenhum favorito ainda — segure em um canal para marcá-lo</string>
+    <string name="all_videos">Todos os vídeos</string>
 </resources>

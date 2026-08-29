@@ -14,10 +14,8 @@ import dev.vayou.core.domain.GetSortedMediaUseCase
 import dev.vayou.core.media.MediaActions
 import dev.vayou.core.media.MediaWrite
 import dev.vayou.core.model.Folder
-import dev.vayou.core.model.MediaLibrary
 import dev.vayou.core.model.Sort
 import dev.vayou.core.model.Video
-import dev.vayou.tv.TvMediaList
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -70,9 +68,6 @@ class TvLibraryViewModel @Inject constructor(
                 folders = root.folderList,
                 videos = root.mediaList,
                 favourites = playlists.favouriteUris.mapNotNull(byUri::get),
-                playlists = playlists.of(MediaLibrary.Video).map { list ->
-                    TvMediaList(list.id, list.name, list.itemUris.mapNotNull(byUri::get))
-                },
             )
         }
     }.stateIn(
@@ -146,7 +141,6 @@ data class TvLibraryState(
     val folders: List<Folder> = emptyList(),
     val videos: List<Video> = emptyList(),
     val favourites: List<Video> = emptyList(),
-    val playlists: List<TvMediaList<Video>> = emptyList(),
 )
 
 private const val IdleTimeoutMs = 5_000L

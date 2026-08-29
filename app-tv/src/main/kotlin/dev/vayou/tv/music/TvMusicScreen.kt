@@ -3,9 +3,13 @@ package dev.vayou.tv.music
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -16,34 +20,35 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.session.MediaController
 import androidx.tv.material3.MaterialTheme
 import dev.vayou.core.media.MusicSort
 import dev.vayou.core.media.Song
-import dev.vayou.core.model.SmartPlaylist
 import dev.vayou.core.player.ui.musicMediaItem
 import dev.vayou.core.player.ui.rememberMusicController
-import dev.vayou.core.ui.designsystem.VayouIcons
+import dev.vayou.core.ui.graphics.rememberArtworkTint
 import dev.vayou.tv.R
 import dev.vayou.tv.TvCard
 import dev.vayou.tv.TvCardGap
-import dev.vayou.tv.TvCardMark
 import dev.vayou.tv.TvCardStar
 import dev.vayou.tv.TvCardWidth
 import dev.vayou.tv.TvChoiceList
-import dev.vayou.tv.TvMediaList
 import dev.vayou.tv.TvMessage
 import dev.vayou.tv.TvOrderButton
 import dev.vayou.tv.TvScreenInset
 import dev.vayou.tv.TvSearchHeader
-import dev.vayou.tv.TvTile
 import dev.vayou.tv.TvTitleInset
 
 /**
@@ -58,13 +63,8 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
     val state by viewModel.state.collectAsStateWithLifecycle()
     var isShowingSleeve by remember { mutableStateOf(false) }
 
-    /**
-     * What has been opened on top of the grid: starred, the list of lists, or one of them by id.
-     *
-     * One field and reserved names rather than three flags: only one of them can be open, and three
-     * booleans would be three ways to say so and one of them wrong.
-     */
-    var openList by rememberSaveable { mutableStateOf<String?>(null) }
+    /** Whether the grid is showing the starred rather than the whole library. */
+    var isInFavourites by rememberSaveable { mutableStateOf(false) }
 
     var isChoosingOrder by remember { mutableStateOf(false) }
 
@@ -78,8 +78,6 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
         nowPlayingId = player.currentMediaItem?.mediaId
     }
     val nowPlaying = remember(state, nowPlayingId) { state.songs.firstOrNull { it.uriString == nowPlayingId } }
-    val openPlaylist = remember(state, openList) { state.playlists.firstOrNull { it.id == openList } }
-    val isInFavourites = openList == SmartPlaylist.Favourites
 
     // One way out, and the mark in the header presses it too. The key on the remote walked out of
     // what was opened before leaving the section; the mark, where there was one, went straight home
@@ -88,8 +86,7 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
         when {
             query != null -> query = null
             isShowingSleeve -> isShowingSleeve = false
-            openPlaylist != null -> openList = AllLists
-            openList != null -> openList = null
+            isInFavourites -> isInFavourites = false
             else -> onBack()
         }
     }
@@ -138,21 +135,16 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
             .background(MaterialTheme.colorScheme.surface),
     ) {
         // Only for what the listener walked into. At the top the bar above already says "Music".
-        val opening = when {
-            isInFavourites -> stringResource(R.string.favourites)
-            openPlaylist != null -> openPlaylist.name
-            openList == AllLists -> stringResource(R.string.playlists)
-            else -> null
-        }
+        val opening = stringResource(R.string.favourites).takeIf { isInFavourites }
         TvSearchHeader(
             title = opening,
             query = query,
             onSearch = { query = it },
             onOpenSearch = { query = "" },
             onBack = goBack,
-            // Not over starred or a built list: those keep the order they were built in, and a
-            // button that quietly does nothing is worse than no button at all.
-            action = if (openList != null) {
+            // Not over starred: it keeps the order it was built in, and a button that quietly
+            // does nothing is worse than no button at all.
+            action = if (isInFavourites) {
                 null
             } else {
                 {
@@ -164,13 +156,9 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
             },
         )
 
-        // Starred and the lists are ways of looking at this library rather than other libraries, so
-        // they open in place: the same grid, the same cards, one fewer of everything else.
-        val listed = when {
-            isInFavourites -> state.favourites
-            openPlaylist != null -> openPlaylist.items
-            else -> state.songs
-        }
+        // Starred is a way of looking at this library rather than another library, so it opens
+        // in place: the same grid, the same cards, one fewer of everything else.
+        val listed = if (isInFavourites) state.favourites else state.songs
         when {
             state.isLoading -> TvMessage(stringResource(R.string.loading_library))
 
@@ -179,9 +167,7 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
                 nowPlayingId = nowPlayingId,
                 heads = false,
                 favouriteCount = state.favourites.size,
-                playlistCount = state.playlists.sumOf { it.items.size },
-                onOpenFavourites = { openList = SmartPlaylist.Favourites },
-                onOpenPlaylists = { openList = AllLists },
+                onOpenFavourites = { isInFavourites = true },
                 onPlay = { index ->
                     controller?.playFrom(found, index)
                     isShowingSleeve = true
@@ -190,21 +176,14 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
                 onToggleFavourite = viewModel::toggleFavourite,
                 emptyMessage = stringResource(R.string.nothing_found).takeIf { found.isEmpty() },
             )
-            openList == AllLists -> Lists(
-                playlists = state.playlists,
-                onOpen = { openList = it.id },
-            )
-
             isInFavourites && listed.isEmpty() -> TvMessage(stringResource(R.string.no_favourites))
             state.songs.isEmpty() -> TvMessage(stringResource(R.string.no_songs))
             else -> Grid(
                 songs = listed,
                 nowPlayingId = nowPlayingId,
-                heads = openList == null,
+                heads = !isInFavourites,
                 favouriteCount = state.favourites.size,
-                playlistCount = state.playlists.sumOf { it.items.size },
-                onOpenFavourites = { openList = SmartPlaylist.Favourites },
-                onOpenPlaylists = { openList = AllLists },
+                onOpenFavourites = { isInFavourites = true },
                 onPlay = { index ->
                     controller?.playFrom(listed, index)
                     isShowingSleeve = true
@@ -227,12 +206,10 @@ private fun MediaController.playFrom(songs: List<Song>, index: Int) {
 private fun Grid(
     songs: List<Song>,
     nowPlayingId: String?,
-    /** True at the top of the library, where the two ways of looking at it sit before the tracks. */
+    /** True at the top of the library, where the starred sit before the tracks. */
     heads: Boolean,
     favouriteCount: Int,
-    playlistCount: Int,
     onOpenFavourites: () -> Unit,
-    onOpenPlaylists: () -> Unit,
     onPlay: (Int) -> Unit,
     onOpenSleeve: () -> Unit,
     onToggleFavourite: (Song) -> Unit,
@@ -261,13 +238,6 @@ private fun Grid(
                     modifier = Modifier.focusRequester(first),
                 ) { TvCardStar() }
             }
-            item {
-                TvCard(
-                    title = stringResource(R.string.playlists),
-                    subtitle = pluralStringResource(R.plurals.n_songs, playlistCount, playlistCount),
-                    onClick = onOpenPlaylists,
-                ) { TvCardMark(VayouIcons.MusicPlaylist) }
-            }
         }
         itemsIndexed(songs, key = { _, song -> song.uriString }) { index, song ->
             TvCard(
@@ -281,41 +251,54 @@ private fun Grid(
                 onLongClick = { onToggleFavourite(song) },
                 modifier = if (index == 0 && !heads) Modifier.focusRequester(first) else Modifier,
             ) {
-                TvCover(song.artworkUri)
+                Sleeve(song.artworkUri)
             }
         }
     }
 }
 
-/** The lists the listener built on the phone. Opening one is all a remote can do with it. */
+/**
+ * A sleeve on a card that is not the shape of one.
+ *
+ * The card is 16:9 because every other card in the app is, and a viewer should not meet two grids
+ * built to different heights. A cover is square. Cropping it to fit cuts away the top and the
+ * bottom, which is where a record usually has its name printed; letterboxing it leaves two dead
+ * grey panels either side.
+ *
+ * So the panels take the record's own colour, read off the cover itself, and the sleeve stands
+ * clear of the edges in the middle of them. A track with no cover has no colour to give, so the
+ * card stays the flat grey it always was with the note in the middle of it -- the framing costs
+ * nothing where there is nothing to frame.
+ *
+ * Only here: [TvCover] is the cover itself and the now-playing screen frames it its own way.
+ */
 @Composable
-private fun Lists(playlists: List<TvMediaList<Song>>, onOpen: (TvMediaList<Song>) -> Unit) {
-    if (playlists.isEmpty()) {
-        TvMessage(stringResource(R.string.no_playlists))
-        return
-    }
-    val first = remember { FocusRequester() }
-    LaunchedEffect(Unit) { runCatching { first.requestFocus() } }
-
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(TvCardWidth),
-        contentPadding = PaddingValues(horizontal = TvScreenInset, vertical = TvTitleInset),
-        horizontalArrangement = Arrangement.spacedBy(TvCardGap),
-        verticalArrangement = Arrangement.spacedBy(TvCardGap),
+private fun Sleeve(model: Any?) {
+    val surface = MaterialTheme.colorScheme.surfaceVariant
+    // A 24-pixel copy, cached by Coil, and a grid only ever composes the dozen cards it shows.
+    val tint = rememberArtworkTint(model = model, fallback = surface)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .drawBehind { drawRect(Brush.verticalGradient(listOf(tint, surface))) },
+        contentAlignment = Alignment.Center,
     ) {
-        itemsIndexed(playlists, key = { _, list -> list.id }) { index, list ->
-            TvTile(
-                title = list.name,
-                subtitle = pluralStringResource(R.plurals.n_songs, list.items.size, list.items.size),
-                onClick = { onOpen(list) },
-                modifier = if (index == 0) Modifier.focusRequester(first) else Modifier,
-            ) { TvCardMark(VayouIcons.MusicPlaylist) }
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(vertical = SleeveInset)
+                .aspectRatio(1f)
+                .clip(MaterialTheme.shapes.small)
+                .background(surface),
+            contentAlignment = Alignment.Center,
+        ) {
+            TvCover(model)
         }
     }
 }
 
-/** The reserved name for the list of lists, beside the store's own for the derived ones. */
-private const val AllLists = "lists"
+/** How far the sleeve stands off the card's own edge, top and bottom. */
+private val SleeveInset = 12.dp
 
 /** How each axis is named here. The comparators are shared with the phone; the words are not. */
 private val MusicSort.label: Int

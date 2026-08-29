@@ -103,14 +103,13 @@ fun TvLibraryScreen(
     val openFolder = remember(state, openFolderPath) {
         openFolderPath?.let { path -> state.folders.firstOrNull { it.path == path } }
     }
-    val openPlaylist = remember(state, openList) { state.playlists.firstOrNull { it.id == openList } }
     val isInFavourites = openList == SmartPlaylist.Favourites
 
     /** The films of whatever was opened, or null while a grid of somethings is what is listed. */
     val opened: List<Video>? = when {
         openFolder != null -> openFolder.mediaList
         isInFavourites -> state.favourites
-        else -> openPlaylist?.items
+        else -> null
     }
 
     // One way out, and the mark in the header presses it too. The key on the remote walked out of
@@ -120,7 +119,6 @@ fun TvLibraryScreen(
         when {
             query != null -> query = null
             openFolderPath != null -> openFolderPath = null
-            openPlaylist != null -> openList = AllLists
             openList != null -> openList = null
             else -> onBack()
         }
@@ -213,9 +211,7 @@ fun TvLibraryScreen(
         val opening = when {
             openFolder != null -> openFolder.name
             isInFavourites -> stringResource(R.string.favourites)
-            openPlaylist != null -> openPlaylist.name
-            openList == AllLists -> stringResource(R.string.playlists)
-            openList == AllFolders -> stringResource(R.string.folders)
+            openList == AllVideos -> stringResource(R.string.all_videos)
             else -> null
         }
         TvSearchHeader(
@@ -227,7 +223,7 @@ fun TvLibraryScreen(
             // Only over the listings that obey it, as on the phone. Starred and the built lists keep
             // the order they were built in, and a button that quietly does nothing is worse than no
             // button: the viewer presses it twice and concludes the television is broken.
-            action = if (openList == null || openList == AllFolders) {
+            action = if (openList == null || openList == AllVideos) {
                 {
                     TvOrderButton(
                         isAscending = state.sort.order == Sort.Order.ASCENDING,
@@ -253,34 +249,19 @@ fun TvLibraryScreen(
                 videos(opened, { onPlayVideo(it, false) }, { acting = it }, first)
             }
 
-            openList == AllFolders ->
-                Cards(stringResource(R.string.no_folders).takeIf { state.folders.isEmpty() }) { first ->
-                    itemsIndexed(state.folders, key = { _, folder -> folder.path }) { index, folder ->
-                        TvTile(
-                            title = folder.name,
-                            subtitle = countOf(folder.mediaList.size),
-                            onClick = { openFolderPath = folder.path },
-                            modifier = if (index == 0) Modifier.focusRequester(first) else Modifier,
-                        ) { TvCardFolder() }
-                    }
+            openList == AllVideos ->
+                Cards(stringResource(R.string.no_videos).takeIf { state.videos.isEmpty() }) { first ->
+                    videos(state.videos, { onPlayVideo(it, false) }, { acting = it }, first)
                 }
 
-            openList == AllLists ->
-                Cards(stringResource(R.string.no_playlists).takeIf { state.playlists.isEmpty() }) { first ->
-                    itemsIndexed(state.playlists, key = { _, list -> list.id }) { index, list ->
-                        TvTile(
-                            title = list.name,
-                            subtitle = countOf(list.items.size),
-                            onClick = { openList = list.id },
-                            modifier = if (index == 0) Modifier.focusRequester(first) else Modifier,
-                        ) { TvCardMark(VayouIcons.Playlist) }
-                    }
-                }
-
+            // Folders, and not every film at once. The phone opens its library the same way, and a
+            // remote is the reason it matters more here: a thumb scrolls two hundred cards in one
+            // movement, and a D-pad presses two hundred times. The whole list is still one card
+            // away for anyone who would rather have it.
             else -> Cards(stringResource(R.string.no_videos).takeIf { state.videos.isEmpty() }) { first ->
-                // All three at the head of the grid, in with the films rather than each in a
-                // section of its own: they are ways of looking at this library, not other
-                // libraries, and a television has room on its rail for what is visited daily.
+                // Both at the head of the grid, in with the folders rather than each in a section
+                // of its own: they are ways of looking at this library, not other libraries, and a
+                // television has room on its rail for what is visited daily.
                 item {
                     TvTile(
                         title = stringResource(R.string.favourites),
@@ -291,19 +272,18 @@ fun TvLibraryScreen(
                 }
                 item {
                     TvTile(
-                        title = stringResource(R.string.playlists),
-                        subtitle = countOf(state.playlists.sumOf { it.items.size }),
-                        onClick = { openList = AllLists },
-                    ) { TvCardMark(VayouIcons.Playlist) }
-                }
-                item {
-                    TvTile(
-                        title = stringResource(R.string.folders),
+                        title = stringResource(R.string.all_videos),
                         subtitle = countOf(state.videos.size),
-                        onClick = { openList = AllFolders },
+                        onClick = { openList = AllVideos },
+                    ) { TvCardMark(VayouIcons.VideoLibrary) }
+                }
+                itemsIndexed(state.folders, key = { _, folder -> folder.path }) { _, folder ->
+                    TvTile(
+                        title = folder.name,
+                        subtitle = countOf(folder.mediaList.size),
+                        onClick = { openFolderPath = folder.path },
                     ) { TvCardFolder() }
                 }
-                videos(state.videos, { onPlayVideo(it, false) }, { acting = it }, first = null)
             }
         }
     }
@@ -373,11 +353,9 @@ private fun Cards(emptyMessage: String?, content: LazyGridScope.(FocusRequester)
     LaunchedEffect(Unit) { runCatching { first.requestFocus() } }
 }
 
-/** The reserved names for the grids that are not a list, beside the store's own for the derived
- *  ones. Strings because that is what [openList] holds, and it holds real playlist ids too. */
-private const val AllLists = "lists"
-
-private const val AllFolders = "folders"
+/** The name of the grid of every film at once, beside the store's own for the starred. A string
+ *  because that is what [openList] holds. */
+private const val AllVideos = "videos"
 
 @Composable
 private fun countOf(size: Int): String = pluralStringResource(R.plurals.n_videos, size, size)

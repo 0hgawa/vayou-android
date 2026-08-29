@@ -56,11 +56,9 @@
     <string name="subtitle_size_small">Small</string>
     <string name="subtitle_size_medium">Medium</string>
     <string name="subtitle_size_large">Large</string>
-    <string name="folders">Folders</string>
     <string name="favourites">Favourites</string>
     <string name="loading_library">Reading this television’s videos…</string>
     <string name="no_videos">No videos here</string>
-    <string name="no_folders">No folders here</string>
     <plurals name="n_videos">
         <item quantity="one">%1$d video</item>
         <item quantity="other">%1$d videos</item>
@@ -79,8 +77,6 @@
         <item quantity="one">%1$d song</item>
         <item quantity="other">%1$d songs</item>
     </plurals>
-    <string name="playlists">Playlists</string>
-    <string name="no_playlists">No playlists yet — build them on the phone</string>
     <string name="search">Search</string>
     <string name="group_all">All</string>
     <string name="country">Country</string>
@@ -140,4 +136,5 @@
     <string name="no_subtitles_found">Nothing found for this film</string>
     <string name="subtitle_search_term">Search by name</string>
     <string name="no_favourite_channels">No favourites yet — hold on a channel to star it</string>
+    <string name="all_videos">All videos</string>
 </resources>
