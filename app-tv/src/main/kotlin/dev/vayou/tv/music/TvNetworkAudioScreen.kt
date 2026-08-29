@@ -32,7 +32,16 @@ import dev.vayou.tv.TvMessage
 @Composable
 fun TvNetworkAudioScreen(onBack: () -> Unit, viewModel: TvNetworkAudioViewModel = hiltViewModel()) {
     val queue by viewModel.queue.collectAsStateWithLifecycle()
-    val controller = rememberMusicController()
+
+    /**
+     * What the session says it is playing, which is not this folder until it says so.
+     *
+     * One service plays everything -- a film and a track are the same session -- so on the way in
+     * it is still holding whatever was watched or heard last, its queue and its artwork with it.
+     * Handing the sleeve a player in that state is what put the last film's picture on this screen.
+     */
+    var playingId by remember { mutableStateOf<String?>(null) }
+    val controller = rememberMusicController { player -> playingId = player.currentMediaItem?.mediaId }
 
     // Set once the folder and the service have both answered, and once only: this screen is
     // recomposed on every tick of the clock under the cover, and handing the queue over again would
@@ -54,6 +63,23 @@ fun TvNetworkAudioScreen(onBack: () -> Unit, viewModel: TvNetworkAudioViewModel 
         player.play()
     }
 
+    /**
+     * Whether the session has reached the track this screen was opened for.
+     *
+     * Not merely queued, and not merely playing something from this folder: the track itself.
+     * Setting a queue is a message to a service in another process, and until it has been acted on
+     * the player still answers about the last thing -- which, listening through an album, is the
+     * track before this one, and is in this same folder. A folder is too loose a test for that.
+     *
+     * Latched, because after arriving the listener may move on: once the right track has been
+     * reached the screen belongs to the player, whatever it goes on to play.
+     */
+    var hasArrived by remember { mutableStateOf(false) }
+    val wanted = queue?.let { it.tracks.getOrNull(it.startIndex) }
+    LaunchedEffect(playingId, wanted) {
+        if (!hasArrived && wanted != null && playingId == wanted) hasArrived = true
+    }
+
     // Leaving the screen leaves the music, as leaving the film leaves the film: there is no
     // notification on a television to bring it back from.
     //
@@ -69,7 +95,7 @@ fun TvNetworkAudioScreen(onBack: () -> Unit, viewModel: TvNetworkAudioViewModel 
         modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface),
         contentAlignment = Alignment.Center,
     ) {
-        if (controller == null || !isQueued) {
+        if (controller == null || !isQueued || !hasArrived) {
             TvMessage(stringResource(R.string.opening))
         } else {
             TvNowPlaying(controller)

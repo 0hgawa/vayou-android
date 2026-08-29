@@ -48,9 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
-import androidx.media3.common.Timeline
 import androidx.media3.session.MediaController
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
@@ -109,42 +107,36 @@ fun TvNowPlaying(controller: MediaController, known: TrackFacts? = null, sleeve:
     // button that opens the list was drawn for a queue of one and stayed missing.
     var trackCount by remember { mutableIntStateOf(controller.mediaItemCount) }
 
+    /**
+     * Everything this screen shows of the player, read together, on every event.
+     *
+     * One listener and one read rather than a handler per field. The player announces a change of
+     * track and what it knows about that track as two separate events, so a screen that mirrors
+     * each field as its own event arrives spends the beat between them describing two different
+     * tracks at once -- a new address beside the picture and the name of the one that ended. Read
+     * together, the pair is always of the same instant and that beat does not exist.
+     *
+     * Called once here as well, because the player is a service that was already running: whatever
+     * it did between this screen being built and this line arrived before there was anybody to hear
+     * it, and would otherwise be missed until the next track began.
+     */
     DisposableEffect(controller) {
+        fun read() {
+            item = controller.currentMediaItem
+            metadata = controller.mediaMetadata
+            isPlaying = controller.isPlaying
+            trackCount = controller.mediaItemCount
+            repeatMode = controller.repeatMode
+            isShuffling = controller.shuffleModeEnabled
+            positionMs = controller.currentPosition.coerceAtLeast(0)
+            durationMs = controller.duration.coerceAtLeast(0)
+        }
+
         val listener = object : Player.Listener {
-            override fun onIsPlayingChanged(playing: Boolean) {
-                isPlaying = playing
-            }
-
-            override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
-                metadata = mediaMetadata
-            }
-
-            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                item = mediaItem
-                positionMs = controller.currentPosition.coerceAtLeast(0)
-                durationMs = controller.duration.coerceAtLeast(0)
-            }
-
-            override fun onPlaybackStateChanged(playbackState: Int) {
-                durationMs = controller.duration.coerceAtLeast(0)
-            }
-
-            override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-                trackCount = controller.mediaItemCount
-            }
-
-            // Mirrored off the player rather than kept here, because this screen is not the only
-            // thing that can change them: the phone and the notification are looking at the same
-            // session, and a copy held on this side would be a second answer that goes stale.
-            override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-                isShuffling = shuffleModeEnabled
-            }
-
-            override fun onRepeatModeChanged(mode: Int) {
-                repeatMode = mode
-            }
+            override fun onEvents(player: Player, events: Player.Events) = read()
         }
         controller.addListener(listener)
+        read()
         onDispose { controller.removeListener(listener) }
     }
 
@@ -167,9 +159,19 @@ fun TvNowPlaying(controller: MediaController, known: TrackFacts? = null, sleeve:
         ?: known?.artwork
         ?: metadata.artworkData
         ?: metadata.artworkUri
-    val settled = remember(item?.mediaId) { mutableStateOf<Any?>(null) }
-    LaunchedEffect(item?.mediaId, available) { if (settled.value == null) settled.value = available }
-    val cover = settled.value
+
+    // Kept with the address of the track it was found for, and shown only while that is still the
+    // track. A picture reaches this screen from several places at several moments, and one of them
+    // is the player's own copy of what it knows -- which, for the beat between being told the track
+    // has changed and being told what the new one is, still describes the one that ended. Held as a
+    // bare picture, whatever turned up in that beat was kept for the length of the track; held with
+    // its address, it simply does not match, and nothing is shown until the right one arrives.
+    val settled = remember { mutableStateOf<Pair<String?, Any?>?>(null) }
+    val playing = item?.mediaId
+    LaunchedEffect(playing, available) {
+        if (available != null && settled.value?.first != playing) settled.value = playing to available
+    }
+    val cover = settled.value?.takeIf { it.first == playing }?.second
 
     val title = known?.title?.takeIf { it.isNotBlank() }
         ?: metadata.title?.toString()?.takeIf { it.isNotBlank() }
@@ -555,7 +557,9 @@ private fun Queue(controller: MediaController, trackCount: Int, onDismiss: () ->
  */
 @Composable
 fun TvCover(model: Any?) {
-    val mark: @Composable () -> Unit = { TvCardMark(VayouIcons.AudioNotesFilled) }
+    // The same note the phone draws for a track with no cover, and the same one the file on a
+    // share gets. Three places showing one kind of thing had been showing it three ways.
+    val mark: @Composable () -> Unit = { TvCardMark(VayouIcons.Audio) }
     if (model == null) {
         mark()
         return
