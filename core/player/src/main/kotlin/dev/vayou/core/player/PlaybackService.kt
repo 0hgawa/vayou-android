@@ -285,7 +285,14 @@ class PlaybackService : MediaSessionService() {
             // an active session, and only the session can say it is over.
             .setCustomLayout(
                 listOf(
+                    // A cross, and drawn by us because media3 has no close in its standard set --
+                    // the whole list is transport, rating and queue, and the nearest thing is the
+                    // stop square this used to carry. A square on a media panel says "stop
+                    // playing", which is the one thing this button does not do: it empties the
+                    // queue and ends the session. The standard icon stays on the builder for
+                    // whatever cannot draw ours.
                     CommandButton.Builder(CommandButton.ICON_STOP)
+                        .setCustomIconResId(R.drawable.ic_close_session)
                         .setSessionCommand(SessionCommand(PlaybackCommands.Close, Bundle.EMPTY))
                         .setDisplayName(getString(R.string.close_session))
                         .build(),
