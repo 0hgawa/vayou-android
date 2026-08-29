@@ -23,6 +23,7 @@ import coil3.ImageLoader
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.AndroidEntryPoint
+import dev.vayou.core.data.repository.MediaPlaylistRepository
 import dev.vayou.core.data.repository.PreferencesRepository
 import dev.vayou.core.model.AudioEffectType
 import dev.vayou.core.model.EqPreset
@@ -36,6 +37,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 /**
@@ -67,6 +70,14 @@ class PlaybackService : MediaSessionService() {
 
     @Inject
     lateinit var preferences: PreferencesRepository
+
+    /** What the star writes to, and the same store every other starred thing in the app reads. */
+    @Inject
+    lateinit var playlistRepository: MediaPlaylistRepository
+
+    /** The starred addresses as they stand, kept because the panel is redrawn off the main thread's
+     *  own callbacks and cannot wait on a flow to answer. */
+    private var favouriteUris: List<String> = emptyList()
 
     /** The same loader every cover on screen comes from -- see [CoilBitmapLoader]. */
     @Inject
@@ -112,6 +123,15 @@ class PlaybackService : MediaSessionService() {
             customCommand: SessionCommand,
             args: Bundle,
         ): ListenableFuture<SessionResult> = when (customCommand.customAction) {
+            PlaybackCommands.ToggleFavourite -> {
+                // The address and not the title: it is what the star is stored against everywhere
+                // else, and two files can carry the same name.
+                session.player.currentMediaItem?.mediaId?.let { uri ->
+                    scope.launch { playlistRepository.toggleFavourite(uri) }
+                }
+                Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
+            }
+
             PlaybackCommands.Close -> {
                 // Emptied, not just stopped: a stopped player with a queue still describes
                 // something to come back to, and the panel would draw the row again.
@@ -254,9 +274,62 @@ class PlaybackService : MediaSessionService() {
         }
     }
 
+    /**
+     * The two buttons the panel draws beside the transport, the way out first.
+     *
+     * Both sit in the overflow slot, which is the only one the system's own panel understands: it
+     * takes a flat list of actions and places them itself. The named corners media3 offers --
+     * back, forward, and their secondaries -- belong to the notification media3 draws, and a button
+     * asking for one of those reaches the system panel as nothing at all. Asking for them is how
+     * both of these buttons disappeared from it.
+     *
+     * So the order is all there is to say, and it does not fully settle the placement: a queue
+     * with nothing after it loses the skip-forward button, the row closes up, and the panel puts
+     * the pair back the other way round. The way out leads because it is the one worth having in
+     * the same corner most of the time, and it is the corner it already had when it was alone here.
+     *
+     * The star is filled or hollow by what is starred right now: a button that always looks the
+     * same is a button nobody can read the state of, and this is the same star the library and the
+     * music screen already draw for the same thing.
+     */
+    private fun mediaButtons(isFavourite: Boolean): List<CommandButton> = listOf(
+        // A cross, and drawn by us because media3 has no close in its standard set -- the whole
+        // list is transport, rating and queue, and the nearest thing is the stop square this used
+        // to carry. A square on a media panel says "stop playing", which is the one thing this
+        // button does not do: it empties the queue and ends the session. The standard icon stays
+        // on the builder for whatever cannot draw ours.
+        CommandButton.Builder(CommandButton.ICON_STOP)
+            .setSlots(CommandButton.SLOT_OVERFLOW)
+            .setCustomIconResId(R.drawable.ic_close_session)
+            .setSessionCommand(SessionCommand(PlaybackCommands.Close, Bundle.EMPTY))
+            .setDisplayName(getString(R.string.close_session))
+            .build(),
+        CommandButton.Builder(if (isFavourite) CommandButton.ICON_STAR_FILLED else CommandButton.ICON_STAR_UNFILLED)
+            .setSlots(CommandButton.SLOT_OVERFLOW)
+            .setSessionCommand(SessionCommand(PlaybackCommands.ToggleFavourite, Bundle.EMPTY))
+            .setDisplayName(getString(R.string.favourite_session))
+            .build(),
+    )
+
+    /**
+     * Redraws the star for whatever is playing now.
+     *
+     * Called from both sides, because either can move it: the track changes under a fixed set of
+     * stars, or the set changes under a fixed track -- and the second happens from four other
+     * places, the library, the music grid, the sleeve and the television.
+     */
+    private fun refreshFavouriteButton() {
+        val session = session ?: return
+        val uri = session.player.currentMediaItem?.mediaId
+        session.setMediaButtonPreferences(mediaButtons(isFavourite = uri != null && uri in favouriteUris))
+    }
+
     private val playerListener = object : Player.Listener {
         /** The end of a track has no hour to count towards, so it is answered here instead. */
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            // Before the sleep timer's own business below, which returns early: a star left showing
+            // the previous track's state is a button that lies about what pressing it does.
+            refreshFavouriteButton()
             if (sleepTimerMinutes != PlaybackCommands.EndOfTrack) return
             if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANGED) return
             stopForSleepTimer()
@@ -280,24 +353,7 @@ class PlaybackService : MediaSessionService() {
             // Cached around, because the notification asks for the same cover on every update and
             // the system control asks again for its own copy.
             .setBitmapLoader(CacheBitmapLoader(CoilBitmapLoader(this, imageLoader, scope)))
-            // The way out, in the panel itself. Paused media sits in the shade until something
-            // clears it, and on this phone a swipe does not: the row is what the system draws for
-            // an active session, and only the session can say it is over.
-            .setCustomLayout(
-                listOf(
-                    // A cross, and drawn by us because media3 has no close in its standard set --
-                    // the whole list is transport, rating and queue, and the nearest thing is the
-                    // stop square this used to carry. A square on a media panel says "stop
-                    // playing", which is the one thing this button does not do: it empties the
-                    // queue and ends the session. The standard icon stays on the builder for
-                    // whatever cannot draw ours.
-                    CommandButton.Builder(CommandButton.ICON_STOP)
-                        .setCustomIconResId(R.drawable.ic_close_session)
-                        .setSessionCommand(SessionCommand(PlaybackCommands.Close, Bundle.EMPTY))
-                        .setDisplayName(getString(R.string.close_session))
-                        .build(),
-                ),
-            )
+            .setMediaButtonPreferences(mediaButtons(isFavourite = false))
             .setSessionActivity(
                 PendingIntent.getActivity(
                     this,
@@ -307,6 +363,24 @@ class PlaybackService : MediaSessionService() {
                 ),
             )
             .build()
+
+        // Kept in step with the store rather than read once: starring the track playing from the
+        // sleeve, or unstarring it from the library, has to reach the panel too, and the panel is
+        // the one place a viewer can see the answer without opening anything.
+        //
+        // Narrowed to the starred addresses, because the store holds far more than them and every
+        // one of its parts moves on its own. Playing a track writes a play count to it, so the
+        // whole notification was being rebuilt a second time on every track -- once for the track
+        // and once for the count it had just recorded.
+        scope.launch {
+            playlistRepository.playlists
+                .map { it.favouriteUris }
+                .distinctUntilChanged()
+                .collect {
+                    favouriteUris = it
+                    refreshFavouriteButton()
+                }
+        }
     }
 
     /**

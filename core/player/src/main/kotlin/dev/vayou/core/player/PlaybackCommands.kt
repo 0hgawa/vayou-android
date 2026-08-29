@@ -34,8 +34,12 @@ object PlaybackCommands {
         GetVolumeBoostSupport,
         SetSkipSilence,
         GetSkipSilence,
+        ToggleFavourite,
         Close,
     ).map { SessionCommand(it, Bundle.EMPTY) }
+
+    /** Stars whatever is playing, from the panel, without opening the app to do it. */
+    const val ToggleFavourite = "TOGGLE_FAVOURITE"
 
     /** Ends the session from the panel the system draws: stop, forget the queue, take the row away. */
     const val Close = "CLOSE"

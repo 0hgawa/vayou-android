@@ -17,4 +17,5 @@
     <string name="eq_preset_pop">Pop</string>
     <string name="eq_preset_rock">Rock</string>
     <string name="eq_preset_custom">Custom</string>
+    <string name="favourite_session">Favourite</string>
 </resources>
