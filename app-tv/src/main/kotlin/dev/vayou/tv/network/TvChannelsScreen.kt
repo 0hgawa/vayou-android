@@ -34,9 +34,11 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.os.ConfigurationCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.ClickableSurfaceDefaults
@@ -47,6 +49,7 @@ import androidx.tv.material3.Text
 import coil3.compose.AsyncImage
 import dev.vayou.core.smb.IptvCountries
 import dev.vayou.core.smb.PlaylistChannel
+import dev.vayou.core.ui.R as UiR
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.tv.R
 import dev.vayou.tv.TvAction
@@ -84,6 +87,8 @@ fun TvChannelsScreen(
     onBack: () -> Unit,
     viewModel: TvChannelsViewModel = hiltViewModel(),
 ) {
+    val locale = ConfigurationCompat.getLocales(LocalConfiguration.current)[0]
+    val everywhere = stringResource(UiR.string.iptv_international)
     val state by viewModel.state.collectAsStateWithLifecycle()
     var isSearching by remember { mutableStateOf(false) }
     var isFiltering by remember { mutableStateOf(false) }
@@ -236,7 +241,10 @@ fun TvChannelsScreen(
             if (state.isByCountry) {
                 TvChoiceList(
                     title = stringResource(R.string.country),
-                    options = IptvCountries.map { it to it.name },
+                    // Named by the platform in the language this screen is being read in, and
+                    // read off the configuration rather than the default so the app's own choice
+                    // of language is what decides it.
+                    options = IptvCountries.map { it to (it.nameIn(locale) ?: everywhere) },
                     selected = state.country,
                     // Never null in practice: the list only holds countries. Typed to match the
                     // selected one, which is null for a list that is not held by country at all.
@@ -354,6 +362,8 @@ private fun Header(
     onOpenFilter: () -> Unit,
     onOpenLists: () -> Unit,
 ) {
+    val locale = ConfigurationCompat.getLocales(LocalConfiguration.current)[0]
+    val everywhere = stringResource(UiR.string.iptv_international)
     val field = remember { FocusRequester() }
     LaunchedEffect(isSearching) { if (isSearching) runCatching { field.requestFocus() } }
 
@@ -381,7 +391,7 @@ private fun Header(
         Text(
             text = when {
                 state.onlyStarred -> stringResource(R.string.favourites)
-                state.isByCountry -> state.country?.name ?: state.listName
+                state.isByCountry -> state.country?.let { it.nameIn(locale) ?: everywhere } ?: state.listName
                 else -> state.group ?: state.listName
             },
             style = MaterialTheme.typography.headlineSmall,

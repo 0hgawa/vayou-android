@@ -18,14 +18,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.core.os.ConfigurationCompat
 import dev.vayou.core.common.Utils
 import dev.vayou.core.smb.BrowserSort
 import dev.vayou.core.smb.BrowserSortBy
 import dev.vayou.core.smb.IptvCountries
 import dev.vayou.core.smb.SmbFileItem
+import dev.vayou.core.ui.R as UiR
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.VayouBottomSheet
 import dev.vayou.core.ui.designsystem.components.VayouBottomSheetTitle
@@ -231,10 +234,12 @@ internal fun BrowserSortSheet(sort: BrowserSort, onChange: (BrowserSort) -> Unit
 internal fun CountrySheet(currentCode: String?, onSelect: (String?) -> Unit, onDismiss: () -> Unit) {
     VayouBottomSheet(onDismissRequest = onDismiss) {
         VayouBottomSheetTitle(text = stringResource(R.string.country))
+        val locale = ConfigurationCompat.getLocales(LocalConfiguration.current)[0]
+        val everywhere = stringResource(UiR.string.iptv_international)
         LazyColumn(modifier = Modifier.heightIn(max = VayouSheetDefaults.ListMaxHeight)) {
             items(IptvCountries) { country ->
                 FilterSheetRow(
-                    text = country.name,
+                    text = country.nameIn(locale) ?: everywhere,
                     isSelected = country.code.orEmpty() == currentCode.orEmpty(),
                     onClick = { onSelect(country.code) },
                 )

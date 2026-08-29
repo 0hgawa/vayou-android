@@ -64,7 +64,7 @@ class PlaylistStore @Inject constructor(@ApplicationContext private val context:
 
     /** Replaces the iptv-org list with another country's. Null is the global index. */
     suspend fun setIptvCountry(code: String?, displayName: String) {
-        val url = IptvCountry(code, displayName).url
+        val url = IptvCountry(code).url
         store.update { current -> current.filterNot { it.isIptvOrg } + SavedPlaylist(displayName, url) }
         context.playlistDataStore.edit { prefs ->
             if (code.isNullOrBlank()) prefs.remove(IptvCountryKey) else prefs[IptvCountryKey] = code.lowercase()

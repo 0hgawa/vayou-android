@@ -318,7 +318,7 @@ class NetworkViewModel @Inject constructor(
     fun openPlaylist(playlist: SavedPlaylist) = loadPlaylist(playlist.name, playlist.url)
 
     fun switchCountry(code: String?) {
-        val url = IptvCountry(code, LivePlaylistName).url
+        val url = IptvCountry(code).url
         if (url == _uiState.value.playlistUrl) return
         viewModelScope.launch { playlistStore.setIptvCountry(code, LivePlaylistName) }
         loadPlaylist(_uiState.value.playlistName ?: LivePlaylistName, url)
