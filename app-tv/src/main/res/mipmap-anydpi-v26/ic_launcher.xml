@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  No monochrome layer here, unlike the phone.
+
+  That layer is a silhouette the system fills with its own colour, and it exists for the themed
+  icons a phone launcher offers as a setting. A television has no such setting, but its launcher
+  reaches for the layer anyway when a viewer holds the button on the tile, and what they get is the
+  mark in white on the set's accent, which is neither the mark's colour nor the app's.
+
+  Left out, the tile is the mark on white wherever it is drawn.
+-->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@color/ic_launcher_background" />
     <foreground android:drawable="@drawable/vayou_mark" />
-    <monochrome android:drawable="@drawable/vayou_mark_monochrome" />
 </adaptive-icon>
