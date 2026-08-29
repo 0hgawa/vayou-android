@@ -9,8 +9,11 @@ android {
 
     defaultConfig {
         applicationId = "dev.vayou.tv"
+        // From one, unlike the phone: this is a listing of its own, and nothing has ever been
+        // installed from it. The phone carries its old numbering because it has an audience to
+        // keep; the television has none yet.
         versionCode = 1
-        versionName = "0.1"
+        versionName = "1.0"
     }
 
     buildTypes {

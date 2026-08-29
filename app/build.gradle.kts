@@ -1,25 +1,7 @@
-import java.util.Properties
-
 plugins {
     id("vayou.android.application")
     id("vayou.android.compose")
     id("vayou.hilt")
-}
-
-/**
- * The upload key, read from a file the repository does not carry.
- *
- * Absent on every machine but the one that publishes, and the build has to work on the others: with
- * no file the release simply comes out unsigned, which is what a build server or a fresh clone
- * wants anyway.
- *
- * `keystore.properties` sits beside the settings file, and the four names are the ones the old
- * project already uses -- the same file works for both, which matters because they are signed by
- * the same upload key and always will be.
- */
-val uploadKeyFile = rootProject.file("keystore.properties")
-val uploadKey = Properties().apply {
-    if (uploadKeyFile.exists()) uploadKeyFile.inputStream().use(::load)
 }
 
 android {
@@ -36,24 +18,7 @@ android {
         versionName = "0.2.0"
     }
 
-    signingConfigs {
-        if (uploadKeyFile.exists()) {
-            create("upload") {
-                storeFile = file(uploadKey.getProperty("RELEASE_STORE_FILE"))
-                storePassword = uploadKey.getProperty("RELEASE_STORE_PASSWORD")
-                keyAlias = uploadKey.getProperty("RELEASE_KEY_ALIAS")
-                keyPassword = uploadKey.getProperty("RELEASE_KEY_PASSWORD")
-            }
-        }
-    }
-
     buildTypes {
-        release {
-            // Null when there is no key file, which leaves the bundle unsigned rather than failing
-            // the build for everyone who is not publishing it.
-            signingConfig = signingConfigs.findByName("upload")
-        }
-
         debug {
             // `.next`, not the `.debug` the convention plugin gives: that is the package the old
             // build already occupies on a developer's phone, and this one has to sit beside it
