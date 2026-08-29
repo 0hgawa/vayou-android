@@ -26,8 +26,13 @@ import kotlinx.serialization.json.jsonArray
  * rate-limited — low. Because that endpoint is unofficial it can still answer
  * 429/403 or time out, so two safety nets are layered on top:
  *  - the batch call retries with backoff on rate-limit ([RETRY_DELAYS]);
- *  - anything the batch still couldn't translate falls back to the per-text
- *    `gtx` endpoint, so a single failing endpoint never silently drops a line.
+ *  - anything the batch still couldn't translate goes to the endpoint the
+ *    Translate browser extension uses, which Google throttles far less, in
+ *    chunks of [MAX_FALLBACK_CHARS] rather than one request per line.
+ *
+ * Both endpoints are unofficial and neither is promised to anyone, which is
+ * why there are two: they are rate-limited separately, so the one that is
+ * still answering carries the other.
  */
 object RealtimeTranslator {
 
@@ -63,12 +68,15 @@ object RealtimeTranslator {
                     stillPending += indexed
                 }
             }
-            // Fallback: per-text gtx for whatever the batch endpoint missed
-            // (whole-batch failure or individual gaps in an otherwise-OK batch).
-            stillPending.forEach { indexed ->
-                translateOneGtx(indexed.value, targetLanguage)?.let { tr ->
-                    cache[indexed.value to targetLanguage] = tr
-                    results[indexed.index] = tr
+            // Whatever the batch endpoint missed -- a whole batch that failed, or gaps in one that
+            // otherwise worked -- goes to the reserve in as few requests as it fits into.
+            if (stillPending.isNotEmpty()) {
+                val recovered = translateFallback(stillPending.map { it.value }, targetLanguage)
+                stillPending.forEachIndexed { offset, indexed ->
+                    recovered.getOrNull(offset)?.let { tr ->
+                        cache[indexed.value to targetLanguage] = tr
+                        results[indexed.index] = tr
+                    }
                 }
             }
         }
@@ -199,25 +207,78 @@ object RealtimeTranslator {
         return text.ifBlank { null }
     }
 
-    // ---- Fallback endpoint: gtx, one text per request, retried on rate-limit ----
+    // ---- Fallback endpoint: the one the Translate extension calls, throttled far less ----
 
-    private suspend fun translateOneGtx(text: String, targetLang: String): String? {
+    /**
+     * Translates whatever the batch endpoint could not, in as few requests as it can.
+     *
+     * The reserve used to be the public `gtx` endpoint, and it was the wrong one twice over.
+     * Google rate-limits it harder than anything else it answers on: measured from one network
+     * within a minute of each other, `gtx` replied 429 while this one replied 200. Since `gtx` was
+     * the only reserve there was, a limited address meant no translation at all rather than a
+     * slower one.
+     *
+     * Several lines per request, joined by a blank line, because this endpoint hands the blank
+     * lines back untouched -- which the desktop build had already found and this one had not. A
+     * reserve that asked once per line spent a hundred requests where ten would do, and that is
+     * how an address gets limited in the first place.
+     */
+    private suspend fun translateFallback(texts: List<String>, targetLang: String): List<String?> {
+        val results = arrayOfNulls<String>(texts.size)
+        var index = 0
+        while (index < texts.size) {
+            val start = index
+            var budget = 0
+            val chunk = mutableListOf<String>()
+            // At least one, however long it is: a single line over the budget still has to be sent,
+            // and a chunk that refused it would loop for ever.
+            while (index < texts.size && (chunk.isEmpty() || budget + texts[index].length <= MAX_FALLBACK_CHARS)) {
+                budget += texts[index].length + SEPARATOR.length
+                chunk += texts[index].withoutBlankLines()
+                index++
+            }
+            translateJoined(chunk, targetLang)?.forEachIndexed { offset, translated ->
+                results[start + offset] = translated
+            }
+        }
+        return results.toList()
+    }
+
+    /**
+     * One request for a whole chunk, split back on the separator that joined it.
+     *
+     * Null unless the pieces come back in the same number they went out. The split is the whole of
+     * the agreement between the two ends, and a response that broke it would shift every line onto
+     * its neighbour's timing -- which is worse than showing the original words.
+     */
+    private suspend fun translateJoined(texts: List<String>, targetLang: String): List<String?>? {
         for (delayMs in RETRY_DELAYS) {
             if (delayMs > 0) delay(delayMs)
-            when (val result = gtxOnce(text, targetLang)) {
-                is GtxResult.Ok -> return result.text
-                GtxResult.RateLimited -> continue
-                GtxResult.Failed -> return null
+            when (val result = fallbackOnce(texts.joinToString(SEPARATOR), targetLang)) {
+                is FallbackResult.Ok -> {
+                    val parts = result.text.split(SEPARATOR)
+                    return if (parts.size == texts.size) parts.map { it.trim().ifBlank { null } } else null
+                }
+                FallbackResult.RateLimited -> continue
+                FallbackResult.Failed -> return null
             }
         }
         return null
     }
 
-    private suspend fun gtxOnce(text: String, targetLang: String): GtxResult = withContext(Dispatchers.IO) {
+    /**
+     * A blank line inside a line of dialogue would be read as the end of it.
+     *
+     * The separator is the only thing telling the far end where one caption stops, so a caption
+     * carrying one of its own would come back as two and push everything after it along by one.
+     */
+    private fun String.withoutBlankLines(): String = BLANK_LINES.replace(this, "\n")
+
+    private suspend fun fallbackOnce(text: String, targetLang: String): FallbackResult = withContext(Dispatchers.IO) {
         throttle()
         try {
             val query = URLEncoder.encode(text, "UTF-8")
-            val url = "$GTX_URL?client=gtx&sl=auto&tl=$targetLang&dt=t&q=$query"
+            val url = "$FALLBACK_URL?client=dict-chrome-ex&sl=auto&tl=$targetLang&q=$query"
             val connection = (URL(url).openConnection() as HttpURLConnection).apply {
                 requestMethod = "GET"
                 setRequestProperty("User-Agent", USER_AGENT)
@@ -228,38 +289,36 @@ object RealtimeTranslator {
             try {
                 val code = connection.responseCode
                 if (code == HTTP_TOO_MANY_REQUESTS || code == HttpURLConnection.HTTP_FORBIDDEN) {
-                    return@withContext GtxResult.RateLimited
+                    return@withContext FallbackResult.RateLimited
                 }
-                if (code !in 200..299) return@withContext GtxResult.Failed
+                if (code !in 200..299) return@withContext FallbackResult.Failed
                 val body = connection.inputStream.use { it.readBytes() }.toString(Charsets.UTF_8)
-                parseGtx(body)?.let { GtxResult.Ok(it) } ?: GtxResult.Failed
+                parseFallback(body)?.let { FallbackResult.Ok(it) } ?: FallbackResult.Failed
             } finally {
                 connection.disconnect()
             }
         } catch (_: Exception) {
-            GtxResult.Failed
+            FallbackResult.Failed
         }
     }
 
-    private sealed interface GtxResult {
-        data class Ok(val text: String) : GtxResult
-        data object RateLimited : GtxResult
-        data object Failed : GtxResult
+    private sealed interface FallbackResult {
+        data class Ok(val text: String) : FallbackResult
+        data object RateLimited : FallbackResult
+        data object Failed : FallbackResult
     }
 
     /**
-     * gtx returns `[[["translated","source",…], …], …]`: the first element is
-     * the list of translated sentence segments; concatenate `[0][*][0]`.
+     * The answer is `[["translated text","detected source"]]`, so the translation is `[0][0]`.
+     *
+     * Only that one field. The element beside it is the language the endpoint decided the text was
+     * in, and reading the pair as a whole appends "en" to the end of every caption.
      */
-    private fun parseGtx(body: String): String? {
+    private fun parseFallback(body: String): String? {
         val arr = runCatching { json.parseToJsonElement(body).jsonArray }.getOrNull() ?: return null
-        val segments = arr.getOrNull(0) as? JsonArray ?: return null
-        val builder = StringBuilder()
-        for (segment in segments) {
-            val piece = (segment as? JsonArray)?.getOrNull(0) as? JsonPrimitive ?: continue
-            piece.contentOrNull?.let { builder.append(it) }
-        }
-        return builder.toString().ifBlank { null }
+        val first = arr.getOrNull(0) as? JsonArray ?: return null
+        val text = (first.getOrNull(0) as? JsonPrimitive)?.contentOrNull ?: return null
+        return text.ifBlank { null }
     }
 
     // ---- Shared rate limiter (both endpoints share the same budget) ----
@@ -274,12 +333,20 @@ object RealtimeTranslator {
 
     private const val BATCH_URL =
         "https://translate.google.com/_/TranslateWebserverUi/data/batchexecute?rpcids=MkEWBc&rt=c"
-    private const val GTX_URL = "https://translate.googleapis.com/translate_a/single"
+    private const val FALLBACK_URL = "https://clients5.google.com/translate_a/t"
     private const val USER_AGENT =
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     private const val TIMEOUT = 5_000
     private const val MIN_REQUEST_INTERVAL_MS = 100L
     private const val MAX_BATCH_SIZE = 50
+
+    /** What tells the reserve where one caption ends, and what its answer is split back on. */
+    private const val SEPARATOR = "\n\n"
+
+    /** As much text as the reserve is asked for at once, which is what the desktop build settled on. */
+    private const val MAX_FALLBACK_CHARS = 4_500
+
+    private val BLANK_LINES = Regex("\n{2,}")
     private const val HTTP_TOO_MANY_REQUESTS = 429
     private const val NEWLINE: Byte = 0x0A
     private val RETRY_DELAYS = longArrayOf(0L, 800L, 1600L)
