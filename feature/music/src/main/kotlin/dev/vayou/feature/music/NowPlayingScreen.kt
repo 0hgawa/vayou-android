@@ -57,6 +57,7 @@ import dev.vayou.core.model.PlayerPreferences
 import dev.vayou.core.player.stepToNext
 import dev.vayou.core.player.stepToPrevious
 import dev.vayou.core.ui.designsystem.VayouIcons
+import dev.vayou.core.ui.designsystem.components.AlongTheTimeline
 import dev.vayou.core.ui.designsystem.components.VayouArtwork
 import dev.vayou.core.ui.designsystem.components.VayouArtworkRole
 import dev.vayou.core.ui.designsystem.components.VayouCircularProgress
@@ -592,44 +593,46 @@ private fun Transport(
         }
         // Sixteen inside the trio leaves about twenty-eight out to the two at the edges: near enough
         // to double that the three read as one control and the other two as neighbours.
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(VayouTheme.spacing.lg, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            ControlButton(onClick = player::stepToPrevious) {
-                Icon(
-                    imageVector = VayouIcons.SkipPreviousFilled,
-                    contentDescription = stringResource(R.string.previous),
-                    tint = VayouTheme.colors.onSurface,
-                    // A step above the row below: the drawn glyph keeps a margin the equalizer icon
-                    // does not, so at the same token it renders visibly smaller.
-                    modifier = Modifier.size(VayouTheme.iconSize.lg),
-                )
-            }
-            // The one filled control on the screen. Everything else here is a glyph on the surface,
-            // so play needs no label to be the thing a thumb goes to.
-            Box(
-                modifier = Modifier
-                    .size(PlayerButtonSize.Primary)
-                    .clip(CircleShape)
-                    .background(VayouTheme.colors.onSurface)
-                    .clickable { if (isPlaying) player.pause() else player.play() },
-                contentAlignment = Alignment.Center,
+        AlongTheTimeline {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(VayouTheme.spacing.lg, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
-                    imageVector = if (isPlaying) VayouIcons.PauseFilled else VayouIcons.Play,
-                    contentDescription = stringResource(if (isPlaying) R.string.pause else R.string.play),
-                    tint = VayouTheme.colors.surface,
-                    modifier = Modifier.size(PlayGlyph),
-                )
-            }
-            ControlButton(onClick = player::stepToNext) {
-                Icon(
-                    imageVector = VayouIcons.SkipNextFilled,
-                    contentDescription = stringResource(R.string.next),
-                    tint = VayouTheme.colors.onSurface,
-                    modifier = Modifier.size(VayouTheme.iconSize.lg),
-                )
+                ControlButton(onClick = player::stepToPrevious) {
+                    Icon(
+                        imageVector = VayouIcons.SkipPreviousFilled,
+                        contentDescription = stringResource(R.string.previous),
+                        tint = VayouTheme.colors.onSurface,
+                        // A step above the row below: the drawn glyph keeps a margin the equalizer
+                        // icon does not, so at the same token it renders visibly smaller.
+                        modifier = Modifier.size(VayouTheme.iconSize.lg),
+                    )
+                }
+                // The one filled control on the screen. Everything else here is a glyph on the
+                // surface, so play needs no label to be the thing a thumb goes to.
+                Box(
+                    modifier = Modifier
+                        .size(PlayerButtonSize.Primary)
+                        .clip(CircleShape)
+                        .background(VayouTheme.colors.onSurface)
+                        .clickable { if (isPlaying) player.pause() else player.play() },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = if (isPlaying) VayouIcons.PauseFilled else VayouIcons.Play,
+                        contentDescription = stringResource(if (isPlaying) R.string.pause else R.string.play),
+                        tint = VayouTheme.colors.surface,
+                        modifier = Modifier.size(PlayGlyph),
+                    )
+                }
+                ControlButton(onClick = player::stepToNext) {
+                    Icon(
+                        imageVector = VayouIcons.SkipNextFilled,
+                        contentDescription = stringResource(R.string.next),
+                        tint = VayouTheme.colors.onSurface,
+                        modifier = Modifier.size(VayouTheme.iconSize.lg),
+                    )
+                }
             }
         }
     }

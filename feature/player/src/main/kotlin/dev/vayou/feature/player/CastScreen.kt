@@ -40,6 +40,7 @@ import dev.vayou.core.player.PlaybackService
 import dev.vayou.core.player.stepToNext
 import dev.vayou.core.player.stepToPrevious
 import dev.vayou.core.ui.designsystem.VayouIcons
+import dev.vayou.core.ui.designsystem.components.AlongTheTimeline
 import dev.vayou.core.ui.designsystem.components.VayouBackButton
 import dev.vayou.core.ui.designsystem.components.VayouCircularProgress
 import dev.vayou.core.ui.theme.VayouTheme
@@ -131,31 +132,41 @@ internal fun CastScreen(player: Player, deviceName: String?, onBack: () -> Unit)
             onSeek = player::seekTo,
         )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = BottomInset),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            CastTransportButton(VayouIcons.SkipPreviousFilled, R.string.previous_file, previous.isEnabled || isQueued) {
-                player.stepToPrevious()
-            }
-            CastTransportButton(VayouIcons.Replay, R.string.cast_skip_back) {
-                player.seekTo((player.currentPosition - SkipMs).coerceAtLeast(0L))
-            }
-            PlayerButton(onClick = playPause::onClick, size = PlayerButtonSize.Primary) {
-                Icon(
-                    imageVector = if (playPause.showPlay) VayouIcons.Play else VayouIcons.PauseFilled,
-                    contentDescription = stringResource(if (playPause.showPlay) R.string.play else R.string.pause),
-                    modifier = Modifier.size(PlayerButtonSize.PrimaryGlyph),
-                )
-            }
-            CastTransportButton(VayouIcons.FastForward, R.string.cast_skip_forward) {
-                player.seekTo((player.currentPosition + SkipMs).coerceAtMost(player.duration))
-            }
-            CastTransportButton(VayouIcons.SkipNextFilled, R.string.next_file, next.isEnabled || isQueued) {
-                player.stepToNext()
+        AlongTheTimeline {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = BottomInset),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                CastTransportButton(
+                    glyph = VayouIcons.SkipPreviousFilled,
+                    label = R.string.previous_file,
+                    enabled = previous.isEnabled || isQueued,
+                ) {
+                    player.stepToPrevious()
+                }
+                CastTransportButton(VayouIcons.Replay, R.string.cast_skip_back) {
+                    player.seekTo((player.currentPosition - SkipMs).coerceAtLeast(0L))
+                }
+                PlayerButton(onClick = playPause::onClick, size = PlayerButtonSize.Primary) {
+                    Icon(
+                        imageVector = if (playPause.showPlay) VayouIcons.Play else VayouIcons.PauseFilled,
+                        contentDescription = stringResource(if (playPause.showPlay) R.string.play else R.string.pause),
+                        modifier = Modifier.size(PlayerButtonSize.PrimaryGlyph),
+                    )
+                }
+                CastTransportButton(VayouIcons.FastForward, R.string.cast_skip_forward) {
+                    player.seekTo((player.currentPosition + SkipMs).coerceAtMost(player.duration))
+                }
+                CastTransportButton(
+                    glyph = VayouIcons.SkipNextFilled,
+                    label = R.string.next_file,
+                    enabled = next.isEnabled || isQueued,
+                ) {
+                    player.stepToNext()
+                }
             }
         }
     }

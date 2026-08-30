@@ -54,6 +54,7 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import coil3.compose.SubcomposeAsyncImage
 import dev.vayou.core.ui.designsystem.VayouIcons
+import dev.vayou.core.ui.designsystem.components.AlongTheTimeline
 import dev.vayou.core.ui.graphics.rememberArtworkTint
 import dev.vayou.tv.Hairline
 import dev.vayou.tv.R
@@ -332,19 +333,21 @@ fun TvNowPlaying(controller: MediaController, known: TrackFacts? = null, sleeve:
                         .focusRequester(play)
                         .onFocusChanged { isPlayFocused = it.isFocused },
                 )
-                TvControlCapsule {
-                    TvControlButton(
-                        icon = VayouIcons.SkipPreviousFilled,
-                        label = stringResource(R.string.previous),
-                        onClick = controller::seekToPreviousMediaItem,
-                        isGrouped = true,
-                    )
-                    TvControlButton(
-                        icon = VayouIcons.SkipNextFilled,
-                        label = stringResource(R.string.next),
-                        onClick = controller::seekToNextMediaItem,
-                        isGrouped = true,
-                    )
+                AlongTheTimeline {
+                    TvControlCapsule {
+                        TvControlButton(
+                            icon = VayouIcons.SkipPreviousFilled,
+                            label = stringResource(R.string.previous),
+                            onClick = controller::seekToPreviousMediaItem,
+                            isGrouped = true,
+                        )
+                        TvControlButton(
+                            icon = VayouIcons.SkipNextFilled,
+                            label = stringResource(R.string.next),
+                            onClick = controller::seekToNextMediaItem,
+                            isGrouped = true,
+                        )
+                    }
                 }
                 TvControlCapsule {
                     TvControlButton(

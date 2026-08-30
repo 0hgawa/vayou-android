@@ -28,6 +28,7 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import dev.vayou.core.player.ui.asSpeedLabel
 import dev.vayou.core.ui.designsystem.VayouIcons
+import dev.vayou.core.ui.designsystem.components.AlongTheTimeline
 import dev.vayou.tv.R
 import dev.vayou.tv.TvControlButton
 import dev.vayou.tv.TvControlCapsule
@@ -131,22 +132,24 @@ internal fun TvPlayerControls(
                 // Left out rather than dimmed at the ends of a queue: a D-pad walks past a disabled
                 // button as if it were not there, so a dim one is a gap with a picture in it.
                 if (hasPrevious || hasNext) {
-                    TvControlCapsule {
-                        if (hasPrevious) {
-                            TvControlButton(
-                                icon = VayouIcons.SkipPreviousFilled,
-                                label = stringResource(R.string.previous),
-                                onClick = onPrevious,
-                                isGrouped = true,
-                            )
-                        }
-                        if (hasNext) {
-                            TvControlButton(
-                                icon = VayouIcons.SkipNextFilled,
-                                label = stringResource(R.string.next),
-                                onClick = onNext,
-                                isGrouped = true,
-                            )
+                    AlongTheTimeline {
+                        TvControlCapsule {
+                            if (hasPrevious) {
+                                TvControlButton(
+                                    icon = VayouIcons.SkipPreviousFilled,
+                                    label = stringResource(R.string.previous),
+                                    onClick = onPrevious,
+                                    isGrouped = true,
+                                )
+                            }
+                            if (hasNext) {
+                                TvControlButton(
+                                    icon = VayouIcons.SkipNextFilled,
+                                    label = stringResource(R.string.next),
+                                    onClick = onNext,
+                                    isGrouped = true,
+                                )
+                            }
                         }
                     }
                 }

@@ -35,6 +35,7 @@ import androidx.media3.ui.compose.state.PlaybackSpeedState
 import dev.vayou.core.player.isNightModeSupported
 import dev.vayou.core.player.ui.asSpeedLabel
 import dev.vayou.core.ui.designsystem.VayouIcons
+import dev.vayou.core.ui.designsystem.components.AlongTheTimeline
 import dev.vayou.core.ui.designsystem.components.VayouDropdownMenu
 import dev.vayou.core.ui.designsystem.components.VayouDropdownMenuItem
 import dev.vayou.core.ui.theme.VayouTheme
@@ -271,38 +272,41 @@ private fun Transport(
     onNext: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(TransportGap, Alignment.CenterHorizontally),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        // Dimmed at the ends of the queue, never taken away. Removing one moves play out from the
-        // middle of the row and shifts the other under a thumb that was already reaching for it --
-        // a control that is not where it was a second ago is worse than one that says no.
-        TransportButton(
-            glyph = VayouIcons.SkipPreviousFilled,
-            label = R.string.previous_file,
-            enabled = canGoPrevious,
-            onClick = onPrevious,
-        )
-
-        PlayerButton(
-            onClick = playPause::onClick,
-            size = PlayerButtonSize.Primary,
+    AlongTheTimeline {
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy(TransportGap, Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                imageVector = if (playPause.showPlay) VayouIcons.Play else VayouIcons.PauseFilled,
-                contentDescription = stringResource(if (playPause.showPlay) R.string.play else R.string.pause),
-                modifier = Modifier.size(PlayerButtonSize.PrimaryGlyph),
+            // Dimmed at the ends of the queue, never taken away. Removing one moves play out from
+            // the middle of the row and shifts the other under a thumb that was already reaching
+            // for it -- a control that is not where it was a second ago is worse than one that
+            // says no.
+            TransportButton(
+                glyph = VayouIcons.SkipPreviousFilled,
+                label = R.string.previous_file,
+                enabled = canGoPrevious,
+                onClick = onPrevious,
+            )
+
+            PlayerButton(
+                onClick = playPause::onClick,
+                size = PlayerButtonSize.Primary,
+            ) {
+                Icon(
+                    imageVector = if (playPause.showPlay) VayouIcons.Play else VayouIcons.PauseFilled,
+                    contentDescription = stringResource(if (playPause.showPlay) R.string.play else R.string.pause),
+                    modifier = Modifier.size(PlayerButtonSize.PrimaryGlyph),
+                )
+            }
+
+            TransportButton(
+                glyph = VayouIcons.SkipNextFilled,
+                label = R.string.next_file,
+                enabled = canGoNext,
+                onClick = onNext,
             )
         }
-
-        TransportButton(
-            glyph = VayouIcons.SkipNextFilled,
-            label = R.string.next_file,
-            enabled = canGoNext,
-            onClick = onNext,
-        )
     }
 }
 
