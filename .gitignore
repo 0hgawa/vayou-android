@@ -48,3 +48,11 @@ vendor/
 
 # Local perf benchmarking
 .perf-bench/
+
+# Store captures. Renders, not sources: they come out of an emulator and can be shot again,
+# and 47 MB of png and mp4 never leaves a repository once it is in one. What the listing is
+# actually written from -- the text and the drawings -- stays versioned alongside them.
+play/screenshots*/
+play/tv/
+play/video/
+play/videos/
