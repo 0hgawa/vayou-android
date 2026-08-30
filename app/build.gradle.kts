@@ -22,14 +22,6 @@ android {
     }
 
     buildTypes {
-        debug {
-            // `.next`, not the `.debug` the convention plugin gives: that is the package the old
-            // build already occupies on a developer's phone, and this one has to sit beside it
-            // until it is the better of the two. Drops away when the old project does.
-            applicationIdSuffix = ".next"
-            versionNameSuffix = "-next"
-        }
-
         /**
          * The release build, signed with the debug key so it can be installed on a phone without
          * the release keystore.
@@ -38,13 +30,14 @@ android {
          * Compose that is several times slower to open a sheet. Measuring one against the other
          * release measures the two apps rather than the two build types.
          *
-         * The same package as the debug build, so it replaces it rather than becoming a third icon.
+         * The same package as the debug build, so it replaces it rather than becoming a third
+         * icon -- and so it never collides with a copy installed from the store, which carries a
+         * different signature and would refuse it.
          */
         create("comparable") {
             initWith(getByName("release"))
             signingConfig = signingConfigs.getByName("debug")
-            applicationIdSuffix = ".next"
-            versionNameSuffix = "-next"
+            applicationIdSuffix = ".debug"
             matchingFallbacks.add("release")
         }
     }

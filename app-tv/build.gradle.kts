@@ -48,12 +48,6 @@ android {
     }
 
     buildTypes {
-        debug {
-            // Beside the old TV build rather than over it, for the reason the phone's shell gives.
-            applicationIdSuffix = ".next"
-            versionNameSuffix = "-next"
-        }
-
         /**
          * The build to judge this app by, as the phone has one.
          *
@@ -63,13 +57,12 @@ android {
          * about the app and everything about what `debuggable` costs.
          *
          * Signed with the debug key so it installs without the upload one, and carrying the same
-         * `.next` package so it replaces the debug build rather than becoming a third icon.
+         * `.debug` package so it replaces the debug build rather than becoming a third icon.
          */
         create("comparable") {
             initWith(getByName("release"))
             signingConfig = signingConfigs.getByName("debug")
-            applicationIdSuffix = ".next"
-            versionNameSuffix = "-next"
+            applicationIdSuffix = ".debug"
             matchingFallbacks.add("release")
         }
     }

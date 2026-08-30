@@ -219,10 +219,13 @@ fun Context.getStorageVolumes() = try {
  * number is a second thing to forget to bump.
  *
  * Wrapped in a left-to-right isolate because a version is one symbol and not a phrase. Arabic reads
- * the other way, and the hyphen between a number and a word is a character with no direction of its
- * own, so the paragraph broke `0.1.0-next` in two and laid the halves out backwards -- a viewer in
- * Cairo was told the app was `next-0.1.0`. The isolate says: this run has its own direction, read it
- * as it is written.
+ * the other way, and a hyphen between a number and a word is a character with no direction of its own:
+ * a build carrying a suffix showed `0.1.0-next` on a television in Cairo as `next-0.1.0`, the two
+ * halves laid out in the order the page runs. The isolate says: this run has its own direction, read
+ * it as it is written.
+ *
+ * Kept although today's numbers are digits alone, which the algorithm leaves whole. What a version
+ * name may hold is decided in a build file, not here.
  */
 fun Context.versionName(): String {
     val name = packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
