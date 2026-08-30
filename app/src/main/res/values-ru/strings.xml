@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="destination_video">Видео</string>
+    <string name="destination_audio">Аудио</string>
+    <string name="destination_network">Сеть</string>
+    <string name="destination_settings">Настройки</string>
+</resources>

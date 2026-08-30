@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigate_up">Kembali</string>
+    <string name="done">Selesai</string>
+    <string name="cancel">Batal</string>
+    <string name="stop_selecting">Berhenti memilih</string>
+    <string name="n_of_m_selected">%1$d dari %2$d</string>
+    <string name="add_to_playlist">Tambahkan ke daftar</string>
+    <string name="new_playlist">Daftar baru</string>
+    <string name="undo">Urungkan</string>
+    <string name="more_options">Opsi lainnya</string>
+    <string name="iptv_international">Internasional</string>
+</resources>

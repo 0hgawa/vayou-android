@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="destination_video">Video</string>
+    <string name="destination_audio">Âm thanh</string>
+    <string name="destination_network">Mạng</string>
+    <string name="destination_settings">Cài đặt</string>
+</resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="close_session">Kapat</string>
+    <string name="eq_preset_flat">Düz</string>
+    <string name="eq_preset_vocal">Ses</string>
+    <string name="eq_preset_classical">Klasik</string>
+    <string name="eq_preset_dance">Dans</string>
+    <string name="eq_preset_folk">Folk</string>
+    <string name="eq_preset_heavy_metal">Heavy metal</string>
+    <string name="eq_preset_hip_hop">Hip hop</string>
+    <string name="eq_preset_jazz">Caz</string>
+    <string name="eq_preset_pop">Pop</string>
+    <string name="eq_preset_rock">Rock</string>
+    <string name="eq_preset_custom">Özel</string>
+    <string name="favourite_session">Favori</string>
+</resources>

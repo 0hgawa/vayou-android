@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="close_session">बंद करें</string>
+    <string name="eq_preset_flat">सपाट</string>
+    <string name="eq_preset_vocal">आवाज़</string>
+    <string name="eq_preset_classical">शास्त्रीय</string>
+    <string name="eq_preset_dance">डांस</string>
+    <string name="eq_preset_folk">लोक</string>
+    <string name="eq_preset_heavy_metal">हेवी मेटल</string>
+    <string name="eq_preset_hip_hop">हिप हॉप</string>
+    <string name="eq_preset_jazz">जैज़</string>
+    <string name="eq_preset_pop">पॉप</string>
+    <string name="eq_preset_rock">रॉक</string>
+    <string name="eq_preset_custom">अपनी पसंद</string>
+    <string name="favourite_session">पसंदीदा</string>
+</resources>

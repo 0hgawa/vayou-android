@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="destination_video">فيديو</string>
+    <string name="destination_audio">صوت</string>
+    <string name="destination_network">الشبكة</string>
+    <string name="destination_settings">الإعدادات</string>
+</resources>

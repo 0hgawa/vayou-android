@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="destination_video">Video</string>
+    <string name="destination_audio">Ses</string>
+    <string name="destination_network">Ağ</string>
+    <string name="destination_settings">Ayarlar</string>
+</resources>

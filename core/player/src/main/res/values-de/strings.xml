@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="close_session">Schließen</string>
+    <string name="eq_preset_flat">Neutral</string>
+    <string name="eq_preset_vocal">Stimme</string>
+    <string name="eq_preset_classical">Klassik</string>
+    <string name="eq_preset_dance">Dance</string>
+    <string name="eq_preset_folk">Folk</string>
+    <string name="eq_preset_heavy_metal">Heavy Metal</string>
+    <string name="eq_preset_hip_hop">Hip-Hop</string>
+    <string name="eq_preset_jazz">Jazz</string>
+    <string name="eq_preset_pop">Pop</string>
+    <string name="eq_preset_rock">Rock</string>
+    <string name="eq_preset_custom">Eigen</string>
+    <string name="favourite_session">Favorit</string>
+</resources>

@@ -21,8 +21,20 @@ const val SystemLanguage = ""
  * reader who only knows the word Português.
  */
 val AppLanguages: Map<String, String> = mapOf(
+    // Alphabetical by the name as written, which is the order somebody scanning for their own
+    // reads in. `id` and not `in`: the tag is the modern one, and Java maps it back to the old
+    // code the resource folder carries.
+    "id" to "Bahasa Indonesia",
+    "de" to "Deutsch",
     "en" to "English",
+    "es" to "Español",
+    "fr" to "Français",
     "pt-BR" to "Português (Brasil)",
+    "vi" to "Tiếng Việt",
+    "tr" to "Türkçe",
+    "ru" to "Русский",
+    "ar" to "العربية",
+    "hi" to "हिन्दी",
 )
 
 /**

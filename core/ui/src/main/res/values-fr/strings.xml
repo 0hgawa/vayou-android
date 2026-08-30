@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigate_up">Retour</string>
+    <string name="done">Terminé</string>
+    <string name="cancel">Annuler</string>
+    <string name="stop_selecting">Quitter la sélection</string>
+    <string name="n_of_m_selected">%1$d sur %2$d</string>
+    <string name="add_to_playlist">Ajouter à une liste</string>
+    <string name="new_playlist">Nouvelle liste</string>
+    <string name="undo">Annuler</string>
+    <string name="more_options">Plus d’options</string>
+    <string name="iptv_international">International</string>
+</resources>

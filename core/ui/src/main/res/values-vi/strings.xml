@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigate_up">Quay lại</string>
+    <string name="done">Xong</string>
+    <string name="cancel">Huỷ</string>
+    <string name="stop_selecting">Dừng chọn</string>
+    <string name="n_of_m_selected">%1$d trên %2$d</string>
+    <string name="add_to_playlist">Thêm vào danh sách</string>
+    <string name="new_playlist">Danh sách mới</string>
+    <string name="undo">Hoàn tác</string>
+    <string name="more_options">Tuỳ chọn khác</string>
+    <string name="iptv_international">Quốc tế</string>
+</resources>

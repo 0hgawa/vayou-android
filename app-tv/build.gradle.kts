@@ -31,6 +31,22 @@ android {
         versionName = "0.1.0"
     }
 
+    /**
+     * Every language in every install, rather than only the ones the set is configured in.
+     *
+     * The television picks its language in this app's own settings, because Android TV offers no
+     * system screen that does it. Play, left to itself, delivers only the languages a device is
+     * already set to -- so a set bought in one country would be offered ten languages and handed
+     * one, and the choice would do nothing, silently. That is the whole reason the setting exists.
+     *
+     * It costs about forty kilobytes a language in an app of sixty megabytes.
+     */
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+
     buildTypes {
         debug {
             // Beside the old TV build rather than over it, for the reason the phone's shell gives.

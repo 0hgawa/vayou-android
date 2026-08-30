@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="destination_video">Vídeo</string>
+    <string name="destination_audio">Audio</string>
+    <string name="destination_network">Red</string>
+    <string name="destination_settings">Ajustes</string>
+</resources>

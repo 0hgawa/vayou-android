@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="close_session">Закрыть</string>
+    <string name="eq_preset_flat">Ровная</string>
+    <string name="eq_preset_vocal">Голос</string>
+    <string name="eq_preset_classical">Классика</string>
+    <string name="eq_preset_dance">Танцевальная</string>
+    <string name="eq_preset_folk">Фолк</string>
+    <string name="eq_preset_heavy_metal">Хеви-метал</string>
+    <string name="eq_preset_hip_hop">Хип-хоп</string>
+    <string name="eq_preset_jazz">Джаз</string>
+    <string name="eq_preset_pop">Поп</string>
+    <string name="eq_preset_rock">Рок</string>
+    <string name="eq_preset_custom">Своя</string>
+    <string name="favourite_session">В избранном</string>
+</resources>
