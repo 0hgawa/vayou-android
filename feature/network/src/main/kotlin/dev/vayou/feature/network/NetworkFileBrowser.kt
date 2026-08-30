@@ -28,6 +28,7 @@ import dev.vayou.core.ui.designsystem.MediaListLayoutDefaults
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.VayouEmptyState
 import dev.vayou.core.ui.designsystem.components.VayouListHeader
+import dev.vayou.core.ui.designsystem.components.VayouWaiting
 import dev.vayou.core.ui.theme.VayouTheme
 
 /**
@@ -57,7 +58,7 @@ internal fun FileBrowser(
 ) {
     when {
         isLoading -> {
-            Waiting()
+            VayouWaiting()
             return
         }
         error != null -> {

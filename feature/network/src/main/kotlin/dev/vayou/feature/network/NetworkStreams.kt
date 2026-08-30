@@ -22,6 +22,7 @@ import dev.vayou.core.ui.designsystem.components.VayouListHeader
 import dev.vayou.core.ui.designsystem.components.VayouListHeaderAction
 import dev.vayou.core.ui.designsystem.components.VayouSortOption
 import dev.vayou.core.ui.designsystem.components.VayouSortSheet
+import dev.vayou.core.ui.designsystem.components.VayouWaiting
 
 /** The channel lists the viewer has, with the starred channels above them. */
 @Composable
@@ -144,7 +145,7 @@ internal fun PlaylistDetail(
 ) {
     when {
         isLoading -> {
-            Waiting()
+            VayouWaiting()
             return
         }
         error != null -> {

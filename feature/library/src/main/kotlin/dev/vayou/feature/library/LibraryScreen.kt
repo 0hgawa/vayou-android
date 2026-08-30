@@ -8,7 +8,6 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +25,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -48,7 +46,6 @@ import dev.vayou.core.ui.designsystem.MediaListLayoutDefaults
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.LocalVayouMessages
 import dev.vayou.core.ui.designsystem.components.VayouBackButton
-import dev.vayou.core.ui.designsystem.components.VayouCircularProgress
 import dev.vayou.core.ui.designsystem.components.VayouEmptyState
 import dev.vayou.core.ui.designsystem.components.VayouIconButton
 import dev.vayou.core.ui.designsystem.components.VayouListHeader
@@ -63,6 +60,7 @@ import dev.vayou.core.ui.designsystem.components.VayouSelectionTopBar
 import dev.vayou.core.ui.designsystem.components.VayouSortOption
 import dev.vayou.core.ui.designsystem.components.VayouSortSheet
 import dev.vayou.core.ui.designsystem.components.VayouTopAppBar
+import dev.vayou.core.ui.designsystem.components.VayouWaiting
 import dev.vayou.feature.player.CastButton
 
 @Composable
@@ -327,12 +325,7 @@ private fun LibraryContent(
         when (uiState) {
             // The same wait the audio tab draws, for the same moment: the library has not
             // answered, and nothing it could be told yet would be true.
-            LibraryUiState.Loading -> Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                VayouCircularProgress()
-            }
+            LibraryUiState.Loading -> VayouWaiting()
             is LibraryUiState.Ready -> Column(modifier = Modifier.fillMaxSize()) {
                 // Hidden once a list is open: that screen belongs to the list, and the pills would
                 // offer to switch out from under it.

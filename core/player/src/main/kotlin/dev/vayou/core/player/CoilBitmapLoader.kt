@@ -138,10 +138,6 @@ class CoilBitmapLoader(
     private suspend fun coilBitmapOf(uri: Uri): Bitmap {
         val request = ImageRequest.Builder(context)
             .data(uri)
-            // Asked for at the size it will be drawn. Without this Coil hands back whatever the
-            // provider holds, which for album art is often several times larger than any panel
-            // that will show it -- and this bitmap crosses a process boundary to get there.
-            .size(MarkSize)
             .allowHardware(false)
             .build()
         val result = imageLoader.execute(request)

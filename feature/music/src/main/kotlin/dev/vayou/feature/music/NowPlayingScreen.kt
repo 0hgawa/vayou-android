@@ -60,9 +60,9 @@ import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.AlongTheTimeline
 import dev.vayou.core.ui.designsystem.components.VayouArtwork
 import dev.vayou.core.ui.designsystem.components.VayouArtworkRole
-import dev.vayou.core.ui.designsystem.components.VayouCircularProgress
 import dev.vayou.core.ui.designsystem.components.VayouIconButton
 import dev.vayou.core.ui.designsystem.components.VayouSeekBar
+import dev.vayou.core.ui.designsystem.components.VayouWaiting
 import dev.vayou.core.ui.graphics.rememberArtworkTint
 import dev.vayou.core.ui.theme.VayouTheme
 import dev.vayou.feature.player.EqualizerSheet
@@ -136,9 +136,7 @@ fun NowPlayingScreen(
         }
 
         if (player == null) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                VayouCircularProgress()
-            }
+            VayouWaiting()
             return@Column
         }
 

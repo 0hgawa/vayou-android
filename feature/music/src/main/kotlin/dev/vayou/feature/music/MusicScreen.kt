@@ -7,7 +7,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,7 +33,6 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
@@ -61,7 +59,6 @@ import dev.vayou.core.ui.designsystem.MediaListLayoutDefaults
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.LocalVayouMessages
 import dev.vayou.core.ui.designsystem.components.VayouBackButton
-import dev.vayou.core.ui.designsystem.components.VayouCircularProgress
 import dev.vayou.core.ui.designsystem.components.VayouEmptyState
 import dev.vayou.core.ui.designsystem.components.VayouIconButton
 import dev.vayou.core.ui.designsystem.components.VayouListHeader
@@ -77,6 +74,7 @@ import dev.vayou.core.ui.designsystem.components.VayouSelectionTopBar
 import dev.vayou.core.ui.designsystem.components.VayouSortOption
 import dev.vayou.core.ui.designsystem.components.VayouSortSheet
 import dev.vayou.core.ui.designsystem.components.VayouTopAppBar
+import dev.vayou.core.ui.designsystem.components.VayouWaiting
 import kotlinx.coroutines.launch
 
 /**
@@ -883,9 +881,7 @@ private fun GroupList(
 @Composable
 private fun MusicUiState.isNotReady(): Boolean = when (this) {
     MusicUiState.Loading -> {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            VayouCircularProgress()
-        }
+        VayouWaiting()
         true
     }
 

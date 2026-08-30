@@ -7,9 +7,12 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
@@ -55,6 +58,20 @@ fun VayouCircularProgress(
             useCenter = false,
             style = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round),
         )
+    }
+}
+
+/**
+ * A screen with nothing on it yet, because what goes there has not arrived.
+ *
+ * The counterpart to [VayouEmptyState], and the distinction between them is the whole point: one
+ * says there is nothing, the other says not yet. Four screens were drawing this by hand and a
+ * fifth was about to.
+ */
+@Composable
+fun VayouWaiting(modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        VayouCircularProgress()
     }
 }
 

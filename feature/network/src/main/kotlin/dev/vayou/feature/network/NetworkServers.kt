@@ -38,6 +38,7 @@ import dev.vayou.core.ui.designsystem.components.VayouFolderTile
 import dev.vayou.core.ui.designsystem.components.VayouListHeader
 import dev.vayou.core.ui.designsystem.components.VayouListHeaderAction
 import dev.vayou.core.ui.designsystem.components.VayouTextField
+import dev.vayou.core.ui.designsystem.components.VayouWaiting
 import dev.vayou.core.ui.theme.VayouTheme
 
 /** What is on this network, saved or found, with the pinned folders above it. */
@@ -160,7 +161,7 @@ internal fun ShareList(
     onToggleFavourite: (SmbShare) -> Unit,
 ) {
     when {
-        isLoading -> Waiting()
+        isLoading -> VayouWaiting()
         error != null -> ErrorState(error)
         shares.isEmpty() -> VayouEmptyState(VayouIcons.Folder, stringResource(R.string.no_shares_found))
         else -> LazyColumn(
@@ -309,13 +310,6 @@ internal fun AuthForm(
                 Text(text = stringResource(R.string.connect), style = VayouTheme.typography.labelLarge)
             }
         }
-    }
-}
-
-@Composable
-internal fun Waiting() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        VayouCircularProgress()
     }
 }
 

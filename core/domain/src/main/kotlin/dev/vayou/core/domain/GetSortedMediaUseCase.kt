@@ -43,7 +43,8 @@ class GetSortedMediaUseCase @Inject constructor(
             folderPath == null -> Folder.root.copy(mediaList = videos, folderList = folders)
 
             // Inside a folder there is nothing to switch between: what is there is what it holds.
-            else -> File(folderPath).let { file ->
+            else -> {
+                val file = File(folderPath)
                 Folder(
                     name = file.name,
                     path = file.path,

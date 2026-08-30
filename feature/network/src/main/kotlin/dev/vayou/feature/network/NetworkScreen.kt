@@ -40,6 +40,7 @@ import dev.vayou.core.ui.designsystem.components.VayouPillRow
 import dev.vayou.core.ui.designsystem.components.VayouSearchField
 import dev.vayou.core.ui.designsystem.components.VayouSelectionTopBar
 import dev.vayou.core.ui.designsystem.components.VayouTopAppBar
+import dev.vayou.core.ui.designsystem.components.VayouWaiting
 import dev.vayou.core.ui.theme.VayouTheme
 import kotlinx.coroutines.launch
 
@@ -295,7 +296,7 @@ fun NetworkScreen(
         }
 
         when (uiState.screen) {
-            NetworkScreen.Connecting -> Waiting()
+            NetworkScreen.Connecting -> VayouWaiting()
 
             NetworkScreen.Auth -> AuthForm(
                 host = uiState.host.orEmpty(),
