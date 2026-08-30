@@ -49,8 +49,30 @@ class CoilBitmapLoader(
 
     /** Bytes carried by the file itself, which need no fetching -- only decoding. */
     override fun decodeBitmap(data: ByteArray): ListenableFuture<Bitmap> = scope.future {
-        BitmapFactory.decodeByteArray(data, 0, data.size)
+        BitmapFactory.decodeByteArray(data, 0, data.size, sampledDownToTheMark(data))
             ?: error("Could not decode the artwork carried by the track")
+    }
+
+    /**
+     * How to read a cover without taking it whole.
+     *
+     * Whoever tagged the track chose the size of the picture inside it, and a square of three
+     * thousand pixels is thirty-six megabytes once unpacked -- carried for the life of the track,
+     * and written into a parcel bound for the system's own panel. That panel draws it at
+     * [MarkSize], and every pixel past that is paid for and never seen.
+     *
+     * Read twice on purpose. The first pass asks for the header alone, which decodes nothing and
+     * only reports how big the picture is; the second halves it until it fits. Halving is the one
+     * reduction the decoder does while reading, rather than after.
+     */
+    private fun sampledDownToTheMark(data: ByteArray) = BitmapFactory.Options().apply {
+        inJustDecodeBounds = true
+        BitmapFactory.decodeByteArray(data, 0, data.size, this)
+        inJustDecodeBounds = false
+        inSampleSize = 1
+        while (outWidth / inSampleSize > MarkSize || outHeight / inSampleSize > MarkSize) {
+            inSampleSize *= 2
+        }
     }
 
     /**
@@ -116,6 +138,10 @@ class CoilBitmapLoader(
     private suspend fun coilBitmapOf(uri: Uri): Bitmap {
         val request = ImageRequest.Builder(context)
             .data(uri)
+            // Asked for at the size it will be drawn. Without this Coil hands back whatever the
+            // provider holds, which for album art is often several times larger than any panel
+            // that will show it -- and this bitmap crosses a process boundary to get there.
+            .size(MarkSize)
             .allowHardware(false)
             .build()
         val result = imageLoader.execute(request)
