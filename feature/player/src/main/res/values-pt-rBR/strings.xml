@@ -65,7 +65,6 @@
     <string name="online_subtitles_failed">Não foi possível acessar o serviço de legendas.</string>
     <string name="translate_subtitle">Traduzir</string>
     <string name="subtitle_style">Tamanho e estilo</string>
-    <string name="subtitle_style_system">Usar as legendas do sistema</string>
     <string name="subtitle_style_size">Tamanho do texto</string>
     <string name="subtitle_style_position">Posição vertical</string>
     <string name="subtitle_style_colour">Cor do texto</string>
@@ -79,7 +78,6 @@
     <string name="subtitle_style_shadow">Sombra</string>
     <string name="subtitle_style_outline_colour">Cor do contorno</string>
     <string name="subtitle_style_background">Fundo da legenda</string>
-    <string name="subtitle_style_embedded">Respeitar o estilo do arquivo</string>
     <string name="subtitle_delay">Atraso</string>
     <string name="subtitle_delay_less">Adiantar as legendas</string>
     <string name="subtitle_delay_more">Atrasar as legendas</string>

@@ -44,7 +44,6 @@
     <string name="online_subtitles_failed">Der Untertiteldienst war nicht erreichbar.</string>
     <string name="translate_subtitle">Übersetzen</string>
     <string name="subtitle_style">Größe und Stil</string>
-    <string name="subtitle_style_system">Untertiteleinstellungen des Systems verwenden</string>
     <string name="subtitle_style_size">Textgröße</string>
     <string name="subtitle_style_position">Senkrechte Position</string>
     <string name="subtitle_style_colour">Textfarbe</string>
@@ -58,7 +57,6 @@
     <string name="subtitle_style_shadow">Schatten</string>
     <string name="subtitle_style_outline_colour">Umrissfarbe</string>
     <string name="subtitle_style_background">Untertitelhintergrund</string>
-    <string name="subtitle_style_embedded">Formatierung aus der Datei übernehmen</string>
     <string name="subtitle_delay">Verzögerung</string>
     <string name="subtitle_delay_less">Untertitel früher zeigen</string>
     <string name="subtitle_delay_more">Untertitel später zeigen</string>

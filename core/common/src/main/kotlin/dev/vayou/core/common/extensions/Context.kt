@@ -227,7 +227,5 @@ fun Context.getStorageVolumes() = try {
  * Kept although today's numbers are digits alone, which the algorithm leaves whole. What a version
  * name may hold is decided in a build file, not here.
  */
-fun Context.versionName(): String {
-    val name = packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
-    return if (name.isEmpty()) name else "\u2066$name\u2069"
-}
+fun Context.versionName(): String =
+    "\u2066" + packageManager.getPackageInfo(packageName, 0).versionName.orEmpty() + "\u2069"

@@ -49,7 +49,6 @@
     <string name="online_subtitles_failed">Could not reach the subtitle service.</string>
     <string name="translate_subtitle">Translate</string>
     <string name="subtitle_style">Size and style</string>
-    <string name="subtitle_style_system">Use the system caption settings</string>
     <string name="subtitle_style_size">Subtitle text size</string>
     <string name="subtitle_style_position">Vertical position</string>
     <string name="subtitle_style_colour">Text color</string>
@@ -63,7 +62,6 @@
     <string name="subtitle_style_shadow">Shadow</string>
     <string name="subtitle_style_outline_colour">Outline color</string>
     <string name="subtitle_style_background">Subtitle background</string>
-    <string name="subtitle_style_embedded">Honour styling from the file</string>
     <string name="subtitle_delay">Delay</string>
     <string name="subtitle_delay_less">Bring the subtitles forward</string>
     <string name="subtitle_delay_more">Hold the subtitles back</string>

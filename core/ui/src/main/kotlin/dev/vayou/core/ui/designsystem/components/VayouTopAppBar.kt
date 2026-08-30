@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.vayou.core.ui.theme.VayouTheme
@@ -43,10 +42,10 @@ fun VayouTopAppBar(
     // the folder's name in the middle of the bar, then a settings page in the middle again. One
     // column for every title, the same one every row beneath it starts on, and nothing jumps.
     TopAppBar(
-        // The slot gets the same style the string overload gives: Material would otherwise hand a
-        // composable title its own titleLarge, two points larger, and a bar with a search field in
-        // it would wear a bigger name than the bar beside it.
-        title = { ProvideTextStyle(VayouTopAppBarDefaults.titleStyle, title) },
+        // Set rather than inherited: this theme hands Material only its colours, so a title left
+        // alone would come back in Material's own titleLarge -- the same size, in the regular
+        // weight, beside a bar whose title is semibold.
+        title = { ProvideTextStyle(VayouTheme.typography.titleLarge, title) },
         navigationIcon = navigationIcon,
         actions = actions,
         colors = colors,
@@ -91,7 +90,7 @@ fun VayouTopAppBar(
             Text(
                 text = title,
                 modifier = Modifier.alpha(titleAlpha),
-                style = VayouTopAppBarDefaults.titleStyle,
+                style = VayouTheme.typography.titleLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -101,21 +100,4 @@ fun VayouTopAppBar(
         colors = colors,
         modifier = modifier,
     )
-}
-
-/**
- * Shared so a bar whose title needs a composable slot -- one that swaps a search field in, say --
- * sets that title the same as every bar that only needs a string.
- */
-object VayouTopAppBarDefaults {
-    /**
-     * The rung Material puts here, and no longer two points under it.
-     *
-     * The two points were taken off by hand, which left the one size in the app that the scale did
-     * not have -- against the project's own standard, as the note that used to sit here admitted.
-     * A sheet says its name at this size too, and a bar and a sheet naming their surfaces alike is
-     * worth more than the two points were.
-     */
-    val titleStyle: TextStyle
-        @Composable get() = VayouTheme.typography.titleLarge
 }

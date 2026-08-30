@@ -44,7 +44,6 @@
     <string name="online_subtitles_failed">सबटाइटल सेवा तक पहुँचा नहीं जा सका।</string>
     <string name="translate_subtitle">अनुवाद करें</string>
     <string name="subtitle_style">आकार और शैली</string>
-    <string name="subtitle_style_system">सिस्टम के कैप्शन ऐसे ही इस्तेमाल करें</string>
     <string name="subtitle_style_size">टेक्स्ट का आकार</string>
     <string name="subtitle_style_position">ऊर्ध्वाधर स्थिति</string>
     <string name="subtitle_style_colour">टेक्स्ट का रंग</string>
@@ -58,7 +57,6 @@
     <string name="subtitle_style_shadow">छाया</string>
     <string name="subtitle_style_outline_colour">रूपरेखा का रंग</string>
     <string name="subtitle_style_background">सबटाइटल पृष्ठभूमि</string>
-    <string name="subtitle_style_embedded">फ़ाइल की शैली मानें</string>
     <string name="subtitle_delay">देरी</string>
     <string name="subtitle_delay_less">सबटाइटल आगे लाएँ</string>
     <string name="subtitle_delay_more">सबटाइटल पीछे करें</string>

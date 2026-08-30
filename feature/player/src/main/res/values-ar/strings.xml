@@ -44,7 +44,6 @@
     <string name="online_subtitles_failed">تعذّر الوصول إلى خدمة الترجمة.</string>
     <string name="translate_subtitle">ترجمة</string>
     <string name="subtitle_style">الحجم والنمط</string>
-    <string name="subtitle_style_system">استخدام إعدادات الترجمة في النظام</string>
     <string name="subtitle_style_size">حجم النص</string>
     <string name="subtitle_style_position">الموضع الرأسي</string>
     <string name="subtitle_style_colour">لون النص</string>
@@ -58,7 +57,6 @@
     <string name="subtitle_style_shadow">ظل</string>
     <string name="subtitle_style_outline_colour">لون الحد</string>
     <string name="subtitle_style_background">خلفية الترجمة</string>
-    <string name="subtitle_style_embedded">احترام نمط الملف</string>
     <string name="subtitle_delay">التأخير</string>
     <string name="subtitle_delay_less">تقديم الترجمة</string>
     <string name="subtitle_delay_more">تأخير الترجمة</string>

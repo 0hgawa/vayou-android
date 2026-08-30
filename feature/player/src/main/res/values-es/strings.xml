@@ -44,7 +44,6 @@
     <string name="online_subtitles_failed">No se pudo acceder al servicio de subtítulos.</string>
     <string name="translate_subtitle">Traducir</string>
     <string name="subtitle_style">Tamaño y estilo</string>
-    <string name="subtitle_style_system">Usar los ajustes de subtítulos del sistema</string>
     <string name="subtitle_style_size">Tamaño del texto</string>
     <string name="subtitle_style_position">Posición vertical</string>
     <string name="subtitle_style_colour">Color del texto</string>
@@ -58,7 +57,6 @@
     <string name="subtitle_style_shadow">Sombra</string>
     <string name="subtitle_style_outline_colour">Color del contorno</string>
     <string name="subtitle_style_background">Fondo del subtítulo</string>
-    <string name="subtitle_style_embedded">Respetar el estilo del archivo</string>
     <string name="subtitle_delay">Retardo</string>
     <string name="subtitle_delay_less">Adelantar los subtítulos</string>
     <string name="subtitle_delay_more">Retrasar los subtítulos</string>

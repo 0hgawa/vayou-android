@@ -44,7 +44,6 @@
     <string name="online_subtitles_failed">Không tới được dịch vụ phụ đề.</string>
     <string name="translate_subtitle">Dịch</string>
     <string name="subtitle_style">Cỡ chữ và kiểu</string>
-    <string name="subtitle_style_system">Dùng cài đặt phụ đề của hệ thống</string>
     <string name="subtitle_style_size">Cỡ chữ</string>
     <string name="subtitle_style_position">Vị trí dọc</string>
     <string name="subtitle_style_colour">Màu chữ</string>
@@ -58,7 +57,6 @@
     <string name="subtitle_style_shadow">Bóng</string>
     <string name="subtitle_style_outline_colour">Màu viền</string>
     <string name="subtitle_style_background">Nền phụ đề</string>
-    <string name="subtitle_style_embedded">Giữ kiểu từ tệp</string>
     <string name="subtitle_delay">Độ trễ</string>
     <string name="subtitle_delay_less">Đưa phụ đề lên trước</string>
     <string name="subtitle_delay_more">Giữ phụ đề lại sau</string>
