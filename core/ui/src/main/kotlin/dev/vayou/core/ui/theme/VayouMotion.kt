@@ -11,6 +11,13 @@ data class VayouMotion(
     val durationShort: Int = 150,
     val durationMedium: Int = 300,
     val durationLong: Int = 500,
+    /**
+     * How long a title that overflows stands still before it starts to travel.
+     *
+     * Long enough to be read from the start. A line that begins moving the moment it appears is one
+     * the eye has to chase, and a mini player redraws its title on every track.
+     */
+    val marqueeDelay: Int = 1_200,
     /** Something moving from one place to another on screen. */
     val easingStandard: Easing = CubicBezierEasing(0.2f, 0f, 0f, 1f),
     /** Something arriving: fast in, settling. */

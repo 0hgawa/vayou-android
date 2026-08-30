@@ -85,8 +85,12 @@ fun VayouMiniPlayer(
                         color = VayouTheme.colors.onSurface,
                         maxLines = 1,
                         // A long title travels rather than being cut. It only runs when the text
-                        // actually overflows, so a short one stays still.
-                        modifier = Modifier.basicMarquee(),
+                        // actually overflows, so a short one stays still -- and it waits first, as
+                        // the film player's title does, because a line that moves on arrival is one
+                        // the eye has to chase.
+                        modifier = Modifier.basicMarquee(
+                            initialDelayMillis = VayouTheme.motion.marqueeDelay,
+                        ),
                     )
                     Text(
                         text = subtitle,

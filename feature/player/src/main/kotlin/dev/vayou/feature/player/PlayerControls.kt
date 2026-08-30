@@ -201,7 +201,7 @@ private fun TopBar(
             maxLines = 1,
             modifier = Modifier
                 .weight(1f)
-                .basicMarquee(initialDelayMillis = MarqueeDelayMs),
+                .basicMarquee(initialDelayMillis = VayouTheme.motion.marqueeDelay),
         )
 
         CastButton(onVideo = true)
@@ -633,8 +633,6 @@ private fun BarButton(
 
 /** Enough to lift a white glyph off a bright frame, little enough to keep watching through it. */
 /** Long enough to read the start of a name before it begins to travel. */
-private const val MarqueeDelayMs = 1_200
-
 private val SideInset = 8.dp
 
 /**
