@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.vayou.core.common.extensions.openAppSettings
 import dev.vayou.core.model.Folder
 import dev.vayou.core.model.MediaLayoutMode
 import dev.vayou.core.model.MediaLibrary
@@ -66,6 +67,13 @@ fun LibraryScreen(
     onPlayVideo: (uri: String, title: String) -> Unit,
     /** The same film, ignoring where it was left. Separate because the caller builds the request. */
     onPlayFromStart: (uri: String, title: String) -> Unit,
+    /**
+     * Whether this app may read the films at all, and null while the question is still open.
+     *
+     * Passed in rather than asked for here: the caller already holds this permission, asks for it
+     * on arrival and starts the scan on the answer. A second holder would be a second request.
+     */
+    isGranted: Boolean?,
     viewModel: LibraryViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -80,6 +88,7 @@ fun LibraryScreen(
     }
 
     LibraryContent(
+        isGranted = isGranted,
         onSearch = { isSearching = true },
         uiState = uiState,
         onSelectViewMode = viewModel::selectViewMode,
@@ -92,6 +101,7 @@ fun LibraryScreen(
 
 @Composable
 private fun LibraryContent(
+    isGranted: Boolean?,
     uiState: LibraryUiState,
     onSearch: () -> Unit,
     onSelectViewMode: (MediaViewMode) -> Unit,
@@ -297,6 +307,20 @@ private fun LibraryContent(
             )
         },
     ) {
+        if (isGranted == false) {
+            // Not "no folders yet", which is what stood here and was untrue: there may be a hundred,
+            // and this app has not been allowed to look. The way out is the system's own page for
+            // this app rather than a second request -- Android stops drawing the dialog once a
+            // viewer has refused for good, so asking again returns refused and shows nothing.
+            VayouEmptyState(
+                icon = VayouIcons.Video,
+                title = stringResource(R.string.video_permission_needed),
+                actionLabel = stringResource(dev.vayou.core.ui.R.string.permission_open_settings),
+                onAction = context::openAppSettings,
+            )
+            return@VayouScaffold
+        }
+
         when (uiState) {
             LibraryUiState.Loading -> Unit
             is LibraryUiState.Ready -> Column(modifier = Modifier.fillMaxSize()) {

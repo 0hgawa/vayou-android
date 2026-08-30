@@ -88,7 +88,11 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MusicScreen(onPlaySong: (Song, List<Song>) -> Unit, viewModel: MusicViewModel = hiltViewModel()) {
-    val permission = rememberPermissionState(audioPermission)
+    // Whether the system has answered at all, which is not the same as having said no. A first
+    // composition has no permission and no refusal either, and this screen used to read the first
+    // for the second -- the tab said it had been turned down for the moment it took to ask.
+    var answered by remember { mutableStateOf(false) }
+    val permission = rememberPermissionState(audioPermission) { answered = true }
     val isGranted = permission.status.isGranted
 
     LaunchedEffect(Unit) {
@@ -432,7 +436,7 @@ fun MusicScreen(onPlaySong: (Song, List<Song>) -> Unit, viewModel: MusicViewMode
             )
         },
     ) {
-        if (!isGranted) {
+        if (answered && !isGranted) {
             // A way out, because past a certain point there is no other one. Android stops showing
             // the dialog once a viewer has refused for good -- the request then returns refused
             // without drawing anything -- and until this button the screen said what it needed and
@@ -444,7 +448,7 @@ fun MusicScreen(onPlaySong: (Song, List<Song>) -> Unit, viewModel: MusicViewMode
             VayouEmptyState(
                 icon = VayouIcons.Audio,
                 title = stringResource(R.string.audio_permission_needed),
-                actionLabel = stringResource(R.string.audio_permission_open_settings),
+                actionLabel = stringResource(dev.vayou.core.ui.R.string.permission_open_settings),
                 onAction = context::openAppSettings,
             )
             return@VayouScaffold

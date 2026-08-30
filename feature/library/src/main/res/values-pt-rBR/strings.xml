@@ -5,6 +5,7 @@
     <string name="videos">Vídeos</string>
     <string name="no_folders">Nenhuma pasta ainda</string>
     <string name="no_videos">Nenhum vídeo ainda</string>
+    <string name="video_permission_needed">O Vayou precisa ler seus vídeos para listá-los</string>
     <string name="playlists">Listas</string>
     <string name="favourites">Favoritos</string>
     <string name="new_playlist">Nova lista</string>

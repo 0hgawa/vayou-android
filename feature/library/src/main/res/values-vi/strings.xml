@@ -5,6 +5,7 @@
     <string name="videos">Video</string>
     <string name="no_folders">Chưa có thư mục</string>
     <string name="no_videos">Chưa có video</string>
+    <string name="video_permission_needed">Vayou cần đọc video của bạn để liệt kê</string>
     <string name="sort">Sắp xếp</string>
     <string name="sort_by_title">Tên</string>
     <string name="sort_by_date">Ngày thêm</string>

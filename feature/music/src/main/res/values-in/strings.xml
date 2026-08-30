@@ -74,7 +74,6 @@
     <string name="tags_not_saved">Tidak bisa menulis tag</string>
     <string name="delete_failed">Tidak bisa menghapus</string>
     <string name="lyrics">Lirik</string>
-    <string name="audio_permission_open_settings">Buka setelan</string>
     <plurals name="n_songs">
         <item quantity="other">%d lagu</item>
     </plurals>

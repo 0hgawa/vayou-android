@@ -5,6 +5,7 @@
     <string name="videos">Видео</string>
     <string name="no_folders">Папок пока нет</string>
     <string name="no_videos">Видео пока нет</string>
+    <string name="video_permission_needed">Vayou нужен доступ к видео, чтобы показать его</string>
     <string name="sort">Сортировка</string>
     <string name="sort_by_title">Имени</string>
     <string name="sort_by_date">Дате добавления</string>

@@ -5,6 +5,7 @@
     <string name="videos">Video</string>
     <string name="no_folders">Belum ada folder</string>
     <string name="no_videos">Belum ada video</string>
+    <string name="video_permission_needed">Vayou perlu membaca video Anda untuk mendaftarnya</string>
     <string name="sort">Urutkan</string>
     <string name="sort_by_title">Nama</string>
     <string name="sort_by_date">Tanggal ditambahkan</string>

@@ -9,5 +9,6 @@
     <string name="new_playlist">Новый список</string>
     <string name="undo">Отменить</string>
     <string name="more_options">Ещё</string>
+    <string name="permission_open_settings">Открыть настройки</string>
     <string name="iptv_international">Международные</string>
 </resources>

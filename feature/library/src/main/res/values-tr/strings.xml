@@ -5,6 +5,7 @@
     <string name="videos">Videolar</string>
     <string name="no_folders">Henüz klasör yok</string>
     <string name="no_videos">Henüz video yok</string>
+    <string name="video_permission_needed">Vayou listelemek için videolarınızı okumalı</string>
     <string name="sort">Sırala</string>
     <string name="sort_by_title">Ad</string>
     <string name="sort_by_date">Eklenme tarihi</string>

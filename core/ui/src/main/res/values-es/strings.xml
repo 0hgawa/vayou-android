@@ -9,5 +9,6 @@
     <string name="new_playlist">Nueva lista</string>
     <string name="undo">Deshacer</string>
     <string name="more_options">Más opciones</string>
+    <string name="permission_open_settings">Abrir los ajustes</string>
     <string name="iptv_international">Internacional</string>
 </resources>

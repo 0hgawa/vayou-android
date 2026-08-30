@@ -5,6 +5,7 @@
     <string name="videos">الفيديوهات</string>
     <string name="no_folders">لا مجلدات بعد</string>
     <string name="no_videos">لا فيديوهات بعد</string>
+    <string name="video_permission_needed">يحتاج Vayou إلى قراءة الفيديوهات لعرضها</string>
     <string name="sort">الترتيب</string>
     <string name="sort_by_title">الاسم</string>
     <string name="sort_by_date">تاريخ الإضافة</string>

@@ -9,5 +9,6 @@
     <string name="new_playlist">नई सूची</string>
     <string name="undo">पहले जैसा</string>
     <string name="more_options">और विकल्प</string>
+    <string name="permission_open_settings">सेटिंग खोलें</string>
     <string name="iptv_international">अंतरराष्ट्रीय</string>
 </resources>

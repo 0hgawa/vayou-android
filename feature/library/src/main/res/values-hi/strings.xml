@@ -5,6 +5,7 @@
     <string name="videos">वीडियो</string>
     <string name="no_folders">अभी कोई फ़ोल्डर नहीं</string>
     <string name="no_videos">अभी कोई वीडियो नहीं</string>
+    <string name="video_permission_needed">सूची बनाने के लिए Vayou को आपके वीडियो पढ़ने होंगे</string>
     <string name="sort">क्रम</string>
     <string name="sort_by_title">नाम</string>
     <string name="sort_by_date">जोड़ने की तारीख़</string>

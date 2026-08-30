@@ -74,7 +74,6 @@
     <string name="tags_not_saved">Tags konnten nicht geschrieben werden</string>
     <string name="delete_failed">Löschen fehlgeschlagen</string>
     <string name="lyrics">Songtext</string>
-    <string name="audio_permission_open_settings">Einstellungen öffnen</string>
     <plurals name="n_songs">
         <item quantity="one">%d Titel</item>
         <item quantity="other">%d Titel</item>

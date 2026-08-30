@@ -25,6 +25,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
@@ -155,7 +156,11 @@ private fun VayouApp(
     /** A track on a share: an address and a name, which is all the library knows about it. */
     onPlayNetworkTrack: (uri: String, title: String) -> Unit,
 ) {
-    val permission = rememberPermissionState(storagePermission)
+    // Whether the system has answered at all, which is not the same as having said no. A first
+    // composition has no permission and no refusal either, and a screen that reads the first for
+    // the second tells the viewer it was turned down before it has finished asking.
+    var answered by remember { mutableStateOf(false) }
+    val permission = rememberPermissionState(storagePermission) { answered = true }
     val granted = permission.status.isGranted
 
     // Asked for on arrival rather than behind a button: there is nothing to show without it, and a
@@ -235,6 +240,7 @@ private fun VayouApp(
                 stateHolder.SaveableStateProvider(destination) {
                     when (destination) {
                         TopLevelDestination.Video -> LibraryScreen(
+                            isGranted = granted.takeIf { it || answered },
                             onPlayVideo = { uri, title -> onPlayVideo(PlaybackTarget(uri, title)) },
                             onPlayFromStart = { uri, title ->
                                 onPlayVideo(PlaybackTarget(uri, title, startAtBeginning = true))

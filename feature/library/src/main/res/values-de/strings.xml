@@ -5,6 +5,7 @@
     <string name="videos">Videos</string>
     <string name="no_folders">Noch keine Ordner</string>
     <string name="no_videos">Noch keine Videos</string>
+    <string name="video_permission_needed">Vayou muss deine Videos lesen, um sie aufzulisten</string>
     <string name="sort">Sortieren</string>
     <string name="sort_by_title">Name</string>
     <string name="sort_by_date">Hinzugefügt am</string>

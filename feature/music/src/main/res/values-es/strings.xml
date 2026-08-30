@@ -74,7 +74,6 @@
     <string name="tags_not_saved">No se pudieron escribir las etiquetas</string>
     <string name="delete_failed">No se pudo eliminar</string>
     <string name="lyrics">Letra</string>
-    <string name="audio_permission_open_settings">Abrir los ajustes</string>
     <plurals name="n_songs">
         <item quantity="one">%d pista</item>
         <item quantity="other">%d pistas</item>

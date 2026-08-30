@@ -74,7 +74,6 @@
     <string name="tags_not_saved">تعذّرت كتابة الوسوم</string>
     <string name="delete_failed">تعذّر الحذف</string>
     <string name="lyrics">الكلمات</string>
-    <string name="audio_permission_open_settings">فتح الإعدادات</string>
     <plurals name="n_songs">
         <item quantity="zero">%d مقطع</item>
         <item quantity="one">مقطع واحد</item>

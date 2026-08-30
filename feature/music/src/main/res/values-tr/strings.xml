@@ -74,7 +74,6 @@
     <string name="tags_not_saved">Etiketler yazılamadı</string>
     <string name="delete_failed">Silinemedi</string>
     <string name="lyrics">Şarkı sözleri</string>
-    <string name="audio_permission_open_settings">Ayarları aç</string>
     <plurals name="n_songs">
         <item quantity="one">%d parça</item>
         <item quantity="other">%d parça</item>

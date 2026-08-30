@@ -9,5 +9,6 @@
     <string name="new_playlist">Daftar baru</string>
     <string name="undo">Urungkan</string>
     <string name="more_options">Opsi lainnya</string>
+    <string name="permission_open_settings">Buka setelan</string>
     <string name="iptv_international">Internasional</string>
 </resources>

@@ -74,7 +74,6 @@
     <string name="tags_not_saved">Không ghi được thẻ</string>
     <string name="delete_failed">Không xoá được</string>
     <string name="lyrics">Lời bài hát</string>
-    <string name="audio_permission_open_settings">Mở cài đặt</string>
     <plurals name="n_songs">
         <item quantity="other">%d bản nhạc</item>
     </plurals>
