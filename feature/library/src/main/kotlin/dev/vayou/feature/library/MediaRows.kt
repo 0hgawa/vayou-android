@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.vayou.core.model.Folder
 import dev.vayou.core.model.Video
+import dev.vayou.core.ui.asFileSize
 import dev.vayou.core.ui.designsystem.MediaListLayoutDefaults
 import dev.vayou.core.ui.designsystem.components.VayouFolderGraphic
 import dev.vayou.core.ui.designsystem.components.VayouListHeader
@@ -69,7 +70,7 @@ internal fun VideoRow(
             }
         },
         content = { OneLine(video.displayName) },
-        supportingContent = { SupportingLine("${video.height}p · ${video.formattedFileSize}") },
+        supportingContent = { SupportingLine("${video.height}p · ${video.size.asFileSize()}") },
         trailingContent = when {
             isSelecting -> null
 
@@ -109,7 +110,7 @@ internal fun FolderRow(
                     // the size, and there is nothing on the row to say what is being counted.
                     append(pluralStringResource(R.plurals.n_videos, folder.mediaList.size, folder.mediaList.size))
                     append(" · ")
-                    append(folder.formattedMediaSize)
+                    append(folder.mediaSize.asFileSize())
                 },
             )
         },

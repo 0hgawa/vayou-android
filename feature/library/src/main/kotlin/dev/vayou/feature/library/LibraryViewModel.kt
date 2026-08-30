@@ -291,7 +291,6 @@ private fun PrivateVideo.asVideo(): Video = Video(
     size = size,
     dateModified = dateModified,
     formattedDuration = Utils.formatDurationMillis(duration),
-    formattedFileSize = Utils.formatFileSize(size),
 )
 
 /** A change to a file, stopped halfway, waiting for the system's dialog to be answered. */

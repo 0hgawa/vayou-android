@@ -41,9 +41,9 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
-import dev.vayou.core.common.Utils
 import dev.vayou.core.smb.BrowserSortBy
 import dev.vayou.core.smb.SmbFileItem
+import dev.vayou.core.ui.asFileSize
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.tv.R
 import dev.vayou.tv.TvCard
@@ -162,7 +162,7 @@ fun TvServerScreen(
             lines = listOfNotNull(
                 stringResource(R.string.info_file) to file.name,
                 stringResource(R.string.info_location) to "${state.share.orEmpty()}\\${file.path}",
-                file.size.takeIf { it > 0 }?.let { stringResource(R.string.info_size) to Utils.formatFileSize(it) },
+                file.size.takeIf { it > 0 }?.let { stringResource(R.string.info_size) to it.asFileSize() },
             ),
             onDismiss = { showing = null },
         )

@@ -16,7 +16,6 @@ data class Video(
     val playbackPosition: Long = 200,
     val dateModified: Long = 0,
     val formattedDuration: String = "",
-    val formattedFileSize: String = "",
     val format: String? = null,
     val lastPlayedAt: Date? = null,
     val videoStream: VideoStreamInfo? = null,

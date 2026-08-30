@@ -23,12 +23,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.core.os.ConfigurationCompat
-import dev.vayou.core.common.Utils
 import dev.vayou.core.smb.BrowserSort
 import dev.vayou.core.smb.BrowserSortBy
 import dev.vayou.core.smb.IptvCountries
 import dev.vayou.core.smb.SmbFileItem
 import dev.vayou.core.ui.R as UiR
+import dev.vayou.core.ui.asFileSize
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.VayouBottomSheet
 import dev.vayou.core.ui.designsystem.components.VayouBottomSheetTitle
@@ -182,7 +182,7 @@ internal fun FileDetailsDialog(item: SmbFileItem, host: String?, share: String?,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(VayouTheme.spacing.md)) {
             if (item.size > 0) {
-                DetailRow(stringResource(R.string.size), Utils.formatFileSize(item.size))
+                DetailRow(stringResource(R.string.size), item.size.asFileSize())
             }
             DetailRow(stringResource(R.string.location), location)
         }

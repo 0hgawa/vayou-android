@@ -55,19 +55,6 @@ object Utils {
         "-${formatDurationMillis(abs(millis))}"
     }
 
-    fun formatFileSize(size: Long): String {
-        val kb = 1024
-        val mb = kb * 1024
-        val gb = mb * 1024
-
-        return when {
-            size < kb -> "$size B"
-            size < mb -> "%.2f KB".format(size / kb.toDouble())
-            size < gb -> "%.2f MB".format(size / mb.toDouble())
-            else -> "%.2f GB".format(size / gb.toDouble())
-        }
-    }
-
     fun formatBitrate(bitrate: Long): String? {
         if (bitrate <= 0) {
             return null

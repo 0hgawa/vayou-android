@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.vayou.core.model.Folder
 import dev.vayou.core.model.Video
+import dev.vayou.core.ui.asFileSize
 import dev.vayou.core.ui.designsystem.MediaListLayoutDefaults
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.VayouActionSheet
@@ -255,7 +256,7 @@ internal fun VideoInfoDialog(video: Video, onDismiss: () -> Unit) {
         ) {
             InfoLine(stringResource(R.string.info_file), video.nameWithExtension)
             if (video.parentPath.isNotBlank()) InfoLine(stringResource(R.string.info_location), video.parentPath)
-            InfoLine(stringResource(R.string.info_size), video.formattedFileSize)
+            InfoLine(stringResource(R.string.info_size), video.size.asFileSize())
             InfoLine(stringResource(R.string.info_duration), video.formattedDuration)
             InfoLine(stringResource(R.string.info_resolution), "${video.width} × ${video.height}")
             video.format?.let { InfoLine(stringResource(R.string.info_format), it) }

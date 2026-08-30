@@ -22,7 +22,6 @@ fun MediumWithInfo.toVideo() = Video(
     playbackPosition = mediumStateEntity?.playbackPosition ?: 0L,
     lastPlayedAt = mediumStateEntity?.lastPlayedTime?.let { Date(it) },
     formattedDuration = Utils.formatDurationMillis(mediumEntity.duration),
-    formattedFileSize = Utils.formatFileSize(mediumEntity.size),
     videoStream = videoStreamInfo?.toVideoStreamInfo(),
     audioStreams = audioStreamsInfo.map(AudioStreamInfoEntity::toAudioStreamInfo),
     subtitleStreams = subtitleStreamsInfo.map(SubtitleStreamInfoEntity::toSubtitleStreamInfo),

@@ -19,11 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dev.vayou.core.common.Utils
 import dev.vayou.core.smb.BrowserSort
 import dev.vayou.core.smb.BrowserSortBy
 import dev.vayou.core.smb.SmbFileItem
 import dev.vayou.core.smb.sortedBy
+import dev.vayou.core.ui.asFileSize
 import dev.vayou.core.ui.designsystem.MediaListLayoutDefaults
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.VayouEmptyState
@@ -106,7 +106,7 @@ internal fun FileBrowser(
                     }
                 },
                 title = file.name,
-                subtitle = if (!file.isDirectory && file.size > 0) Utils.formatFileSize(file.size) else null,
+                subtitle = if (!file.isDirectory && file.size > 0) file.size.asFileSize() else null,
                 // A share holds both kinds and each has a player of its own: a track opened in the
                 // video player is a black rectangle with a seek bar under it.
                 onClick = {
@@ -131,7 +131,7 @@ internal fun FileBrowser(
                         {
                             VideoActionsMenu(
                                 name = file.name,
-                                subtitle = if (file.size > 0) Utils.formatFileSize(file.size) else null,
+                                subtitle = if (file.size > 0) file.size.asFileSize() else null,
                                 onPlayFromStart = { onPlayFromStart(file) },
                                 onShowDetails = { onShowDetails(file) },
                             )

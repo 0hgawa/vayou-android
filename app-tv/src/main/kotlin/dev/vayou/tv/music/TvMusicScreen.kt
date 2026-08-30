@@ -43,6 +43,7 @@ import dev.vayou.core.media.MusicSort
 import dev.vayou.core.media.Song
 import dev.vayou.core.player.ui.musicMediaItem
 import dev.vayou.core.player.ui.rememberMusicController
+import dev.vayou.core.ui.asFileSize
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.graphics.rememberArtworkTint
 import dev.vayou.tv.R
@@ -161,7 +162,7 @@ fun TvMusicScreen(onBack: () -> Unit, viewModel: TvMusicViewModel = hiltViewMode
                 song.artist.takeIf { it.isNotBlank() }?.let { stringResource(R.string.info_artist) to it },
                 song.album.takeIf { it.isNotBlank() }?.let { stringResource(R.string.info_album) to it },
                 song.folderPath.takeIf { it.isNotBlank() }?.let { stringResource(R.string.info_location) to it },
-                stringResource(R.string.info_size) to Utils.formatFileSize(song.sizeBytes),
+                stringResource(R.string.info_size) to song.sizeBytes.asFileSize(),
                 stringResource(R.string.info_duration) to Utils.formatDurationMillis(song.durationMs),
                 song.mimeType.takeIf { it.isNotBlank() }?.let { stringResource(R.string.info_format) to it },
             ),
