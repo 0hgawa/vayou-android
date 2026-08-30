@@ -499,7 +499,9 @@ private fun TrackInfo(title: String, artist: String) = Column {
         maxLines = 1,
         modifier = Modifier
             .fillMaxWidth()
-            .basicMarquee(),
+            // The wait the film player and the mini player keep: a title that sets off on arrival
+            // is one the eye has to chase, and on a queue it restarts with every track.
+            .basicMarquee(initialDelayMillis = VayouTheme.motion.marqueeDelay),
     )
     Text(
         text = artist,
