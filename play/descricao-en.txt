@@ -1,0 +1,38 @@
+Vayou TV plays what you already own. Point it at the files on this television, at a folder shared from your computer, or at a channel list you supply, and it puts them on the big screen — built for a remote control, not a touchscreen.
+
+NO ADS. NO ACCOUNT. NO TRACKING.
+Not a banner, not a break, not one. There is nothing to sign up for, no analytics and no crash reporting, and no third party watching what you play. Your library, your viewing history and your server credentials never leave the television.
+
+WHAT IT PLAYS
+• Videos and music stored on the television itself
+• Files on your network: browse Windows and NAS shares over SMB and play straight from them, with nothing to copy first
+• Live channels from M3U playlists that you add yourself
+
+BUILT FOR THE ROOM
+• Every screen reachable with the D-pad, nothing that needs a touchscreen
+• Continue watching on the home screen, with how far in you got marked on each thumbnail
+• Pinned folders and saved servers, so the machine you use every evening is one press away
+• Sign in to a share once and it is remembered
+
+SUBTITLES
+• Embedded tracks and external subtitle files
+• Search for and download subtitles for what you are watching
+• Live translation while it plays
+• Adjust timing, size, colour and outline until they read well from the sofa
+
+WHILE WATCHING
+• Picks up where you left off
+• Audio track and subtitle track selection
+• Playback speed, sleep timer, night mode, volume boost
+• Fit the picture to the screen the way you prefer
+
+MUSIC
+• Cover art, lyrics and an equaliser
+• The queue beside the sleeve, so the next track is never a guess
+• Star what you come back to
+
+IN ENGLISH OR PORTUGUESE
+Choose the language in Settings, whatever the television itself is set to.
+
+ABOUT CONTENT
+Vayou TV is a player. It does not provide, host or supply any films, series or television channels. What you see is what you point it at: your own files, your own network shares, and channel lists you choose to add. You are responsible for having the right to access what you play.
