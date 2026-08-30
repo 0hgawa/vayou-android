@@ -12,7 +12,10 @@
   icon are still made of the same amber.
 
   Drawn over the whole 108dp canvas rather than the safe zone: a background layer is meant to be
-  cropped, and the launcher decides how much.
+  cropped, and the launcher decides how much. The gradient, though, runs only across the 18dp
+  inset that is always visible: laid corner to corner it put its darkest amber exactly where the
+  mask cuts, so a phone showed a flatter tile than the file held, and paler than the same mark on
+  the desktop. Outside that inset the colour holds flat, which is the part nobody is promised.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
@@ -24,13 +27,13 @@
         <aapt:attr name="android:fillColor">
             <gradient
                 android:type="linear"
-                android:startX="0"
-                android:startY="0"
-                android:endX="108"
-                android:endY="108">
+                android:startX="18"
+                android:startY="18"
+                android:endX="90"
+                android:endY="90">
                 <item android:offset="0" android:color="#FFC838" />
                 <item android:offset="0.5" android:color="#FFB300" />
-                <item android:offset="1" android:color="#F6A600" />
+                <item android:offset="1" android:color="#E89A00" />
             </gradient>
         </aapt:attr>
     </path>
