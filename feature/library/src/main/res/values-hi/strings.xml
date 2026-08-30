@@ -18,7 +18,6 @@
     <string name="add_videos">वीडियो जोड़ें</string>
     <string name="rename">नाम बदलें</string>
     <string name="delete_playlist">सूची हटाएँ</string>
-    <string name="no_playlists">अभी कोई प्लेलिस्ट नहीं</string>
     <string name="playlist_empty">इस सूची में अभी कुछ नहीं</string>
     <string name="no_favourites">अभी कोई पसंदीदा नहीं</string>
     <string name="remove_from_playlist">सूची से हटाएँ</string>

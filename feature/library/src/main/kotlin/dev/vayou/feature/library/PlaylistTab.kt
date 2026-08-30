@@ -22,7 +22,6 @@ import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.VayouActionSheet
 import dev.vayou.core.ui.designsystem.components.VayouActionSheetItem
 import dev.vayou.core.ui.designsystem.components.VayouArtwork
-import dev.vayou.core.ui.designsystem.components.VayouEmptyState
 import dev.vayou.core.ui.designsystem.components.VayouListHeader
 import dev.vayou.core.ui.designsystem.components.VayouListHeaderAction
 import dev.vayou.core.ui.designsystem.components.VayouOverflowButton
@@ -91,10 +90,13 @@ internal fun PlaylistList(
             )
         }
 
-        if (playlists.isEmpty()) {
-            item { VayouEmptyState(VayouIcons.Playlist, stringResource(R.string.no_playlists)) }
-        }
-
+        // No empty state under here, though the made lists can be none. This tab is never empty:
+        // Favourites and Private are above and always drawn, so a mark in the middle of the screen
+        // saying there is nothing sits under two rows that say otherwise, and reads as a failure to
+        // load rather than as an invitation. What an empty state is for -- why is this bare, and
+        // what do I do -- is already answered here by the two rows and by the plus beside the
+        // heading. The music tab shows none for the same reason, and keeps its own for the one
+        // place that can honestly be empty: a list just made.
         items(playlists, key = { it.id }) { playlist ->
             val count = countOf(playlist)
             PlaylistRow(

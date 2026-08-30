@@ -103,11 +103,14 @@ object VayouSheetDefaults {
      * Named rather than written out, because two sheets grew their own titles -- the equalizer needed
      * a switch on the line and the action sheet a thumbnail, so both were built by hand and both
      * landed a size below the plain ones.
+     *
+     * The size Material gives a sheet its name in. It was a rung above, and a rung above is what
+     * made a sheet of six short rows read as an announcement.
      */
     val TitleStyle: TextStyle
         @Composable
         @ReadOnlyComposable
-        get() = VayouTheme.typography.headlineSmall
+        get() = VayouTheme.typography.titleLarge
 
     /**
      * What a control on a sheet calls itself, as against a row you pick.

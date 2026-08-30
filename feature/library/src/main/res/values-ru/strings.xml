@@ -18,7 +18,6 @@
     <string name="add_videos">Добавить видео</string>
     <string name="rename">Переименовать</string>
     <string name="delete_playlist">Удалить список</string>
-    <string name="no_playlists">Плейлистов пока нет</string>
     <string name="playlist_empty">В этом списке пока пусто</string>
     <string name="no_favourites">В избранном пока пусто</string>
     <string name="remove_from_playlist">Убрать из списка</string>

@@ -16,7 +16,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import dev.vayou.core.ui.theme.VayouTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,12 +109,13 @@ fun VayouTopAppBar(
  */
 object VayouTopAppBarDefaults {
     /**
-     * Two points under the [VayouTypography.titleLarge] Material puts here, and nothing else about it
-     * touched. The rung below on the scale is six points down *and* a lighter weight, which stops
-     * reading as the same text at a smaller size and starts reading as a different kind of text. This
-     * is a size the scale does not have, which the project's own standard says not to do; it lives
-     * here rather than at a call site, so it is a decision made once.
+     * The rung Material puts here, and no longer two points under it.
+     *
+     * The two points were taken off by hand, which left the one size in the app that the scale did
+     * not have -- against the project's own standard, as the note that used to sit here admitted.
+     * A sheet says its name at this size too, and a bar and a sheet naming their surfaces alike is
+     * worth more than the two points were.
      */
     val titleStyle: TextStyle
-        @Composable get() = VayouTheme.typography.titleLarge.copy(fontSize = 20.sp)
+        @Composable get() = VayouTheme.typography.titleLarge
 }

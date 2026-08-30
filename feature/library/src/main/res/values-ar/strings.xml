@@ -18,7 +18,6 @@
     <string name="add_videos">إضافة فيديوهات</string>
     <string name="rename">إعادة التسمية</string>
     <string name="delete_playlist">حذف القائمة</string>
-    <string name="no_playlists">لا قوائم تشغيل بعد</string>
     <string name="playlist_empty">لا شيء في هذه القائمة بعد</string>
     <string name="no_favourites">لا مفضّلات بعد</string>
     <string name="remove_from_playlist">إزالة من القائمة</string>

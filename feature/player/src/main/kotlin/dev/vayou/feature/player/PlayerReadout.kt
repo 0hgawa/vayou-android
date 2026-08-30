@@ -23,7 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import dev.vayou.core.player.ui.VideoContentScale
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.theme.VayouTheme
@@ -78,11 +77,10 @@ fun PlayerReadoutPill(readout: PlayerReadout?, modifier: Modifier = Modifier) {
             Box(modifier = Modifier.width(ValueWidth), contentAlignment = Alignment.Center) {
                 Text(
                     text = shown.text,
-                    style = VayouTheme.typography.titleMedium.copy(
-                        fontSize = ValueSize,
-                        fontWeight = FontWeight.SemiBold,
-                        fontFeatureSettings = "tnum",
-                    ),
+                    // Only the figures are asked for: the rung already carries the size and the
+                    // weight, and saying them again here was the one text size in the app that the
+                    // scale did not have.
+                    style = VayouTheme.typography.titleMedium.copy(fontFeatureSettings = "tnum"),
                     color = VayouTheme.colors.onVideo,
                     textAlign = TextAlign.Center,
                 )
@@ -170,8 +168,6 @@ private val PillHeight = 48.dp
 
 /** Wide enough for "100%" and for a signed count of seconds, so neither changes the pill's width. */
 private val ValueWidth = 64.dp
-
-private val ValueSize = 18.sp
 
 private val PillStart = 20.dp
 

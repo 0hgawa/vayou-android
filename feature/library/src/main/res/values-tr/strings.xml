@@ -18,7 +18,6 @@
     <string name="add_videos">Video ekle</string>
     <string name="rename">Yeniden adlandır</string>
     <string name="delete_playlist">Listeyi sil</string>
-    <string name="no_playlists">Henüz oynatma listesi yok</string>
     <string name="playlist_empty">Bu listede henüz bir şey yok</string>
     <string name="no_favourites">Henüz favori yok</string>
     <string name="remove_from_playlist">Listeden çıkar</string>

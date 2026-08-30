@@ -18,7 +18,6 @@
     <string name="add_videos">Ajouter des vidéos</string>
     <string name="rename">Renommer</string>
     <string name="delete_playlist">Supprimer la liste</string>
-    <string name="no_playlists">Aucune liste pour l’instant</string>
     <string name="playlist_empty">Rien dans cette liste pour l’instant</string>
     <string name="no_favourites">Rien dans les favoris pour l’instant</string>
     <string name="remove_from_playlist">Retirer de la liste</string>
