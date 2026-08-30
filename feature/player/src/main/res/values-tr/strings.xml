@@ -2,7 +2,7 @@
 <resources>
     <string name="play">Oynat</string>
     <string name="pause">Duraklat</string>
-    <string name="subtitles_off">Kapat</string>
+    <string name="subtitles_off">Kapalı</string>
     <string name="subtitles">Altyazı</string>
     <string name="audio_track">Ses parçası</string>
     <string name="playback_speed">Hız</string>
@@ -35,7 +35,7 @@
     <string name="close">Kapat</string>
     <string name="more_options">Diğer seçenekler</string>
     <string name="sleep_timer">Uyku zamanlayıcısı</string>
-    <string name="sleep_timer_off">Kapat</string>
+    <string name="sleep_timer_off">Kapalı</string>
     <string name="sleep_timer_end_of_track">Bu bittiğinde</string>
     <string name="online_subtitles">Çevrimiçi altyazı ara</string>
     <string name="online_subtitles_by_name">Ada göre ara</string>

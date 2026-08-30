@@ -45,10 +45,10 @@
     <string name="info_audio_codec">Audio-Codec #%1$d</string>
     <string name="search">Suchen</string>
     <string name="search_placeholder">Videos und Ordner suchen</string>
-    <string name="clear_query">Löschen</string>
+    <string name="clear_query">Leeren</string>
     <string name="nothing_found">Nichts passt zu „%1$s“</string>
     <string name="recent_searches">Letzte Suchen</string>
-    <string name="clear_history">Löschen</string>
+    <string name="clear_history">Leeren</string>
     <string name="forget_search">Diese Suche vergessen</string>
     <string name="select_all">Alles auswählen</string>
     <string name="deselect_all">Auswahl aufheben</string>

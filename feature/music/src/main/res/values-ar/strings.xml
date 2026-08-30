@@ -66,7 +66,7 @@
     <string name="tag_album_artist">فنان الألبوم</string>
     <string name="tag_year">السنة</string>
     <string name="favourites">المفضّلة</string>
-    <string name="playing_next">التالي</string>
+    <string name="playing_next">التالي في القائمة</string>
     <string name="added_to_queue_message">أُضيف إلى قائمة الانتظار</string>
     <string name="added_to_playlist_message">أُضيف إلى %1$s</string>
     <string name="removed_from_playlist_message">أُزيل من %1$s</string>

@@ -43,7 +43,7 @@
     <string name="username">Ad</string>
     <string name="password">Parola</string>
     <string name="connect">Bağlan</string>
-    <string name="subtitle_style">Biçim</string>
+    <string name="subtitle_style">Stil</string>
     <string name="subtitle_size">Boyut</string>
     <string name="subtitle_preset_raised">Kabartmalı</string>
     <string name="subtitle_preset_outlined">Dış çizgili</string>

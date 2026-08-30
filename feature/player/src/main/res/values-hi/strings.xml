@@ -2,7 +2,7 @@
 <resources>
     <string name="play">चलाएँ</string>
     <string name="pause">रोकें</string>
-    <string name="subtitles_off">बंद करें</string>
+    <string name="subtitles_off">बंद</string>
     <string name="subtitles">सबटाइटल</string>
     <string name="audio_track">ऑडियो ट्रैक</string>
     <string name="playback_speed">गति</string>
@@ -35,7 +35,7 @@
     <string name="close">बंद करें</string>
     <string name="more_options">और विकल्प</string>
     <string name="sleep_timer">स्लीप टाइमर</string>
-    <string name="sleep_timer_off">बंद करें</string>
+    <string name="sleep_timer_off">बंद</string>
     <string name="sleep_timer_end_of_track">जब यह ख़त्म हो</string>
     <string name="online_subtitles">ऑनलाइन सबटाइटल खोजें</string>
     <string name="online_subtitles_by_name">नाम से खोजें</string>
