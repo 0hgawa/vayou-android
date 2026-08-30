@@ -9,6 +9,8 @@ android {
 }
 
 dependencies {
+    // Onde mora a versao instalada, que os dois shells mostram com o mesmo texto.
+    implementation(projects.core.common)
     implementation(projects.core.data)
     implementation(projects.core.media)
     implementation(projects.core.model)

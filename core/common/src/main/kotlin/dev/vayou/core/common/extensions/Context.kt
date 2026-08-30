@@ -211,3 +211,20 @@ fun Context.getStorageVolumes() = try {
 } catch (e: Exception) {
     listOf(Environment.getExternalStorageDirectory())
 }
+
+/**
+ * The version installed, kept whole in every language.
+ *
+ * Asked of the system rather than compiled in: the package already knows, and a second copy of the
+ * number is a second thing to forget to bump.
+ *
+ * Wrapped in a left-to-right isolate because a version is one symbol and not a phrase. Arabic reads
+ * the other way, and the hyphen between a number and a word is a character with no direction of its
+ * own, so the paragraph broke `0.1.0-next` in two and laid the halves out backwards -- a viewer in
+ * Cairo was told the app was `next-0.1.0`. The isolate says: this run has its own direction, read it
+ * as it is written.
+ */
+fun Context.versionName(): String {
+    val name = packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
+    return if (name.isEmpty()) name else "\u2066$name\u2069"
+}

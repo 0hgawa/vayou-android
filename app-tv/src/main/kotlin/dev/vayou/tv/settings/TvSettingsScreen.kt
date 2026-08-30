@@ -1,6 +1,5 @@
 package dev.vayou.tv.settings
 
-import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
@@ -47,6 +46,7 @@ import androidx.tv.material3.Text
 import dev.vayou.core.common.AppLanguages
 import dev.vayou.core.common.SystemLanguage
 import dev.vayou.core.common.appLanguage
+import dev.vayou.core.common.extensions.versionName
 import dev.vayou.core.common.setAppLanguage
 import dev.vayou.core.model.ApplicationPreferences
 import dev.vayou.core.model.DecoderPriority
@@ -472,8 +472,6 @@ private fun GeneralRows(onReset: () -> Unit) {
         )
     }
 }
-
-private fun Context.versionName(): String = packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
 
 /**
  * A setting's values, in the pane, in place of the rows.

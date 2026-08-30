@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import coil3.SingletonImageLoader
+import dev.vayou.core.common.extensions.versionName
 import dev.vayou.core.ui.designsystem.VayouIcons
 import dev.vayou.core.ui.designsystem.components.ListSectionTitle
 import dev.vayou.core.ui.designsystem.components.PreferenceGroup
@@ -108,6 +109,3 @@ fun Context.clearThumbnailCache() {
         memoryCache?.clear()
     }
 }
-
-@Suppress("DEPRECATION")
-private fun Context.versionName(): String = packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
