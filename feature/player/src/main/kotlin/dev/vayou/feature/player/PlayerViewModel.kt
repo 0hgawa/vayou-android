@@ -334,7 +334,14 @@ class PlayerViewModel @Inject constructor(
     private suspend fun current(uri: String): String? = mediaRepository.getVideoByUri(uri)?.displayName
 
     /** Fetches one of the results and puts it on the film. */
-    fun downloadSubtitle(result: OpenSubtitleResult) {
+    /**
+     * Fetches one result and puts it on the film.
+     *
+     * [onAttached] runs only when a file actually arrived, and is how the screen knows to take the
+     * search away and show the track list instead. Reported rather than assumed: a download that
+     * failed leaves the list up with the failure on it, which is where a second attempt is made.
+     */
+    fun downloadSubtitle(result: OpenSubtitleResult, onAttached: () -> Unit) {
         val shown = onlineSubtitles as? OnlineSubtitleState.Found ?: return
         onlineSubtitles = OnlineSubtitleState.Downloading(shown.results, result)
         viewModelScope.launch {
@@ -345,6 +352,7 @@ class PlayerViewModel @Inject constructor(
             }
             addSubtitle(Uri.fromFile(file))
             onlineSubtitles = shown
+            onAttached()
         }
     }
 

@@ -570,7 +570,16 @@ internal fun PlayerScreen(
                 OnlineSubtitleSheet(
                     state = viewModel.onlineSubtitles,
                     onSearch = { query, language -> viewModel.searchSubtitles(query, language) },
-                    onPick = viewModel::downloadSubtitle,
+                    // Back to the track list once the file is on the film, because that list is
+                    // the answer: the caption is already selected by the time this runs, and the
+                    // search results said nothing about it. A viewer left staring at the same ten
+                    // rows has no way to tell a download that worked from one that did nothing.
+                    onPick = { result ->
+                        viewModel.downloadSubtitle(result) {
+                            onlineSheetOpen = false
+                            openPicker = PickerKind.Subtitle
+                        }
+                    },
                     onDismiss = { onlineSheetOpen = false },
                 )
             }
