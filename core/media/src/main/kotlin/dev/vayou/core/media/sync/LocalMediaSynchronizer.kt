@@ -16,6 +16,7 @@ import dev.vayou.core.common.extensions.getStorageVolumes
 import dev.vayou.core.common.extensions.prettyName
 import dev.vayou.core.common.extensions.scanPaths
 import dev.vayou.core.common.extensions.scanStorage
+import dev.vayou.core.data.LibraryScan
 import dev.vayou.core.database.converter.UriListConverter
 import dev.vayou.core.database.dao.DirectoryDao
 import dev.vayou.core.database.dao.MediumDao
@@ -37,10 +38,12 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class LocalMediaSynchronizer @Inject constructor(
+    private val libraryScan: LibraryScan,
     private val mediumDao: MediumDao,
     private val mediumStateDao: MediumStateDao,
     private val directoryDao: DirectoryDao,
@@ -58,8 +61,15 @@ class LocalMediaSynchronizer @Inject constructor(
     override fun startSync() {
         if (mediaSyncingJob != null) return
         mediaSyncingJob = getMediaVideosFlow().onEach { media ->
-            applicationScope.launch { updateDirectories(media) }
-            applicationScope.launch { updateMedia(media) }
+            applicationScope.launch {
+                joinAll(
+                    launch { updateDirectories(media) },
+                    launch { updateMedia(media) },
+                )
+                // Only once both halves are written. Said any earlier, a screen waiting on this
+                // would be told the library is empty in the moment before its rows arrive.
+                libraryScan.record()
+            }
         }.launchIn(applicationScope)
     }
 
