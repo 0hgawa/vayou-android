@@ -405,6 +405,8 @@ internal fun PlayerScreen(
                 onOpenSleepTimer = { sleepSheetOpen = true },
                 isSleepTimerArmed = sleepTimer.isArmed,
                 onOpenEqualizer = { equalizerSheetOpen = true },
+                // False where the device has no equalizer at all, which is the same as off.
+                isEqualizerOn = equalizer?.isEnabled == true,
                 isNightMode = preferences.nightModeEnabled,
                 onToggleNightMode = { viewModel.setNightMode(!preferences.nightModeEnabled) },
                 onPlayInBackground = onPlayInBackground,

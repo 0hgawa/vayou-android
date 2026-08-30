@@ -346,6 +346,8 @@ private fun NowPlaying(
                 Transport(player, isPlaying, isShuffled, sleepTimer.isArmed) { isSleepTimerOpen = true }
                 SecondaryActions(
                     onEqualizer = { isEqualizerOpen = true },
+                    // False where the device has no equalizer at all, which is the same as off.
+                    isEqualizerOn = equalizer?.isEnabled == true,
                     onQueue = { isQueueOpen = true },
                     onLyrics = lyrics?.let { { isLyricsOpen = !isLyricsOpen } },
                 )
@@ -646,7 +648,12 @@ private fun Transport(
  * dimmed, these read as disabled beside the transport.
  */
 @Composable
-private fun SecondaryActions(onEqualizer: () -> Unit, onQueue: () -> Unit, onLyrics: (() -> Unit)?) {
+private fun SecondaryActions(
+    onEqualizer: () -> Unit,
+    isEqualizerOn: Boolean,
+    onQueue: () -> Unit,
+    onLyrics: (() -> Unit)?,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -659,7 +666,10 @@ private fun SecondaryActions(onEqualizer: () -> Unit, onQueue: () -> Unit, onLyr
             Icon(
                 imageVector = VayouIcons.Equalizer,
                 contentDescription = stringResource(R.string.equalizer),
-                tint = VayouTheme.colors.onSurface,
+                // Lit while a curve is on, the way the sleep timer above is lit while one runs. A
+                // control that changes what is heard has to say so on the screen, or the only way
+                // to know is to open it.
+                tint = if (isEqualizerOn) VayouTheme.colors.accent else VayouTheme.colors.onSurface,
                 modifier = Modifier.size(VayouTheme.iconSize.md),
             )
         }

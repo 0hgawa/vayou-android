@@ -72,6 +72,7 @@ fun PlayerControls(
     onOpenSleepTimer: () -> Unit,
     isSleepTimerArmed: Boolean,
     onOpenEqualizer: () -> Unit,
+    isEqualizerOn: Boolean,
     isNightMode: Boolean,
     onToggleNightMode: () -> Unit,
     onPlayInBackground: () -> Unit,
@@ -116,6 +117,7 @@ fun PlayerControls(
                 onOpenSleepTimer = onOpenSleepTimer,
                 isSleepTimerArmed = isSleepTimerArmed,
                 onOpenEqualizer = onOpenEqualizer,
+                isEqualizerOn = isEqualizerOn,
                 isNightMode = isNightMode,
                 onToggleNightMode = onToggleNightMode,
                 onPlayInBackground = onPlayInBackground,
@@ -165,6 +167,7 @@ private fun TopBar(
     onOpenSleepTimer: () -> Unit,
     isSleepTimerArmed: Boolean,
     onOpenEqualizer: () -> Unit,
+    isEqualizerOn: Boolean,
     isNightMode: Boolean,
     onToggleNightMode: () -> Unit,
     onPlayInBackground: () -> Unit,
@@ -229,6 +232,14 @@ private fun TopBar(
                 VayouDropdownMenuItem(
                     text = stringResource(R.string.equalizer),
                     icon = VayouIcons.Equalizer,
+                    // Lit while a curve is on, as the timer and the night mode are: this menu says
+                    // what is running without being opened twice, and the equalizer was the one
+                    // thing in it that kept quiet.
+                    contentColor = if (isEqualizerOn) {
+                        VayouTheme.colors.accent
+                    } else {
+                        VayouTheme.colors.onSurface
+                    },
                     onClick = {
                         menuOpen = false
                         onOpenEqualizer()
