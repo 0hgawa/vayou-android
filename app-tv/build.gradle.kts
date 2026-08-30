@@ -8,12 +8,27 @@ android {
     namespace = "dev.vayou.tv"
 
     defaultConfig {
-        applicationId = "dev.vayou.tv"
+        // Not `dev.vayou.tv`, which was spent on a listing that was deleted. A package name is
+        // handed out once and never returned, so the second listing needs a second name -- and
+        // this is the whole of what changes: the namespace below, the source packages and every
+        // class stay `dev.vayou.tv`, because what a store calls an app and what its code is called
+        // are two different things.
+        applicationId = "dev.vayoutv"
         // From one, unlike the phone: this is a listing of its own, and nothing has ever been
         // installed from it. The phone carries its old numbering because it has an audience to
         // keep; the television has none yet.
+        //
+        // Back to one with the new name: the numbers spent under the old one went with it, and a
+        // listing that has never handed out a build starts where every listing starts.
         versionCode = 1
-        versionName = "1.0"
+        // Below the phone's 0.2.0, because that is where this shell actually stands. 1.0 is the
+        // number that says a thing is finished, and the television is the younger of the two: the
+        // phone has an audience and more of the rewrite behind it. A number that claims more than
+        // the app has is a promise somebody else has to keep.
+        //
+        // Its own line, not the phone's. They share every core module but ship as two listings,
+        // and a viewer of one never sees the other's number.
+        versionName = "0.1.0"
     }
 
     buildTypes {
