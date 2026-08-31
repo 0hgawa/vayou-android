@@ -14,14 +14,12 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindowProvider
+import dev.vayou.core.ui.designsystem.windowSize
 import dev.vayou.core.ui.theme.VayouTheme
 
 /**
@@ -35,7 +33,7 @@ import dev.vayou.core.ui.theme.VayouTheme
  * already follows for the same reason: a tall window on a foldable or in split screen wants the
  * stacked answer even on a device that calls itself landscape.
  *
- * Asked of the configuration rather than measured here. A sheet is opened from inside some caller's
+ * Asked of the window rather than measured here. A sheet is opened from inside some caller's
  * layout, and measuring there answers how big that caller is, not how big the window is.
  */
 @Composable
@@ -44,8 +42,8 @@ fun VayouSheet(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val window = LocalConfiguration.current
-    if (window.screenWidthDp > window.screenHeightDp) {
+    val window = windowSize()
+    if (window.width > window.height) {
         CompositionLocalProvider(LocalSheetFillsHeight provides true) {
             VayouSideSheet(onDismissRequest, modifier, content)
         }
@@ -215,7 +213,7 @@ object VayouSheetDefaults {
     private val screenHeight: Dp
         @Composable
         @ReadOnlyComposable
-        get() = with(LocalDensity.current) { LocalWindowInfo.current.containerSize.height.toDp() }
+        get() = windowSize().height
 
     /** Sixteen: the step Material puts between a header and what it heads, and the first one on the
      *  4dp grid that reads as a break rather than as leading. */

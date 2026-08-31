@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -34,14 +35,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.core.view.WindowCompat
+import dev.vayou.core.ui.designsystem.windowSize
 import dev.vayou.core.ui.theme.VayouTheme
 
 /**
@@ -74,6 +77,12 @@ internal fun VayouSideSheet(
 
     val dim by animateFloatAsState(if (shown.targetState) ScrimAlpha else 0f, label = "scrim")
 
+    // Which way is off the screen. The panel is aligned to the end, and the end is the left in a
+    // language read that way -- so a slide written as "from the right" would send the Arabic panel
+    // across the middle of the picture to reach an edge on the other side, and the push that
+    // dismisses it would be a push further in.
+    val away = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1 else 1
+
     Dialog(
         onDismissRequest = { shown.targetState = false },
         properties = DialogProperties(
@@ -104,21 +113,23 @@ internal fun VayouSideSheet(
         ) {
             AnimatedVisibility(
                 visibleState = shown,
-                enter = slideInHorizontally { it },
-                exit = slideOutHorizontally { it },
+                enter = slideInHorizontally { it * away },
+                exit = slideOutHorizontally { it * away },
                 modifier = Modifier.align(Alignment.CenterEnd),
             ) {
                 Column(
                     modifier = modifier
                         .fillMaxHeight()
                         .width(sheetWidth())
-                        .graphicsLayer { translationX = pushed }
+                        .graphicsLayer { translationX = pushed * away }
                         .background(VayouTheme.colors.surfaceContainer)
                         // Pushed off the edge to dismiss, which is the gesture a panel at an edge
                         // invites. Only away from the screen: dragging it further in would open a
                         // gap behind it that nothing fills.
                         .draggable(
-                            state = rememberDraggableState { pushed = (pushed + it).coerceAtLeast(0f) },
+                            state = rememberDraggableState {
+                                pushed = (pushed + it * away).coerceAtLeast(0f)
+                            },
                             orientation = Orientation.Horizontal,
                             onDragStopped = {
                                 val enough = with(density) { DismissDistance.toPx() }
@@ -156,8 +167,8 @@ internal fun VayouSideSheet(
  * film needs no width to go on being a film.
  */
 @Composable
-private fun sheetWidth() = (LocalConfiguration.current.screenWidthDp * WidthShare).dp
-    .coerceIn(MinWidth, MaxWidth)
+@ReadOnlyComposable
+private fun sheetWidth() = (windowSize().width * WidthShare).coerceIn(MinWidth, MaxWidth)
 
 private const val ScrimAlpha = 0.32f
 

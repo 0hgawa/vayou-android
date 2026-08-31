@@ -6,12 +6,11 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import dev.vayou.core.ui.R
+import dev.vayou.core.ui.designsystem.windowSize
 import dev.vayou.core.ui.theme.VayouTheme
 
 /**
@@ -30,11 +29,7 @@ fun VayouDialog(
     properties: DialogProperties = VayouDialogDefaults.Properties,
     content: @Composable () -> Unit,
 ) {
-    // Read from the window and not from LocalConfiguration: the same number without building a
-    // Configuration to get it, and without the deprecation that comes with asking for one.
-    val windowInfo = LocalWindowInfo.current
-    val density = LocalDensity.current
-    val maxWidth = with(density) { windowInfo.containerSize.width.toDp() } - VayouDialogDefaults.Margin * 2
+    val maxWidth = windowSize().width - VayouDialogDefaults.Margin * 2
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
