@@ -593,6 +593,18 @@ private fun Transport(
                 modifier = Modifier.size(VayouTheme.iconSize.md),
             )
         }
+        // Whether there is anywhere for the skip keys to go. With one track there is not: [stepToNext]
+        // guards against turning a queue of one over, so the key would answer nothing, and a key that
+        // answers nothing reads as broken rather than as spent.
+        //
+        // Only the forward one is dimmed. Back is dead too for the first three seconds of a lone
+        // track -- after them it restarts it -- and telling those apart needs the position, which
+        // would recompose this whole row once a second to catch a case that fixes itself.
+        //
+        // The count is read rather than watched, as on the film player: a queue only becomes one of
+        // several by something being played, and that redraws this anyway.
+        val isQueued = player.mediaItemCount > 1
+
         // Sixteen inside the trio leaves about twenty-eight out to the two at the edges: near enough
         // to double that the three read as one control and the other two as neighbours.
         AlongTheTimeline {
@@ -604,7 +616,6 @@ private fun Transport(
                     Icon(
                         imageVector = VayouIcons.SkipPreviousFilled,
                         contentDescription = stringResource(R.string.previous),
-                        tint = VayouTheme.colors.onSurface,
                         // A step above the row below: the drawn glyph keeps a margin the equalizer
                         // icon does not, so at the same token it renders visibly smaller.
                         modifier = Modifier.size(VayouTheme.iconSize.lg),
@@ -627,11 +638,10 @@ private fun Transport(
                         modifier = Modifier.size(PlayGlyph),
                     )
                 }
-                ControlButton(onClick = player::stepToNext) {
+                ControlButton(onClick = player::stepToNext, enabled = isQueued) {
                     Icon(
                         imageVector = VayouIcons.SkipNextFilled,
                         contentDescription = stringResource(R.string.next),
-                        tint = VayouTheme.colors.onSurface,
                         modifier = Modifier.size(VayouTheme.iconSize.lg),
                     )
                 }
@@ -682,7 +692,6 @@ private fun SecondaryActions(
                 Icon(
                     imageVector = VayouIcons.Caption,
                     contentDescription = stringResource(R.string.lyrics),
-                    tint = VayouTheme.colors.onSurface,
                     modifier = Modifier.size(VayouTheme.iconSize.md),
                 )
             }
@@ -691,7 +700,6 @@ private fun SecondaryActions(
             Icon(
                 imageVector = VayouIcons.MusicPlaylist,
                 contentDescription = stringResource(R.string.queue),
-                tint = VayouTheme.colors.onSurface,
                 modifier = Modifier.size(VayouTheme.iconSize.md),
             )
         }
@@ -699,16 +707,23 @@ private fun SecondaryActions(
 }
 
 @Composable
-private fun ControlButton(onClick: () -> Unit, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    Box(
-        modifier = modifier
-            .size(PlayerButtonSize.Secondary)
-            .clip(CircleShape)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        content()
-    }
+private fun ControlButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    content: @Composable () -> Unit,
+) {
+    // The design system's own, rather than the box this used to be: that box had no way to be off,
+    // and one of these needs it. Being off is the same thing everywhere in the app -- the glyph at
+    // the muted alpha, the press refused, no ripple -- and there is no reason for this screen to
+    // have a second version of it.
+    VayouIconButton(
+        onClick = onClick,
+        modifier = modifier.size(PlayerButtonSize.Secondary),
+        enabled = enabled,
+        contentColor = VayouTheme.colors.onSurface,
+        content = content,
+    )
 }
 
 /**
