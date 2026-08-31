@@ -2,7 +2,7 @@
 Vayou Player
 
 == BREVE DESCRICAO (max 80) ==
-Player de vídeo e música grátis. Sem anúncios, sem conta, sem rastreamento.
+Player de vídeo e música. Sem anúncios, sem conta, sem rastreamento.
 
 == DESCRICAO COMPLETA (max 4000) ==
 O Vayou reproduz o que já é seu. Aponte-o para os vídeos e as músicas deste aparelho, para uma pasta compartilhada do seu computador ou para uma lista de canais que você forneça, e ele toca — sem pedir cadastro nenhum.

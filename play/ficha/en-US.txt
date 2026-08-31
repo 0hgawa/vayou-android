@@ -2,7 +2,7 @@
 Vayou Player
 
 == BREVE DESCRICAO (max 80) ==
-Free video and music player for your files. No ads, no account, no tracking.
+Video and music player for your own files. No ads, no account, no tracking.
 
 == DESCRICAO COMPLETA (max 4000) ==
 Vayou plays what is already yours. Point it at the videos and music on this phone, at a folder shared from your computer, or at a channel list you supply, and it plays them — without asking you to sign up for anything.

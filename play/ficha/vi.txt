@@ -2,7 +2,7 @@
 Vayou Player
 
 == BREVE DESCRICAO (max 80) ==
-Trình phát video và nhạc miễn phí. Không quảng cáo, không tài khoản.
+Trình phát video và nhạc. Không quảng cáo, không tài khoản, không theo dõi.
 
 == DESCRICAO COMPLETA (max 4000) ==
 Vayou phát những gì vốn đã là của bạn. Hãy hướng nó tới video và nhạc trong điện thoại này, tới một thư mục chia sẻ từ máy tính của bạn, hoặc tới một danh sách kênh do bạn cung cấp — và nó phát, mà không đòi bạn đăng ký bất cứ thứ gì.

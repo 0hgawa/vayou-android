@@ -2,7 +2,7 @@
 Vayou Player
 
 == BREVE DESCRICAO (max 80) ==
-Lecteur vidéo et musique gratuit. Sans pub, sans compte, sans suivi.
+Lecteur vidéo et musique. Sans publicité, sans compte, sans suivi.
 
 == DESCRICAO COMPLETA (max 4000) ==
 Vayou lit ce qui vous appartient déjà. Pointez-le vers les vidéos et la musique de ce téléphone, vers un dossier partagé depuis votre ordinateur ou vers une liste de chaînes que vous fournissez, et il les lit — sans vous demander de vous inscrire à quoi que ce soit.

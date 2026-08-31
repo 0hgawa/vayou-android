@@ -2,7 +2,7 @@
 Vayou Player
 
 == BREVE DESCRICAO (max 80) ==
-Ücretsiz video ve müzik oynatıcı. Reklamsız, hesapsız, takipsiz.
+Video ve müzik oynatıcı. Reklamsız, hesapsız, takipsiz.
 
 == DESCRICAO COMPLETA (max 4000) ==
 Vayou zaten sizin olanı oynatır. Onu bu telefondaki videolara ve müziğe, bilgisayarınızdan paylaşılan bir klasöre ya da kendi getirdiğiniz bir kanal listesine yöneltin; oynatır — hiçbir yere kaydolmanızı istemeden.

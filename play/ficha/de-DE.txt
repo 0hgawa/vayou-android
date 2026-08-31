@@ -2,7 +2,7 @@
 Vayou Player
 
 == BREVE DESCRICAO (max 80) ==
-Kostenloser Video- und Musikplayer. Keine Werbung, kein Konto, kein Tracking.
+Video- und Musikplayer. Keine Werbung, kein Konto, kein Tracking.
 
 == DESCRICAO COMPLETA (max 4000) ==
 Vayou spielt, was Ihnen schon gehört. Richten Sie ihn auf die Videos und die Musik auf diesem Telefon, auf einen vom Rechner freigegebenen Ordner oder auf eine Senderliste, die Sie selbst mitbringen — und er spielt sie ab, ohne dass Sie sich irgendwo anmelden müssen.

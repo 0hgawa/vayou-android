@@ -2,7 +2,7 @@
 Vayou Player
 
 == BREVE DESCRICAO (max 80) ==
-Pemutar video dan musik gratis. Tanpa iklan, tanpa akun, tanpa pelacakan.
+Pemutar video dan musik. Tanpa iklan, tanpa akun, tanpa pelacakan.
 
 == DESCRICAO COMPLETA (max 4000) ==
 Vayou memutar apa yang memang sudah milik Anda. Arahkan ke video dan musik di ponsel ini, ke folder yang dibagikan dari komputer Anda, atau ke daftar saluran yang Anda bawa sendiri — dan ia memutarnya, tanpa meminta Anda mendaftar apa pun.

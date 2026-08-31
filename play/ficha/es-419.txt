@@ -2,7 +2,7 @@
 Vayou Player
 
 == BREVE DESCRICAO (max 80) ==
-Reproductor de video y música gratis. Sin anuncios, sin cuenta, sin rastreo.
+Reproductor de video y música. Sin anuncios, sin cuenta, sin rastreo.
 
 == DESCRICAO COMPLETA (max 4000) ==
 Vayou reproduce lo que ya es tuyo. Apúntalo a los videos y la música de este teléfono, a una carpeta compartida desde tu computadora o a una lista de canales que tú entregues, y los reproduce, sin pedirte registro alguno.
