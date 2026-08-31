@@ -10,7 +10,7 @@ Two media players from one codebase: a **phone and tablet** app, and an **Androi
 ![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Android%20TV-lightgrey)
 
 <p align="center">
-  <img src="screenshots/mobile/12-player.png" width="880" alt="Vayou playing a film on a phone held sideways">
+  <img src="screenshots/mobile/12-player.png" width="940" alt="Vayou playing a film on a phone held sideways">
 </p>
 
 ---
@@ -105,29 +105,29 @@ They are separate listings on the store and separate installs — a phone is not
 
 <table>
 <tr>
-<td align="center"><img src="screenshots/mobile/02-videos.png" width="230"><br><sub><b>Library</b><br>Length, size, and what you played last</sub></td>
-<td align="center"><img src="screenshots/mobile/03-videos-grid.png" width="230"><br><sub><b>Grid</b><br>The same shelf, by thumbnail</sub></td>
-<td align="center"><img src="screenshots/mobile/05-now-playing.png" width="230"><br><sub><b>Music</b><br>The cover tints the screen it sits on</sub></td>
+<td align="center"><img src="screenshots/mobile/02-videos.png" width="300"><br><sub><b>Library</b><br>Length, size, and what you played last</sub></td>
+<td align="center"><img src="screenshots/mobile/03-videos-grid.png" width="300"><br><sub><b>Grid</b><br>The same shelf, by thumbnail</sub></td>
+<td align="center"><img src="screenshots/mobile/05-now-playing.png" width="300"><br><sub><b>Music</b><br>The cover tints the screen it sits on</sub></td>
 </tr>
 <tr>
-<td align="center"><img src="screenshots/mobile/04-songs.png" width="230"><br><sub><b>Songs</b><br>A music library of its own</sub></td>
-<td align="center"><img src="screenshots/mobile/06-queue.png" width="230"><br><sub><b>Queue</b><br>Reorder by holding a row</sub></td>
-<td align="center"><img src="screenshots/mobile/09-appearance.png" width="230"><br><sub><b>Appearance</b><br>Four themes, and the mini player under them</sub></td>
+<td align="center"><img src="screenshots/mobile/04-songs.png" width="300"><br><sub><b>Songs</b><br>A music library of its own</sub></td>
+<td align="center"><img src="screenshots/mobile/06-queue.png" width="300"><br><sub><b>Queue</b><br>Reorder by holding a row</sub></td>
+<td align="center"><img src="screenshots/mobile/09-appearance.png" width="300"><br><sub><b>Appearance</b><br>Four themes, and the mini player under them</sub></td>
 </tr>
 <tr>
-<td align="center"><img src="screenshots/mobile/10-network.png" width="230"><br><sub><b>Network</b><br>Shares and channel lists</sub></td>
-<td align="center"><img src="screenshots/mobile/08-settings.png" width="230"><br><sub><b>Settings</b><br>Nine sections, each explained in a sentence</sub></td>
-<td align="center"><img src="screenshots/mobile/14-library-dark.png" width="230"><br><sub><b>Dark</b><br>Follow the system, light, dark, or black</sub></td>
+<td align="center"><img src="screenshots/mobile/10-network.png" width="300"><br><sub><b>Network</b><br>Shares and channel lists</sub></td>
+<td align="center"><img src="screenshots/mobile/08-settings.png" width="300"><br><sub><b>Settings</b><br>Nine sections, each explained in a sentence</sub></td>
+<td align="center"><img src="screenshots/mobile/14-library-dark.png" width="300"><br><sub><b>Dark</b><br>Follow the system, light, dark, or black</sub></td>
 </tr>
 </table>
 
 <p align="center">
-  <img src="screenshots/mobile/11-library-landscape.png" width="760"><br>
+  <img src="screenshots/mobile/11-library-landscape.png" width="940"><br>
   <sub><b>Turned on its side</b> — the navigation moves to a rail, and the library keeps the height a bottom bar would have taken</sub>
 </p>
 
 <p align="center">
-  <img src="screenshots/mobile/13-side-sheet-queue.png" width="760"><br>
+  <img src="screenshots/mobile/13-side-sheet-queue.png" width="940"><br>
   <sub><b>Side sheet</b> — in a wide window the panel comes in from the edge instead of up from the bottom, and the film stays watchable behind it</sub>
 </p>
 
@@ -135,12 +135,12 @@ They are separate listings on the store and separate installs — a phone is not
 
 <table>
 <tr>
-<td align="center"><img src="screenshots/tablet10/03-videos-grid.png" width="400"><br><sub><b>Library</b><br>Seven across, given the width</sub></td>
-<td align="center"><img src="screenshots/tablet10/06-player.png" width="400"><br><sub><b>Player</b><br>Edge to edge</sub></td>
+<td align="center"><img src="screenshots/tablet10/03-videos-grid.png" width="460"><br><sub><b>Library</b><br>Seven across, given the width</sub></td>
+<td align="center"><img src="screenshots/tablet10/06-player.png" width="460"><br><sub><b>Player</b><br>Edge to edge</sub></td>
 </tr>
 <tr>
-<td align="center"><img src="screenshots/tablet10/05-now-playing.png" width="400"><br><sub><b>Music</b><br>The sleeve beside the controls, not above them</sub></td>
-<td align="center"><img src="screenshots/tablet10/07-side-sheet.png" width="400"><br><sub><b>Queue</b><br>The same panel from the edge</sub></td>
+<td align="center"><img src="screenshots/tablet10/05-now-playing.png" width="460"><br><sub><b>Music</b><br>The sleeve beside the controls, not above them</sub></td>
+<td align="center"><img src="screenshots/tablet10/07-side-sheet.png" width="460"><br><sub><b>Queue</b><br>The same panel from the edge</sub></td>
 </tr>
 </table>
 
@@ -148,16 +148,16 @@ They are separate listings on the store and separate installs — a phone is not
 
 <table>
 <tr>
-<td align="center"><img src="screenshots/tv/01-home.png" width="400"><br><sub><b>Home</b><br>The videos, the shares and the channel lists, a row each</sub></td>
-<td align="center"><img src="screenshots/tv/04-all-videos.png" width="400"><br><sub><b>Videos</b><br>A grid a remote can cross in a few presses</sub></td>
+<td align="center"><img src="screenshots/tv/01-home.png" width="460"><br><sub><b>Home</b><br>The videos, the shares and the channel lists, a row each</sub></td>
+<td align="center"><img src="screenshots/tv/04-all-videos.png" width="460"><br><sub><b>Videos</b><br>A grid a remote can cross in a few presses</sub></td>
 </tr>
 <tr>
-<td align="center"><img src="screenshots/tv/03-player.png" width="400"><br><sub><b>Player</b><br>Built for a remote, not a thumb</sub></td>
-<td align="center"><img src="screenshots/tv/05-settings.png" width="400"><br><sub><b>Settings</b><br>Two columns, so the remote never leaves the left one</sub></td>
+<td align="center"><img src="screenshots/tv/03-player.png" width="460"><br><sub><b>Player</b><br>Built for a remote, not a thumb</sub></td>
+<td align="center"><img src="screenshots/tv/05-settings.png" width="460"><br><sub><b>Settings</b><br>Two columns, so the remote never leaves the left one</sub></td>
 </tr>
 <tr>
-<td align="center"><img src="screenshots/tv/06-music.png" width="400"><br><sub><b>Music</b><br>Covers at three metres</sub></td>
-<td align="center"><img src="screenshots/tv/07-now-playing.png" width="400"><br><sub><b>Now playing</b><br>The sleeve, and the keys that matter</sub></td>
+<td align="center"><img src="screenshots/tv/06-music.png" width="460"><br><sub><b>Music</b><br>Covers at three metres</sub></td>
+<td align="center"><img src="screenshots/tv/07-now-playing.png" width="460"><br><sub><b>Now playing</b><br>The sleeve, and the keys that matter</sub></td>
 </tr>
 </table>
 

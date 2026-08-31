@@ -1,9 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vayou — Privacy Policy / Política de Privacidade</title>
+<meta name="robots" content="index, follow">
+<title>Vayou &mdash; Privacy Policy</title>
+<meta name="description" content="Vayou collects no personal data, stores none and transmits none. Available in eleven languages.">
 <style>
   :root {
     --bg: #ffffff;
@@ -11,6 +13,7 @@
     --muted: #5f5f5f;
     --rule: #e2e2e2;
     --accent: #b47300;
+    --chip: #f2f2f2;
     --code-bg: #f4f4f4;
   }
   @media (prefers-color-scheme: dark) {
@@ -20,6 +23,7 @@
       --muted: #a6a6a6;
       --rule: #2c2c2c;
       --accent: #e0a536;
+      --chip: #1e1e1e;
       --code-bg: #1e1e1e;
     }
   }
@@ -35,19 +39,24 @@
   h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 .35rem; }
   h2 {
     font-size: 1.2rem;
-    margin: 2.5rem 0 .75rem;
+    margin: 2.5rem 0 .35rem;
     padding-top: 1.25rem;
     border-top: 1px solid var(--rule);
   }
   h3 { font-size: 1rem; margin: 1.5rem 0 .4rem; }
-  p, li { color: var(--fg); }
   ul { padding-left: 1.25rem; }
+  [dir="rtl"] ul { padding-left: 0; padding-right: 1.25rem; }
   li { margin: .4rem 0; }
-  .updated { color: var(--muted); font-size: .9rem; margin: 0 0 2rem; }
+  .updated { color: var(--muted); font-size: .9rem; margin: 0 0 .25rem; }
   .lead {
     border-left: 3px solid var(--accent);
     padding: .1rem 0 .1rem 1rem;
     margin: 1.5rem 0;
+  }
+  [dir="rtl"] .lead {
+    border-left: 0;
+    border-right: 3px solid var(--accent);
+    padding: .1rem 1rem .1rem 0;
   }
   code {
     background: var(--code-bg);
@@ -55,9 +64,39 @@
     border-radius: 3px;
     font-size: .9em;
     word-break: break-all;
+    direction: ltr;
+    unicode-bidi: embed;
   }
   a { color: var(--accent); }
-  .langs { margin: 0 0 2.5rem; font-size: .95rem; }
+  /* A escolha de idioma. Botoes e nao um <select>: onze itens cabem numa tira, e uma tira mostra
+     de uma vez que a pagina existe em onze linguas -- que e a pergunta que o leitor tem. */
+  .langs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .langs a {
+    display: block;
+    padding: .3rem .7rem;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    background: var(--chip);
+    color: var(--fg);
+    text-decoration: none;
+    font-size: .9rem;
+  }
+  .langs a[aria-current="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+  /* Sem JavaScript todas as secoes ficam visiveis, uma sob a outra, e a tira acima vira um indice.
+     Com ele, so a escolhida -- por isso quem esconde e a classe posta pelo proprio script. */
+  .js section[data-lang] { display: none; }
+  .js section[data-lang].shown { display: block; }
   footer {
     margin-top: 4rem;
     padding-top: 1.25rem;
@@ -71,172 +110,576 @@
 <main>
 
   <h1>Vayou</h1>
-  <p class="updated">Privacy Policy · Política de Privacidade — 27 August 2026</p>
-  <p class="langs"><a href="#en">English</a> · <a href="#pt">Português</a></p>
-
-  <h2 id="en">Privacy Policy</h2>
-
-  <p class="lead">
-    Vayou collects no personal data, stores none and transmits none. There is no analytics, no
-    tracking, no advertising, no account and no sign-up. The app works entirely offline, apart from
-    the four cases described below — each of which you start yourself.
-  </p>
-
-  <h3>What stays on your device</h3>
-  <p>Written only to the device's own storage, and never sent anywhere:</p>
-  <ul>
-    <li>Your media library — titles, folders, durations and artwork — read from Android's catalogue;</li>
-    <li>Your settings, playlists, favourites and where you left off in each item;</li>
-    <li>The credentials for any network server you add.</li>
-  </ul>
-  <p>Uninstalling the app removes all of it. There is no copy on a server, because there is no server.</p>
-
-  <h3>When the app reaches the internet</h3>
-  <ul>
-    <li>
-      <strong>Live channels.</strong> Downloads public channel lists from
-      <code>iptv-org.github.io</code> and <code>raw.githubusercontent.com</code>. Nothing about you
-      is sent; it is a public file being read.
-    </li>
-    <li>
-      <strong>Subtitle search.</strong> Sends OpenSubtitles
-      (<code>rest.opensubtitles.org</code>) the search term — usually the file name or the title you
-      typed — and the language you chose.
-    </li>
-    <li>
-      <strong>Subtitle translation.</strong> Sends the subtitle text to Google's translation service
-      (<code>translate.google.com</code>) to get the translation back.
-    </li>
-    <li>
-      <strong>Media on your own network.</strong> Connects to the server you added, using the
-      credentials you supplied. That traffic stays on your network and never passes through us.
-    </li>
-  </ul>
-  <p>
-    Subtitle search and translation are the two that hand anything to a third party, and those
-    parties have policies of their own:
-    <a href="https://www.opensubtitles.org/en/privacypolicy">OpenSubtitles</a> and
-    <a href="https://policies.google.com/privacy">Google</a>. Use none of those features and nothing
-    leaves the device.
-  </p>
-
-  <h3>Why each permission is asked for</h3>
-  <ul>
-    <li><strong>Audio, video and storage</strong> — to read the files you are going to play;</li>
-    <li><strong>Internet and network state</strong> — for the four cases above;</li>
-    <li><strong>Wi-Fi state</strong> — to find media servers on your own network;</li>
-    <li><strong>Foreground service</strong> — so music keeps playing with the screen off;</li>
-    <li><strong>Wake lock</strong> — so the screen does not sleep during a video;</li>
-    <li>
-      <strong>Biometrics</strong> — to unlock the private folder. Android performs the check; the
-      app receives a yes or a no, and no biometric data.
-    </li>
+  <p class="updated">Privacy Policy &middot; Last updated 31 August 2026</p>
+  <ul class="langs">
+    <li><a href="#en" data-lang="en" lang="en" hreflang="en">English</a></li>
+    <li><a href="#pt-BR" data-lang="pt-BR" lang="pt-BR" hreflang="pt-BR">Português</a></li>
+    <li><a href="#es" data-lang="es" lang="es" hreflang="es">Español</a></li>
+    <li><a href="#fr" data-lang="fr" lang="fr" hreflang="fr">Français</a></li>
+    <li><a href="#de" data-lang="de" lang="de" hreflang="de">Deutsch</a></li>
+    <li><a href="#ru" data-lang="ru" lang="ru" hreflang="ru">Русский</a></li>
+    <li><a href="#ar" data-lang="ar" lang="ar" hreflang="ar">العربية</a></li>
+    <li><a href="#hi" data-lang="hi" lang="hi" hreflang="hi">हिन्दी</a></li>
+    <li><a href="#tr" data-lang="tr" lang="tr" hreflang="tr">Türkçe</a></li>
+    <li><a href="#vi" data-lang="vi" lang="vi" hreflang="vi">Tiếng Việt</a></li>
+    <li><a href="#id" data-lang="id" lang="id" hreflang="id">Bahasa Indonesia</a></li>
   </ul>
 
-  <h3>Children</h3>
-  <p>
-    Vayou is not directed at children under 13. As it collects no data from anyone, it collects none
-    from children.
-  </p>
+  <section data-lang="en" lang="en" dir="ltr">
+    <h2>Privacy Policy</h2>
+    <p class="updated">English &middot; 31 August 2026</p>
 
-  <h3>Changes</h3>
-  <p>
-    If this policy changes, the date at the top of this page changes with it, and the previous
-    wording stays in the repository's public history.
-  </p>
+<p class="lead">Vayou collects no personal data, stores none and transmits none. There is no analytics, no tracking, no advertising, no account and no sign-up. The app works entirely offline, apart from the four cases described below &mdash; each of which you start yourself.</p>
 
-  <h3>Contact</h3>
-  <p>
-    Questions, corrections or requests:
-    <a href="https://github.com/0hgawa/vayou-android/issues">github.com/0hgawa/vayou-android/issues</a>.
-  </p>
+<h3>What stays on your device</h3>
+<p>Written only to the device's own storage, and never sent anywhere:</p>
+<ul>
+<li>Your media library &mdash; titles, folders, durations and artwork &mdash; read from Android's catalogue;</li>
+<li>Your settings, playlists, favourites and where you left off in each item;</li>
+<li>The credentials for any network server you add.</li>
+</ul>
+<p>Uninstalling the app removes all of it. There is no copy on a server, because there is no server.</p>
 
-  <h2 id="pt" lang="pt-BR">Política de Privacidade</h2>
+<h3>When the app reaches the internet</h3>
+<p>In four situations, and none of them happens on its own:</p>
+<ul>
+<li><strong>Live channels.</strong> Downloads public channel lists from <code>iptv-org.github.io</code> and <code>raw.githubusercontent.com</code>. Nothing about you is sent; it is a public file being read.</li>
+<li><strong>Subtitle search.</strong> Sends OpenSubtitles (<code>rest.opensubtitles.org</code>) the search term &mdash; usually the file name or the title you typed &mdash; and the language you chose.</li>
+<li><strong>Subtitle translation.</strong> Sends the subtitle text to Google's translation service (<code>translate.google.com</code>, <code>clients5.google.com</code>) to get the translation back.</li>
+<li><strong>Media on your own network.</strong> Connects to the server you added, using the credentials you supplied. That traffic stays on your network and never passes through us.</li>
+</ul>
+<p>Subtitle search and translation are the two that hand anything to a third party, and those parties have policies of their own: <a href="https://www.opensubtitles.org/en/privacypolicy">OpenSubtitles</a> and <a href="https://policies.google.com/privacy">Google</a>. Use none of those features and nothing leaves the device.</p>
 
-  <p class="lead">
-    O Vayou não coleta, não armazena e não transmite dados pessoais. Não há análise de uso,
-    rastreamento, publicidade, contas nem cadastro. O aplicativo funciona inteiramente sem internet,
-    exceto nos quatro casos descritos abaixo — todos iniciados por você.
-  </p>
+<h3>Why each permission is asked for</h3>
+<ul>
+<li><strong>Audio, video and storage</strong> &mdash; to read the files you are going to play;</li>
+<li><strong>Internet and network state</strong> &mdash; for the four cases above;</li>
+<li><strong>Wi-Fi state</strong> &mdash; to find media servers on your own network;</li>
+<li><strong>Foreground service</strong> &mdash; so music keeps playing with the screen off;</li>
+<li><strong>Wake lock</strong> &mdash; so the screen does not sleep during a video;</li>
+<li><strong>Biometrics and device credential</strong> &mdash; to unlock the private shelf. Android performs the check; the app receives a yes or a no, and no biometric data.</li>
+</ul>
 
-  <h3>O que fica no seu aparelho</h3>
-  <p>Estas informações são gravadas apenas no armazenamento do próprio aparelho e nunca saem dele:</p>
-  <ul>
-    <li>A sua biblioteca de mídia — títulos, pastas, durações e capas — lida do catálogo do Android;</li>
-    <li>Suas preferências, listas de reprodução, favoritos e a posição em que cada mídia parou;</li>
-    <li>As credenciais dos servidores de rede que você cadastrar.</li>
-  </ul>
-  <p>
-    Desinstalar o aplicativo apaga tudo isso. Não existe cópia em nenhum servidor, porque não existe
-    servidor.
-  </p>
+<h3>Children</h3>
+<p>Vayou is not directed at children under 13. As it collects no data from anyone, it collects none from children.</p>
 
-  <h3>Quando o aplicativo acessa a internet</h3>
-  <p>Em quatro situações, e nenhuma acontece sozinha:</p>
-  <ul>
-    <li>
-      <strong>Canais ao vivo.</strong> Baixa listas públicas de canais de
-      <code>iptv-org.github.io</code> e <code>raw.githubusercontent.com</code>. Nenhuma informação
-      sua é enviada — é apenas a leitura de um arquivo público.
-    </li>
-    <li>
-      <strong>Busca de legendas.</strong> Envia ao OpenSubtitles
-      (<code>rest.opensubtitles.org</code>) o termo procurado, que costuma ser o nome do arquivo ou
-      o título que você digitou, e o idioma escolhido.
-    </li>
-    <li>
-      <strong>Tradução de legendas.</strong> Envia o texto das legendas ao serviço de tradução do
-      Google (<code>translate.google.com</code>) para receber a tradução de volta.
-    </li>
-    <li>
-      <strong>Mídia na sua rede local.</strong> Conecta ao servidor que você cadastrou, com as
-      credenciais que você forneceu. Esse tráfego não sai da sua rede e não passa por nós.
-    </li>
-  </ul>
-  <p>
-    A busca de legendas e a tradução são as duas que entregam algo a terceiros, e esses terceiros
-    têm políticas próprias:
-    <a href="https://www.opensubtitles.org/en/privacypolicy">OpenSubtitles</a> e
-    <a href="https://policies.google.com/privacy">Google</a>. Se você não usar esses recursos, nada
-    é enviado a lugar nenhum.
-  </p>
+<h3>Changes</h3>
+<p>If this policy changes, the date at the top of this page changes with it, and the previous wording stays in the repository's public history.</p>
 
-  <h3>Por que cada permissão é pedida</h3>
-  <ul>
-    <li><strong>Áudio, vídeo e armazenamento</strong> — para ler os arquivos que você vai reproduzir;</li>
-    <li><strong>Internet e estado da rede</strong> — para os quatro casos acima;</li>
-    <li><strong>Estado do Wi-Fi</strong> — para encontrar servidores de mídia na sua própria rede;</li>
-    <li><strong>Serviço em primeiro plano</strong> — para a música continuar com a tela apagada;</li>
-    <li><strong>Manter ativo</strong> — para a tela não apagar durante um vídeo;</li>
-    <li>
-      <strong>Biometria</strong> — para destravar a pasta privada. A conferência é feita pelo
-      Android; o aplicativo recebe apenas um sim ou um não, e nenhum dado biométrico.
-    </li>
-  </ul>
+<h3>Contact</h3>
+<p>Questions, corrections or requests: <a href="https://github.com/0hgawa/vayou-android/issues">github.com/0hgawa/vayou-android/issues</a>.</p>
+  </section>
 
-  <h3>Crianças</h3>
-  <p>
-    O Vayou não é dirigido a menores de 13 anos. Como não coleta dados de ninguém, também não
-    coleta dados de crianças.
-  </p>
+  <section data-lang="pt-BR" lang="pt-BR" dir="ltr">
+    <h2>Política de Privacidade</h2>
+    <p class="updated">Português &middot; 31 de agosto de 2026</p>
 
-  <h3>Alterações</h3>
-  <p>
-    Se esta política mudar, a data no topo desta página muda com ela, e a versão anterior continua
-    disponível no histórico público do repositório.
-  </p>
+<p class="lead">O Vayou n&atilde;o coleta, n&atilde;o armazena e n&atilde;o transmite dados pessoais. N&atilde;o h&aacute; an&aacute;lise de uso, rastreamento, publicidade, contas nem cadastro. O aplicativo funciona inteiramente sem internet, exceto nos quatro casos descritos abaixo &mdash; todos iniciados por voc&ecirc;.</p>
 
-  <h3>Contato</h3>
-  <p>
-    Dúvidas, correções ou pedidos:
-    <a href="https://github.com/0hgawa/vayou-android/issues">github.com/0hgawa/vayou-android/issues</a>.
-  </p>
+<h3>O que fica no seu aparelho</h3>
+<p>Estas informa&ccedil;&otilde;es s&atilde;o gravadas apenas no armazenamento do pr&oacute;prio aparelho e nunca saem dele:</p>
+<ul>
+<li>A sua biblioteca de m&iacute;dia &mdash; t&iacute;tulos, pastas, dura&ccedil;&otilde;es e capas &mdash; lida do cat&aacute;logo do Android;</li>
+<li>Suas prefer&ecirc;ncias, listas de reprodu&ccedil;&atilde;o, favoritos e a posi&ccedil;&atilde;o em que cada m&iacute;dia parou;</li>
+<li>As credenciais dos servidores de rede que voc&ecirc; cadastrar.</li>
+</ul>
+<p>Desinstalar o aplicativo apaga tudo isso. N&atilde;o existe c&oacute;pia em nenhum servidor, porque n&atilde;o existe servidor.</p>
+
+<h3>Quando o aplicativo acessa a internet</h3>
+<p>Em quatro situa&ccedil;&otilde;es, e nenhuma acontece sozinha:</p>
+<ul>
+<li><strong>Canais ao vivo.</strong> Baixa listas p&uacute;blicas de canais de <code>iptv-org.github.io</code> e <code>raw.githubusercontent.com</code>. Nenhuma informa&ccedil;&atilde;o sua &eacute; enviada &mdash; &eacute; apenas a leitura de um arquivo p&uacute;blico.</li>
+<li><strong>Busca de legendas.</strong> Envia ao OpenSubtitles (<code>rest.opensubtitles.org</code>) o termo procurado, que costuma ser o nome do arquivo ou o t&iacute;tulo que voc&ecirc; digitou, e o idioma escolhido.</li>
+<li><strong>Tradu&ccedil;&atilde;o de legendas.</strong> Envia o texto das legendas ao servi&ccedil;o de tradu&ccedil;&atilde;o do Google (<code>translate.google.com</code>, <code>clients5.google.com</code>) para receber a tradu&ccedil;&atilde;o de volta.</li>
+<li><strong>M&iacute;dia na sua rede local.</strong> Conecta ao servidor que voc&ecirc; cadastrou, com as credenciais que voc&ecirc; forneceu. Esse tr&aacute;fego n&atilde;o sai da sua rede e n&atilde;o passa por n&oacute;s.</li>
+</ul>
+<p>A busca de legendas e a tradu&ccedil;&atilde;o s&atilde;o as duas que entregam algo a terceiros, e esses terceiros t&ecirc;m pol&iacute;ticas pr&oacute;prias: <a href="https://www.opensubtitles.org/en/privacypolicy">OpenSubtitles</a> e <a href="https://policies.google.com/privacy">Google</a>. Se voc&ecirc; n&atilde;o usar esses recursos, nada &eacute; enviado a lugar nenhum.</p>
+
+<h3>Por que cada permiss&atilde;o &eacute; pedida</h3>
+<ul>
+<li><strong>&Aacute;udio, v&iacute;deo e armazenamento</strong> &mdash; para ler os arquivos que voc&ecirc; vai reproduzir;</li>
+<li><strong>Internet e estado da rede</strong> &mdash; para os quatro casos acima;</li>
+<li><strong>Estado do Wi-Fi</strong> &mdash; para encontrar servidores de m&iacute;dia na sua pr&oacute;pria rede;</li>
+<li><strong>Servi&ccedil;o em primeiro plano</strong> &mdash; para a m&uacute;sica continuar com a tela apagada;</li>
+<li><strong>Manter ativo</strong> &mdash; para a tela n&atilde;o apagar durante um v&iacute;deo;</li>
+<li><strong>Biometria e credencial do aparelho</strong> &mdash; para destravar a pasta privada. A confer&ecirc;ncia &eacute; feita pelo Android; o aplicativo recebe apenas um sim ou um n&atilde;o, e nenhum dado biom&eacute;trico.</li>
+</ul>
+
+<h3>Crian&ccedil;as</h3>
+<p>O Vayou n&atilde;o &eacute; dirigido a menores de 13 anos. Como n&atilde;o coleta dados de ningu&eacute;m, tamb&eacute;m n&atilde;o coleta dados de crian&ccedil;as.</p>
+
+<h3>Altera&ccedil;&otilde;es</h3>
+<p>Se esta pol&iacute;tica mudar, a data no topo desta p&aacute;gina muda com ela, e a vers&atilde;o anterior continua dispon&iacute;vel no hist&oacute;rico p&uacute;blico do reposit&oacute;rio.</p>
+
+<h3>Contato</h3>
+<p>D&uacute;vidas, corre&ccedil;&otilde;es ou pedidos: <a href="https://github.com/0hgawa/vayou-android/issues">github.com/0hgawa/vayou-android/issues</a>.</p>
+  </section>
+
+  <section data-lang="es" lang="es" dir="ltr">
+    <h2>Política de Privacidad</h2>
+    <p class="updated">Español &middot; 31 de agosto de 2026</p>
+
+<p class="lead">Vayou no recopila, no almacena ni transmite datos personales. No hay anal&iacute;ticas, ni rastreo, ni publicidad, ni cuentas, ni registro. La aplicaci&oacute;n funciona por completo sin conexi&oacute;n, salvo en los cuatro casos descritos m&aacute;s abajo, y todos los inicia usted.</p>
+
+<h3>Lo que se queda en su dispositivo</h3>
+<p>Se guarda &uacute;nicamente en el almacenamiento del propio dispositivo y nunca sale de &eacute;l:</p>
+<ul>
+<li>Su biblioteca multimedia &mdash; t&iacute;tulos, carpetas, duraciones y car&aacute;tulas &mdash; le&iacute;da del cat&aacute;logo de Android;</li>
+<li>Sus ajustes, listas de reproducci&oacute;n, favoritos y el punto en el que dej&oacute; cada elemento;</li>
+<li>Las credenciales de los servidores de red que a&ntilde;ada.</li>
+</ul>
+<p>Desinstalar la aplicaci&oacute;n borra todo eso. No hay copia en ning&uacute;n servidor, porque no hay servidor.</p>
+
+<h3>Cu&aacute;ndo la aplicaci&oacute;n accede a internet</h3>
+<p>En cuatro situaciones, y ninguna ocurre por s&iacute; sola:</p>
+<ul>
+<li><strong>Canales en directo.</strong> Descarga listas p&uacute;blicas de canales de <code>iptv-org.github.io</code> y <code>raw.githubusercontent.com</code>. No se env&iacute;a nada suyo: es la lectura de un archivo p&uacute;blico.</li>
+<li><strong>B&uacute;squeda de subt&iacute;tulos.</strong> Env&iacute;a a OpenSubtitles (<code>rest.opensubtitles.org</code>) el t&eacute;rmino buscado &mdash; normalmente el nombre del archivo o el t&iacute;tulo que escribi&oacute; &mdash; y el idioma elegido.</li>
+<li><strong>Traducci&oacute;n de subt&iacute;tulos.</strong> Env&iacute;a el texto de los subt&iacute;tulos al servicio de traducci&oacute;n de Google (<code>translate.google.com</code>, <code>clients5.google.com</code>) para recibir la traducci&oacute;n.</li>
+<li><strong>Medios en su propia red.</strong> Se conecta al servidor que usted a&ntilde;adi&oacute;, con las credenciales que usted facilit&oacute;. Ese tr&aacute;fico no sale de su red y nunca pasa por nosotros.</li>
+</ul>
+<p>La b&uacute;squeda y la traducci&oacute;n de subt&iacute;tulos son las dos que entregan algo a un tercero, y esos terceros tienen sus propias pol&iacute;ticas: <a href="https://www.opensubtitles.org/en/privacypolicy">OpenSubtitles</a> y <a href="https://policies.google.com/privacy">Google</a>. Si no usa esas funciones, nada sale del dispositivo.</p>
+
+<h3>Por qu&eacute; se pide cada permiso</h3>
+<ul>
+<li><strong>Audio, v&iacute;deo y almacenamiento</strong> &mdash; para leer los archivos que va a reproducir;</li>
+<li><strong>Internet y estado de la red</strong> &mdash; para los cuatro casos anteriores;</li>
+<li><strong>Estado del Wi-Fi</strong> &mdash; para encontrar servidores multimedia en su propia red;</li>
+<li><strong>Servicio en primer plano</strong> &mdash; para que la m&uacute;sica siga sonando con la pantalla apagada;</li>
+<li><strong>Mantener activo</strong> &mdash; para que la pantalla no se apague durante un v&iacute;deo;</li>
+<li><strong>Biometr&iacute;a y credencial del dispositivo</strong> &mdash; para desbloquear la carpeta privada. La comprobaci&oacute;n la hace Android; la aplicaci&oacute;n recibe solo un s&iacute; o un no, y ning&uacute;n dato biom&eacute;trico.</li>
+</ul>
+
+<h3>Menores</h3>
+<p>Vayou no est&aacute; dirigida a menores de 13 a&ntilde;os. Como no recopila datos de nadie, tampoco recopila datos de menores.</p>
+
+<h3>Cambios</h3>
+<p>Si esta pol&iacute;tica cambia, la fecha de la parte superior de esta p&aacute;gina cambia con ella, y la redacci&oacute;n anterior permanece en el historial p&uacute;blico del repositorio.</p>
+
+<h3>Contacto</h3>
+<p>Dudas, correcciones o solicitudes: <a href="https://github.com/0hgawa/vayou-android/issues">github.com/0hgawa/vayou-android/issues</a>.</p>
+  </section>
+
+  <section data-lang="fr" lang="fr" dir="ltr">
+    <h2>Politique de confidentialité</h2>
+    <p class="updated">Français &middot; 31 août 2026</p>
+
+<p class="lead">Vayou ne collecte, ne conserve et ne transmet aucune donn&eacute;e personnelle. Pas d&rsquo;analyse d&rsquo;usage, pas de pistage, pas de publicit&eacute;, pas de compte, pas d&rsquo;inscription. L&rsquo;application fonctionne enti&egrave;rement hors ligne, sauf dans les quatre cas d&eacute;crits ci-dessous, que vous d&eacute;clenchez vous-m&ecirc;me.</p>
+
+<h3>Ce qui reste sur votre appareil</h3>
+<p>&Eacute;crit uniquement dans le stockage de l&rsquo;appareil, et jamais envoy&eacute; ailleurs&nbsp;:</p>
+<ul>
+<li>Votre biblioth&egrave;que &mdash; titres, dossiers, dur&eacute;es et pochettes &mdash; lue dans le catalogue d&rsquo;Android&nbsp;;</li>
+<li>Vos r&eacute;glages, listes de lecture, favoris et l&rsquo;endroit o&ugrave; vous vous &ecirc;tes arr&ecirc;t&eacute; dans chaque &eacute;l&eacute;ment&nbsp;;</li>
+<li>Les identifiants des serveurs r&eacute;seau que vous ajoutez.</li>
+</ul>
+<p>D&eacute;sinstaller l&rsquo;application efface tout cela. Il n&rsquo;existe aucune copie sur un serveur, puisqu&rsquo;il n&rsquo;y a pas de serveur.</p>
+
+<h3>Quand l&rsquo;application acc&egrave;de &agrave; internet</h3>
+<p>Dans quatre situations, dont aucune ne se produit d&rsquo;elle-m&ecirc;me&nbsp;:</p>
+<ul>
+<li><strong>Cha&icirc;nes en direct.</strong> T&eacute;l&eacute;charge des listes publiques de cha&icirc;nes depuis <code>iptv-org.github.io</code> et <code>raw.githubusercontent.com</code>. Rien vous concernant n&rsquo;est envoy&eacute;&nbsp;: c&rsquo;est la lecture d&rsquo;un fichier public.</li>
+<li><strong>Recherche de sous-titres.</strong> Envoie &agrave; OpenSubtitles (<code>rest.opensubtitles.org</code>) le terme recherch&eacute; &mdash; le plus souvent le nom du fichier ou le titre que vous avez saisi &mdash; et la langue choisie.</li>
+<li><strong>Traduction des sous-titres.</strong> Envoie le texte des sous-titres au service de traduction de Google (<code>translate.google.com</code>, <code>clients5.google.com</code>) pour en recevoir la traduction.</li>
+<li><strong>M&eacute;dias sur votre propre r&eacute;seau.</strong> Se connecte au serveur que vous avez ajout&eacute;, avec les identifiants que vous avez fournis. Ce trafic reste sur votre r&eacute;seau et ne passe jamais par nous.</li>
+</ul>
+<p>La recherche et la traduction de sous-titres sont les deux seules &agrave; confier quoi que ce soit &agrave; un tiers, et ces tiers ont leurs propres politiques&nbsp;: <a href="https://www.opensubtitles.org/en/privacypolicy">OpenSubtitles</a> et <a href="https://policies.google.com/privacy">Google</a>. N&rsquo;utilisez aucune de ces fonctions et rien ne quitte l&rsquo;appareil.</p>
+
+<h3>Pourquoi chaque autorisation est demand&eacute;e</h3>
+<ul>
+<li><strong>Audio, vid&eacute;o et stockage</strong> &mdash; pour lire les fichiers que vous allez ouvrir&nbsp;;</li>
+<li><strong>Internet et &eacute;tat du r&eacute;seau</strong> &mdash; pour les quatre cas ci-dessus&nbsp;;</li>
+<li><strong>&Eacute;tat du Wi-Fi</strong> &mdash; pour trouver les serveurs multim&eacute;dias de votre propre r&eacute;seau&nbsp;;</li>
+<li><strong>Service au premier plan</strong> &mdash; pour que la musique continue &eacute;cran &eacute;teint&nbsp;;</li>
+<li><strong>Maintien en veille</strong> &mdash; pour que l&rsquo;&eacute;cran ne s&rsquo;&eacute;teigne pas pendant une vid&eacute;o&nbsp;;</li>
+<li><strong>Biom&eacute;trie et identifiant de l&rsquo;appareil</strong> &mdash; pour d&eacute;verrouiller le dossier priv&eacute;. La v&eacute;rification est faite par Android&nbsp;; l&rsquo;application re&ccedil;oit un oui ou un non, et aucune donn&eacute;e biom&eacute;trique.</li>
+</ul>
+
+<h3>Enfants</h3>
+<p>Vayou ne s&rsquo;adresse pas aux enfants de moins de 13&nbsp;ans. Comme elle ne collecte de donn&eacute;es de personne, elle n&rsquo;en collecte pas non plus des enfants.</p>
+
+<h3>Modifications</h3>
+<p>Si cette politique change, la date en haut de cette page change avec elle, et la r&eacute;daction pr&eacute;c&eacute;dente demeure dans l&rsquo;historique public du d&eacute;p&ocirc;t.</p>
+
+<h3>Contact</h3>
+<p>Questions, corrections ou demandes&nbsp;: <a href="https://github.com/0hgawa/vayou-android/issues">github.com/0hgawa/vayou-android/issues</a>.</p>
+  </section>
+
+  <section data-lang="de" lang="de" dir="ltr">
+    <h2>Datenschutzerklärung</h2>
+    <p class="updated">Deutsch &middot; 31. August 2026</p>
+
+<p class="lead">Vayou erhebt keine personenbezogenen Daten, speichert keine und übermittelt keine. Es gibt keine Nutzungsanalyse, kein Tracking, keine Werbung, kein Konto und keine Anmeldung. Die App arbeitet vollständig offline, abgesehen von den vier unten beschriebenen Fällen &mdash; die Sie jeweils selbst auslösen.</p>
+
+<h3>Was auf Ihrem Gerät bleibt</h3>
+<p>Wird ausschließlich in den Speicher des Geräts geschrieben und nie irgendwohin gesendet:</p>
+<ul>
+<li>Ihre Medienbibliothek &mdash; Titel, Ordner, Laufzeiten und Cover &mdash; aus dem Katalog von Android gelesen;</li>
+<li>Ihre Einstellungen, Wiedergabelisten, Favoriten und die Stelle, an der Sie jeweils aufgehört haben;</li>
+<li>Die Zugangsdaten der Netzwerkserver, die Sie hinzufügen.</li>
+</ul>
+<p>Das Deinstallieren der App löscht all das. Es gibt keine Kopie auf einem Server, weil es keinen Server gibt.</p>
+
+<h3>Wann die App ins Internet geht</h3>
+<p>In vier Fällen, und keiner davon geschieht von allein:</p>
+<ul>
+<li><strong>Live-Kanäle.</strong> Lädt öffentliche Senderlisten von <code>iptv-org.github.io</code> und <code>raw.githubusercontent.com</code>. Nichts über Sie wird gesendet; es wird lediglich eine öffentliche Datei gelesen.</li>
+<li><strong>Untertitelsuche.</strong> Sendet an OpenSubtitles (<code>rest.opensubtitles.org</code>) den Suchbegriff &mdash; meist der Dateiname oder der von Ihnen eingegebene Titel &mdash; und die gewählte Sprache.</li>
+<li><strong>Untertitelübersetzung.</strong> Sendet den Untertiteltext an den Übersetzungsdienst von Google (<code>translate.google.com</code>, <code>clients5.google.com</code>), um die Übersetzung zu erhalten.</li>
+<li><strong>Medien im eigenen Netzwerk.</strong> Verbindet sich mit dem Server, den Sie hinzugefügt haben, mit den von Ihnen angegebenen Zugangsdaten. Dieser Verkehr bleibt in Ihrem Netzwerk und läuft nie über uns.</li>
+</ul>
+<p>Untertitelsuche und -übersetzung sind die beiden, die etwas an Dritte weitergeben, und diese Dritten haben eigene Richtlinien: <a href="https://www.opensubtitles.org/en/privacypolicy">OpenSubtitles</a> und <a href="https://policies.google.com/privacy">Google</a>. Nutzen Sie keine dieser Funktionen, verlässt nichts das Gerät.</p>
+
+<h3>Warum jede Berechtigung verlangt wird</h3>
+<ul>
+<li><strong>Audio, Video und Speicher</strong> &mdash; um die Dateien zu lesen, die Sie abspielen wollen;</li>
+<li><strong>Internet und Netzwerkstatus</strong> &mdash; für die vier Fälle oben;</li>
+<li><strong>WLAN-Status</strong> &mdash; um Medienserver im eigenen Netzwerk zu finden;</li>
+<li><strong>Vordergrunddienst</strong> &mdash; damit die Musik bei ausgeschaltetem Bildschirm weiterläuft;</li>
+<li><strong>Wach halten</strong> &mdash; damit der Bildschirm während eines Videos nicht ausgeht;</li>
+<li><strong>Biometrie und Gerätesperre</strong> &mdash; um den privaten Ordner zu entsperren. Die Prüfung übernimmt Android; die App erhält nur ein Ja oder ein Nein und keinerlei biometrische Daten.</li>
+</ul>
+
+<h3>Kinder</h3>
+<p>Vayou richtet sich nicht an Kinder unter 13 Jahren. Da die App von niemandem Daten erhebt, erhebt sie auch keine von Kindern.</p>
+
+<h3>Änderungen</h3>
+<p>Ändert sich diese Erklärung, ändert sich das Datum oben auf dieser Seite mit ihr, und der vorherige Wortlaut bleibt im öffentlichen Verlauf des Repositorys erhalten.</p>
+
+<h3>Kontakt</h3>
+<p>Fragen, Korrekturen oder Anliegen: <a href="https://github.com/0hgawa/vayou-android/issues">github.com/0hgawa/vayou-android/issues</a>.</p>
+  </section>
+
+  <section data-lang="ru" lang="ru" dir="ltr">
+    <h2>Политика конфиденциальности</h2>
+    <p class="updated">Русский &middot; 31 августа 2026 г.</p>
+
+<p class="lead">Vayou не собирает, не хранит и не передаёт персональные данные. Нет аналитики, слежения, рекламы, учётных записей и регистрации. Приложение полностью работает без интернета, кроме четырёх случаев, описанных ниже, &mdash; и каждый из них начинаете вы сами.</p>
+
+<h3>Что остаётся на вашем устройстве</h3>
+<p>Записывается только в память самого устройства и никуда не отправляется:</p>
+<ul>
+<li>Ваша медиатека &mdash; названия, папки, длительности и обложки &mdash; прочитанная из каталога Android;</li>
+<li>Ваши настройки, плейлисты, избранное и место, на котором вы остановились;</li>
+<li>Учётные данные сетевых серверов, которые вы добавляете.</li>
+</ul>
+<p>Удаление приложения стирает всё это. Копии на сервере нет, потому что нет и сервера.</p>
+
+<h3>Когда приложение выходит в интернет</h3>
+<p>В четырёх случаях, и ни один не происходит сам по себе:</p>
+<ul>
+<li><strong>Телеканалы.</strong> Загружает публичные списки каналов с <code>iptv-org.github.io</code> и <code>raw.githubusercontent.com</code>. О вас ничего не отправляется — это чтение публичного файла.</li>
+<li><strong>Поиск субтитров.</strong> Отправляет в OpenSubtitles (<code>rest.opensubtitles.org</code>) поисковый запрос &mdash; обычно имя файла или введённое вами название &mdash; и выбранный язык.</li>
+<li><strong>Перевод субтитров.</strong> Отправляет текст субтитров в переводчик Google (<code>translate.google.com</code>, <code>clients5.google.com</code>), чтобы получить перевод.</li>
+<li><strong>Медиа в вашей сети.</strong> Подключается к серверу, который вы добавили, с указанными вами учётными данными. Этот трафик остаётся в вашей сети и никогда не проходит через нас.</li>
+</ul>
+<p>Поиск и перевод субтитров &mdash; единственные две функции, передающие что-либо третьим лицам, и у этих лиц свои политики: <a href="https://www.opensubtitles.org/en/privacypolicy">OpenSubtitles</a> и <a href="https://policies.google.com/privacy">Google</a>. Не пользуйтесь ими &mdash; и с устройства не уйдёт ничего.</p>
+
+<h3>Зачем нужно каждое разрешение</h3>
+<ul>
+<li><strong>Аудио, видео и хранилище</strong> &mdash; чтобы читать файлы, которые вы собираетесь воспроизвести;</li>
+<li><strong>Интернет и состояние сети</strong> &mdash; для четырёх случаев выше;</li>
+<li><strong>Состояние Wi-Fi</strong> &mdash; чтобы находить медиасерверы в вашей сети;</li>
+<li><strong>Служба переднего плана</strong> &mdash; чтобы музыка продолжалась при выключенном экране;</li>
+<li><strong>Удержание экрана</strong> &mdash; чтобы экран не гас во время видео;</li>
+<li><strong>Биометрия и код устройства</strong> &mdash; чтобы разблокировать личную папку. Проверку выполняет Android; приложение получает только «да» или «нет» и никаких биометрических данных.</li>
+</ul>
+
+<h3>Дети</h3>
+<p>Vayou не предназначено для детей младше 13 лет. Поскольку приложение не собирает данные ни у кого, оно не собирает их и у детей.</p>
+
+<h3>Изменения</h3>
+<p>Если эта политика изменится, вместе с ней изменится и дата вверху страницы, а прежняя редакция останется в открытой истории репозитория.</p>
+
+<h3>Контакты</h3>
+<p>Вопросы, исправления и просьбы: <a href="https://github.com/0hgawa/vayou-android/issues">github.com/0hgawa/vayou-android/issues</a>.</p>
+  </section>
+
+  <section data-lang="ar" lang="ar" dir="rtl">
+    <h2>سياسة الخصوصية</h2>
+    <p class="updated">العربية &middot; 31 أغسطس 2026</p>
+
+<p class="lead">لا يجمع Vayou أي بيانات شخصية، ولا يخزّنها، ولا ينقلها. لا توجد تحليلات ولا تتبّع ولا إعلانات ولا حساب ولا تسجيل. يعمل التطبيق دون اتصال بالكامل، باستثناء الحالات الأربع الموضّحة أدناه &mdash; وكلٌّ منها تبدؤه أنت بنفسك.</p>
+
+<h3>ما يبقى على جهازك</h3>
+<p>يُكتب في ذاكرة الجهاز نفسه فقط، ولا يُرسَل إلى أي مكان:</p>
+<ul>
+<li>مكتبة الوسائط لديك &mdash; العناوين والمجلدات والمدد وصور الأغلفة &mdash; مقروءة من فهرس أندرويد؛</li>
+<li>إعداداتك وقوائم التشغيل والمفضّلة والموضع الذي توقّفت عنده في كل عنصر؛</li>
+<li>بيانات اعتماد أي خادم شبكة تضيفه.</li>
+</ul>
+<p>إلغاء تثبيت التطبيق يمحو ذلك كلّه. لا توجد نسخة على أي خادم، لأنه لا يوجد خادم أصلًا.</p>
+
+<h3>متى يتصل التطبيق بالإنترنت</h3>
+<p>في أربع حالات، ولا تحدث أيٌّ منها من تلقاء نفسها:</p>
+<ul>
+<li><strong>القنوات المباشرة.</strong> يُنزّل قوائم قنوات عامة من <code>iptv-org.github.io</code> و<code>raw.githubusercontent.com</code>. لا يُرسَل أي شيء يخصّك؛ إنما تُقرأ ملفات عامة.</li>
+<li><strong>البحث عن الترجمات.</strong> يُرسل إلى OpenSubtitles (<code>rest.opensubtitles.org</code>) عبارة البحث &mdash; وهي عادةً اسم الملف أو العنوان الذي كتبته &mdash; واللغة التي اخترتها.</li>
+<li><strong>ترجمة النصوص.</strong> يُرسل نص الترجمة إلى خدمة الترجمة من Google (<code>translate.google.com</code> و<code>clients5.google.com</code>) ليستعيد الترجمة.</li>
+<li><strong>الوسائط على شبكتك.</strong> يتصل بالخادم الذي أضفته، ببيانات الاعتماد التي قدّمتها. تبقى هذه الحركة داخل شبكتك ولا تمرّ بنا أبدًا.</li>
+</ul>
+<p>البحث عن الترجمات وترجمتها هما الوظيفتان الوحيدتان اللتان تُسلّمان شيئًا إلى طرف ثالث، ولهذه الأطراف سياساتها الخاصة: <a href="https://www.opensubtitles.org/en/privacypolicy">OpenSubtitles</a> و<a href="https://policies.google.com/privacy">Google</a>. إن لم تستخدم هاتين الوظيفتين فلن يغادر الجهازَ شيء.</p>
+
+<h3>لماذا يُطلَب كل إذن</h3>
+<ul>
+<li><strong>الصوت والفيديو والتخزين</strong> &mdash; لقراءة الملفات التي ستشغّلها؛</li>
+<li><strong>الإنترنت وحالة الشبكة</strong> &mdash; للحالات الأربع أعلاه؛</li>
+<li><strong>حالة الواي فاي</strong> &mdash; للعثور على خوادم الوسائط في شبكتك؛</li>
+<li><strong>خدمة في المقدّمة</strong> &mdash; لتستمر الموسيقى والشاشة مطفأة؛</li>
+<li><strong>إبقاء الجهاز مستيقظًا</strong> &mdash; لئلّا تنطفئ الشاشة أثناء الفيديو؛</li>
+<li><strong>القياسات الحيوية وقفل الجهاز</strong> &mdash; لفتح المجلد الخاص. أندرويد هو من يتحقق؛ ولا يتلقّى التطبيق سوى نعم أو لا، ولا يتلقّى أي بيانات حيوية.</li>
+</ul>
+
+<h3>الأطفال</h3>
+<p>Vayou غير موجَّه للأطفال دون سن 13. وبما أنه لا يجمع بيانات من أحد، فهو لا يجمع بيانات الأطفال أيضًا.</p>
+
+<h3>التغييرات</h3>
+<p>إذا تغيّرت هذه السياسة، تغيّر معها التاريخ في أعلى الصفحة، ويبقى النص السابق في السجل العام للمستودع.</p>
+
+<h3>التواصل</h3>
+<p>الأسئلة والتصويبات والطلبات: <a href="https://github.com/0hgawa/vayou-android/issues">github.com/0hgawa/vayou-android/issues</a>.</p>
+  </section>
+
+  <section data-lang="hi" lang="hi" dir="ltr">
+    <h2>गोपनीयता नीति</h2>
+    <p class="updated">हिन्दी &middot; 31 अगस्त 2026</p>
+
+<p class="lead">Vayou कोई व्यक्तिगत डेटा एकत्र नहीं करता, संग्रहीत नहीं करता और प्रसारित नहीं करता। कोई एनालिटिक्स नहीं, कोई ट्रैकिंग नहीं, कोई विज्ञापन नहीं, कोई खाता नहीं और कोई साइन-अप नहीं। ऐप पूरी तरह ऑफ़लाइन काम करता है, नीचे बताए गए चार मामलों को छोड़कर &mdash; और उनमें से हर एक आप स्वयं शुरू करते हैं।</p>
+
+<h3>आपके उपकरण पर क्या रहता है</h3>
+<p>केवल उपकरण की अपनी मेमोरी में लिखा जाता है और कहीं नहीं भेजा जाता:</p>
+<ul>
+<li>आपकी मीडिया लाइब्रेरी &mdash; शीर्षक, फ़ोल्डर, अवधि और कवर &mdash; Android की सूची से पढ़ी गई;</li>
+<li>आपकी सेटिंग्स, प्लेलिस्ट, पसंदीदा और हर फ़ाइल में आप जहाँ रुके थे वह जगह;</li>
+<li>आपके जोड़े गए किसी भी नेटवर्क सर्वर के लॉगिन विवरण।</li>
+</ul>
+<p>ऐप हटाने पर यह सब मिट जाता है। किसी सर्वर पर कोई प्रति नहीं है, क्योंकि कोई सर्वर ही नहीं है।</p>
+
+<h3>ऐप इंटरनेट से कब जुड़ता है</h3>
+<p>चार स्थितियों में, और इनमें से कोई भी अपने आप नहीं होती:</p>
+<ul>
+<li><strong>लाइव चैनल।</strong> <code>iptv-org.github.io</code> और <code>raw.githubusercontent.com</code> से सार्वजनिक चैनल सूचियाँ डाउनलोड करता है। आपके बारे में कुछ नहीं भेजा जाता; यह एक सार्वजनिक फ़ाइल पढ़ना भर है।</li>
+<li><strong>उपशीर्षक खोज।</strong> OpenSubtitles (<code>rest.opensubtitles.org</code>) को खोज शब्द भेजता है &mdash; प्रायः फ़ाइल का नाम या आपके लिखे शीर्षक &mdash; और आपकी चुनी हुई भाषा।</li>
+<li><strong>उपशीर्षक अनुवाद।</strong> अनुवाद पाने के लिए उपशीर्षक का पाठ Google की अनुवाद सेवा (<code>translate.google.com</code>, <code>clients5.google.com</code>) को भेजता है।</li>
+<li><strong>आपके अपने नेटवर्क का मीडिया।</strong> आपके जोड़े गए सर्वर से, आपके दिए विवरण के साथ जुड़ता है। यह ट्रैफ़िक आपके नेटवर्क में ही रहता है और कभी हमारे पास से नहीं गुज़रता।</li>
+</ul>
+<p>उपशीर्षक की खोज और अनुवाद ही दो ऐसी सुविधाएँ हैं जो किसी तीसरे पक्ष को कुछ सौंपती हैं, और उन पक्षों की अपनी नीतियाँ हैं: <a href="https://www.opensubtitles.org/en/privacypolicy">OpenSubtitles</a> और <a href="https://policies.google.com/privacy">Google</a>। इन सुविधाओं का उपयोग न करें तो उपकरण से कुछ भी बाहर नहीं जाता।</p>
+
+<h3>हर अनुमति क्यों माँगी जाती है</h3>
+<ul>
+<li><strong>ऑडियो, वीडियो और संग्रहण</strong> &mdash; उन फ़ाइलों को पढ़ने के लिए जिन्हें आप चलाएँगे;</li>
+<li><strong>इंटरनेट और नेटवर्क स्थिति</strong> &mdash; ऊपर बताए चार मामलों के लिए;</li>
+<li><strong>Wi-Fi स्थिति</strong> &mdash; आपके अपने नेटवर्क पर मीडिया सर्वर खोजने के लिए;</li>
+<li><strong>अग्रभूमि सेवा</strong> &mdash; ताकि स्क्रीन बंद होने पर भी संगीत चलता रहे;</li>
+<li><strong>जागृत रखना</strong> &mdash; ताकि वीडियो के दौरान स्क्रीन बंद न हो;</li>
+<li><strong>बायोमेट्रिक्स और उपकरण लॉक</strong> &mdash; निजी फ़ोल्डर खोलने के लिए। जाँच Android करता है; ऐप को केवल हाँ या ना मिलता है, कोई बायोमेट्रिक डेटा नहीं।</li>
+</ul>
+
+<h3>बच्चे</h3>
+<p>Vayou 13 वर्ष से कम आयु के बच्चों के लिए नहीं है। चूँकि यह किसी से भी डेटा एकत्र नहीं करता, इसलिए बच्चों से भी नहीं करता।</p>
+
+<h3>परिवर्तन</h3>
+<p>यदि यह नीति बदलती है, तो इस पृष्ठ के शीर्ष की तारीख़ भी उसके साथ बदलती है, और पिछला पाठ रिपॉज़िटरी के सार्वजनिक इतिहास में बना रहता है।</p>
+
+<h3>संपर्क</h3>
+<p>प्रश्न, सुधार या अनुरोध: <a href="https://github.com/0hgawa/vayou-android/issues">github.com/0hgawa/vayou-android/issues</a>।</p>
+  </section>
+
+  <section data-lang="tr" lang="tr" dir="ltr">
+    <h2>Gizlilik Politikası</h2>
+    <p class="updated">Türkçe &middot; 31 Ağustos 2026</p>
+
+<p class="lead">Vayou hiçbir kişisel veri toplamaz, saklamaz ve iletmez. Kullanım analizi, izleme, reklam, hesap ve kayıt yoktur. Uygulama, aşağıda açıklanan dört durum dışında tamamen çevrimdışı çalışır &mdash; ve bunların her birini siz başlatırsınız.</p>
+
+<h3>Cihazınızda kalanlar</h3>
+<p>Yalnızca cihazın kendi belleğine yazılır ve hiçbir yere gönderilmez:</p>
+<ul>
+<li>Medya kitaplığınız &mdash; başlıklar, klasörler, süreler ve kapaklar &mdash; Android'in kataloğundan okunur;</li>
+<li>Ayarlarınız, çalma listeleriniz, favorileriniz ve her öğede kaldığınız yer;</li>
+<li>Eklediğiniz ağ sunucularının kimlik bilgileri.</li>
+</ul>
+<p>Uygulamayı kaldırmak bunların hepsini siler. Hiçbir sunucuda kopya yoktur, çünkü sunucu yoktur.</p>
+
+<h3>Uygulama internete ne zaman çıkar</h3>
+<p>Dört durumda, ve hiçbiri kendiliğinden olmaz:</p>
+<ul>
+<li><strong>Canlı kanallar.</strong> <code>iptv-org.github.io</code> ve <code>raw.githubusercontent.com</code> adreslerinden herkese açık kanal listeleri indirir. Sizinle ilgili hiçbir şey gönderilmez; yalnızca herkese açık bir dosya okunur.</li>
+<li><strong>Altyazı arama.</strong> OpenSubtitles'a (<code>rest.opensubtitles.org</code>) arama terimini &mdash; genellikle dosya adı ya da yazdığınız başlık &mdash; ve seçtiğiniz dili gönderir.</li>
+<li><strong>Altyazı çevirisi.</strong> Çeviriyi geri alabilmek için altyazı metnini Google'ın çeviri hizmetine (<code>translate.google.com</code>, <code>clients5.google.com</code>) gönderir.</li>
+<li><strong>Kendi ağınızdaki medya.</strong> Eklediğiniz sunucuya, verdiğiniz kimlik bilgileriyle bağlanır. Bu trafik ağınızda kalır ve hiçbir zaman bizden geçmez.</li>
+</ul>
+<p>Üçüncü bir tarafa bir şey veren yalnızca altyazı arama ve çeviridir; o tarafların kendi politikaları vardır: <a href="https://www.opensubtitles.org/en/privacypolicy">OpenSubtitles</a> ve <a href="https://policies.google.com/privacy">Google</a>. Bu özellikleri kullanmazsanız cihazdan hiçbir şey çıkmaz.</p>
+
+<h3>Her izin neden isteniyor</h3>
+<ul>
+<li><strong>Ses, video ve depolama</strong> &mdash; oynatacağınız dosyaları okumak için;</li>
+<li><strong>İnternet ve ağ durumu</strong> &mdash; yukarıdaki dört durum için;</li>
+<li><strong>Wi-Fi durumu</strong> &mdash; kendi ağınızdaki medya sunucularını bulmak için;</li>
+<li><strong>Ön plan hizmeti</strong> &mdash; ekran kapalıyken müziğin sürmesi için;</li>
+<li><strong>Uyanık tutma</strong> &mdash; video sırasında ekranın sönmemesi için;</li>
+<li><strong>Biyometri ve cihaz kilidi</strong> &mdash; özel klasörün kilidini açmak için. Doğrulamayı Android yapar; uygulama yalnızca evet ya da hayır alır, hiçbir biyometrik veri almaz.</li>
+</ul>
+
+<h3>Çocuklar</h3>
+<p>Vayou 13 yaşından küçük çocuklara yönelik değildir. Kimseden veri toplamadığı için çocuklardan da toplamaz.</p>
+
+<h3>Değişiklikler</h3>
+<p>Bu politika değişirse sayfanın üstündeki tarih de onunla birlikte değişir ve önceki metin deponun herkese açık geçmişinde kalır.</p>
+
+<h3>İletişim</h3>
+<p>Sorular, düzeltmeler veya istekler: <a href="https://github.com/0hgawa/vayou-android/issues">github.com/0hgawa/vayou-android/issues</a>.</p>
+  </section>
+
+  <section data-lang="vi" lang="vi" dir="ltr">
+    <h2>Chính sách quyền riêng tư</h2>
+    <p class="updated">Tiếng Việt &middot; 31 tháng 8 năm 2026</p>
+
+<p class="lead">Vayou không thu thập, không lưu trữ và không truyền đi dữ liệu cá nhân nào. Không có phân tích sử dụng, không theo dõi, không quảng cáo, không tài khoản và không đăng ký. Ứng dụng hoạt động hoàn toàn ngoại tuyến, ngoại trừ bốn trường hợp mô tả bên dưới &mdash; và mỗi trường hợp đều do bạn tự khởi động.</p>
+
+<h3>Những gì ở lại trên thiết bị của bạn</h3>
+<p>Chỉ được ghi vào bộ nhớ của chính thiết bị và không bao giờ được gửi đi đâu:</p>
+<ul>
+<li>Thư viện phương tiện của bạn &mdash; tên, thư mục, thời lượng và ảnh bìa &mdash; đọc từ danh mục của Android;</li>
+<li>Cài đặt, danh sách phát, mục yêu thích và vị trí bạn đã dừng ở mỗi mục;</li>
+<li>Thông tin đăng nhập của bất kỳ máy chủ mạng nào bạn thêm vào.</li>
+</ul>
+<p>Gỡ cài đặt ứng dụng sẽ xoá tất cả những thứ đó. Không có bản sao nào trên máy chủ, vì không hề có máy chủ.</p>
+
+<h3>Khi nào ứng dụng kết nối internet</h3>
+<p>Trong bốn trường hợp, và không trường hợp nào tự xảy ra:</p>
+<ul>
+<li><strong>Kênh trực tiếp.</strong> Tải danh sách kênh công khai từ <code>iptv-org.github.io</code> và <code>raw.githubusercontent.com</code>. Không có gì về bạn được gửi đi; đó chỉ là việc đọc một tệp công khai.</li>
+<li><strong>Tìm phụ đề.</strong> Gửi tới OpenSubtitles (<code>rest.opensubtitles.org</code>) từ khoá tìm kiếm &mdash; thường là tên tệp hoặc tiêu đề bạn gõ &mdash; và ngôn ngữ bạn chọn.</li>
+<li><strong>Dịch phụ đề.</strong> Gửi nội dung phụ đề tới dịch vụ dịch của Google (<code>translate.google.com</code>, <code>clients5.google.com</code>) để nhận bản dịch.</li>
+<li><strong>Phương tiện trong mạng của bạn.</strong> Kết nối tới máy chủ bạn đã thêm, bằng thông tin đăng nhập bạn cung cấp. Lưu lượng đó ở lại trong mạng của bạn và không bao giờ đi qua chúng tôi.</li>
+</ul>
+<p>Tìm và dịch phụ đề là hai tính năng duy nhất giao thứ gì đó cho bên thứ ba, và các bên đó có chính sách riêng: <a href="https://www.opensubtitles.org/en/privacypolicy">OpenSubtitles</a> và <a href="https://policies.google.com/privacy">Google</a>. Không dùng hai tính năng ấy thì không có gì rời khỏi thiết bị.</p>
+
+<h3>Vì sao cần từng quyền</h3>
+<ul>
+<li><strong>Âm thanh, video và bộ nhớ</strong> &mdash; để đọc những tệp bạn sắp phát;</li>
+<li><strong>Internet và trạng thái mạng</strong> &mdash; cho bốn trường hợp ở trên;</li>
+<li><strong>Trạng thái Wi-Fi</strong> &mdash; để tìm máy chủ phương tiện trong mạng của bạn;</li>
+<li><strong>Dịch vụ nền trước</strong> &mdash; để nhạc tiếp tục phát khi màn hình tắt;</li>
+<li><strong>Giữ máy thức</strong> &mdash; để màn hình không tắt trong lúc xem video;</li>
+<li><strong>Sinh trắc học và khoá thiết bị</strong> &mdash; để mở thư mục riêng tư. Android thực hiện việc kiểm tra; ứng dụng chỉ nhận được có hoặc không, và không nhận dữ liệu sinh trắc nào.</li>
+</ul>
+
+<h3>Trẻ em</h3>
+<p>Vayou không hướng đến trẻ em dưới 13 tuổi. Vì không thu thập dữ liệu của bất kỳ ai, ứng dụng cũng không thu thập dữ liệu của trẻ em.</p>
+
+<h3>Thay đổi</h3>
+<p>Nếu chính sách này thay đổi, ngày ở đầu trang cũng thay đổi theo, và bản trước vẫn nằm trong lịch sử công khai của kho mã.</p>
+
+<h3>Liên hệ</h3>
+<p>Câu hỏi, đính chính hoặc yêu cầu: <a href="https://github.com/0hgawa/vayou-android/issues">github.com/0hgawa/vayou-android/issues</a>.</p>
+  </section>
+
+  <section data-lang="id" lang="id" dir="ltr">
+    <h2>Kebijakan Privasi</h2>
+    <p class="updated">Bahasa Indonesia &middot; 31 Agustus 2026</p>
+
+<p class="lead">Vayou tidak mengumpulkan, tidak menyimpan, dan tidak mengirimkan data pribadi. Tidak ada analitik, pelacakan, iklan, akun, maupun pendaftaran. Aplikasi bekerja sepenuhnya luring, kecuali pada empat hal yang dijelaskan di bawah ini &mdash; dan semuanya Anda sendiri yang memulai.</p>
+
+<h3>Apa yang tetap ada di perangkat Anda</h3>
+<p>Hanya ditulis ke penyimpanan perangkat itu sendiri dan tidak pernah dikirim ke mana pun:</p>
+<ul>
+<li>Pustaka media Anda &mdash; judul, folder, durasi, dan sampul &mdash; dibaca dari katalog Android;</li>
+<li>Pengaturan, daftar putar, favorit, dan posisi terakhir Anda pada setiap item;</li>
+<li>Kredensial server jaringan yang Anda tambahkan.</li>
+</ul>
+<p>Menghapus aplikasi menghapus semuanya. Tidak ada salinan di server mana pun, karena memang tidak ada server.</p>
+
+<h3>Kapan aplikasi terhubung ke internet</h3>
+<p>Dalam empat keadaan, dan tak satu pun terjadi dengan sendirinya:</p>
+<ul>
+<li><strong>Saluran langsung.</strong> Mengunduh daftar saluran publik dari <code>iptv-org.github.io</code> dan <code>raw.githubusercontent.com</code>. Tidak ada apa pun tentang Anda yang dikirim; itu hanya pembacaan berkas publik.</li>
+<li><strong>Pencarian takarir.</strong> Mengirim ke OpenSubtitles (<code>rest.opensubtitles.org</code>) kata pencarian &mdash; biasanya nama berkas atau judul yang Anda ketik &mdash; dan bahasa yang Anda pilih.</li>
+<li><strong>Terjemahan takarir.</strong> Mengirim teks takarir ke layanan terjemahan Google (<code>translate.google.com</code>, <code>clients5.google.com</code>) untuk menerima terjemahannya.</li>
+<li><strong>Media di jaringan Anda sendiri.</strong> Terhubung ke server yang Anda tambahkan, dengan kredensial yang Anda berikan. Lalu lintas itu tetap di jaringan Anda dan tidak pernah melewati kami.</li>
+</ul>
+<p>Pencarian dan terjemahan takarir adalah dua hal yang menyerahkan sesuatu kepada pihak ketiga, dan pihak-pihak itu punya kebijakan sendiri: <a href="https://www.opensubtitles.org/en/privacypolicy">OpenSubtitles</a> dan <a href="https://policies.google.com/privacy">Google</a>. Jangan gunakan keduanya, maka tidak ada apa pun yang keluar dari perangkat.</p>
+
+<h3>Mengapa setiap izin diminta</h3>
+<ul>
+<li><strong>Audio, video, dan penyimpanan</strong> &mdash; untuk membaca berkas yang akan Anda putar;</li>
+<li><strong>Internet dan status jaringan</strong> &mdash; untuk empat hal di atas;</li>
+<li><strong>Status Wi-Fi</strong> &mdash; untuk menemukan server media di jaringan Anda sendiri;</li>
+<li><strong>Layanan latar depan</strong> &mdash; agar musik terus berjalan saat layar mati;</li>
+<li><strong>Menjaga perangkat tetap aktif</strong> &mdash; agar layar tidak padam saat memutar video;</li>
+<li><strong>Biometrik dan kunci perangkat</strong> &mdash; untuk membuka folder pribadi. Android yang melakukan pemeriksaan; aplikasi hanya menerima ya atau tidak, dan tidak menerima data biometrik apa pun.</li>
+</ul>
+
+<h3>Anak-anak</h3>
+<p>Vayou tidak ditujukan untuk anak di bawah 13 tahun. Karena tidak mengumpulkan data dari siapa pun, aplikasi juga tidak mengumpulkan data anak-anak.</p>
+
+<h3>Perubahan</h3>
+<p>Jika kebijakan ini berubah, tanggal di bagian atas halaman ini ikut berubah, dan rumusan sebelumnya tetap ada di riwayat publik repositori.</p>
+
+<h3>Kontak</h3>
+<p>Pertanyaan, koreksi, atau permintaan: <a href="https://github.com/0hgawa/vayou-android/issues">github.com/0hgawa/vayou-android/issues</a>.</p>
+  </section>
 
   <footer>
-    Vayou — reprodutor de mídia para Android · media player for Android<br>
+    Vayou &mdash; media player for Android and Android TV<br>
     <a href="https://github.com/0hgawa/vayou-android">github.com/0hgawa/vayou-android</a>
   </footer>
 
 </main>
+<script>
+(function () {
+  var raiz = document.documentElement;
+  raiz.className = "js";
+
+  var secoes = [].slice.call(document.querySelectorAll("section[data-lang]"));
+  var teclas = [].slice.call(document.querySelectorAll(".langs a"));
+  var codigos = secoes.map(function (s) { return s.getAttribute("data-lang"); });
+
+  // O pedido explicito primeiro, depois o idioma do navegador, e o ingles quando nenhum serve.
+  // "pt" casa com "pt-BR" e "pt-BR" casa com "pt": o leitor pediu a lingua, nao a regiao.
+  function escolher() {
+    var pedido = decodeURIComponent((location.hash || "").slice(1));
+    var querem = (pedido ? [pedido] : []).concat(navigator.languages || [navigator.language || ""]);
+    for (var i = 0; i < querem.length; i++) {
+      var quer = String(querem[i]).toLowerCase();
+      for (var j = 0; j < codigos.length; j++) {
+        var tem = codigos[j].toLowerCase();
+        if (quer === tem || quer.split("-")[0] === tem.split("-")[0]) return codigos[j];
+      }
+    }
+    return "en";
+  }
+
+  function mostrar(codigo) {
+    secoes.forEach(function (s) {
+      var esta = s.getAttribute("data-lang") === codigo;
+      s.classList.toggle("shown", esta);
+      if (esta) {
+        raiz.setAttribute("lang", codigo);
+        raiz.setAttribute("dir", s.getAttribute("dir") || "ltr");
+      }
+    });
+    teclas.forEach(function (a) {
+      var esta = a.getAttribute("data-lang") === codigo;
+      if (esta) a.setAttribute("aria-current", "true");
+      else a.removeAttribute("aria-current");
+    });
+  }
+
+  teclas.forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      e.preventDefault();
+      var codigo = a.getAttribute("data-lang");
+      // Trocado sem empilhar uma entrada por clique: voltar deve sair da pagina, nao desfazer
+      // uma escolha de idioma de cada vez.
+      history.replaceState(null, "", "#" + codigo);
+      mostrar(codigo);
+    });
+  });
+  window.addEventListener("hashchange", function () { mostrar(escolher()); });
+
+  mostrar(escolher());
+})();
+</script>
 </body>
 </html>
