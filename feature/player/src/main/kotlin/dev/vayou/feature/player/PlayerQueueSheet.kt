@@ -35,11 +35,11 @@ import androidx.media3.common.Player
 import dev.vayou.core.player.queueKeys
 import dev.vayou.core.ui.designsystem.MediaListLayoutDefaults
 import dev.vayou.core.ui.designsystem.VayouIcons
-import dev.vayou.core.ui.designsystem.components.VayouBottomSheet
-import dev.vayou.core.ui.designsystem.components.VayouBottomSheetTitle
 import dev.vayou.core.ui.designsystem.components.VayouMediaThumbnail
 import dev.vayou.core.ui.designsystem.components.VayouSegmentedListItem
+import dev.vayou.core.ui.designsystem.components.VayouSheet
 import dev.vayou.core.ui.designsystem.components.VayouSheetDefaults
+import dev.vayou.core.ui.designsystem.components.VayouSheetTitle
 import dev.vayou.core.ui.designsystem.components.VayouToggleIconButton
 import dev.vayou.core.ui.designsystem.components.draggedLift
 import dev.vayou.core.ui.theme.VayouTheme
@@ -86,14 +86,14 @@ internal fun PlayerQueueSheet(player: Player, onDismiss: () -> Unit) {
     // Opening on the fortieth film of a folder should not start at the first.
     LaunchedEffect(Unit) { listState.scrollToItem(currentIndex.coerceAtLeast(0)) }
 
-    VayouBottomSheet(onDismissRequest = onDismiss) {
+    VayouSheet(onDismissRequest = onDismiss) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(end = VayouTheme.spacing.lg),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            VayouBottomSheetTitle(text = stringResource(R.string.queue), modifier = Modifier.weight(1f))
+            VayouSheetTitle(text = stringResource(R.string.queue), modifier = Modifier.weight(1f))
             VayouToggleIconButton(
                 icon = VayouIcons.Shuffle,
                 isOn = isShuffled,

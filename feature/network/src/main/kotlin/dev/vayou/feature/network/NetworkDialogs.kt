@@ -30,13 +30,13 @@ import dev.vayou.core.smb.SmbFileItem
 import dev.vayou.core.ui.R as UiR
 import dev.vayou.core.ui.asFileSize
 import dev.vayou.core.ui.designsystem.VayouIcons
-import dev.vayou.core.ui.designsystem.components.VayouBottomSheet
-import dev.vayou.core.ui.designsystem.components.VayouBottomSheetTitle
 import dev.vayou.core.ui.designsystem.components.VayouCancelButton
 import dev.vayou.core.ui.designsystem.components.VayouDialog
 import dev.vayou.core.ui.designsystem.components.VayouDoneButton
 import dev.vayou.core.ui.designsystem.components.VayouIconButton
+import dev.vayou.core.ui.designsystem.components.VayouSheet
 import dev.vayou.core.ui.designsystem.components.VayouSheetDefaults
+import dev.vayou.core.ui.designsystem.components.VayouSheetTitle
 import dev.vayou.core.ui.designsystem.components.VayouSortOption
 import dev.vayou.core.ui.designsystem.components.VayouSortSheet
 import dev.vayou.core.ui.designsystem.components.VayouTextField
@@ -232,8 +232,8 @@ internal fun BrowserSortSheet(sort: BrowserSort, onChange: (BrowserSort) -> Unit
  */
 @Composable
 internal fun CountrySheet(currentCode: String?, onSelect: (String?) -> Unit, onDismiss: () -> Unit) {
-    VayouBottomSheet(onDismissRequest = onDismiss) {
-        VayouBottomSheetTitle(text = stringResource(R.string.country))
+    VayouSheet(onDismissRequest = onDismiss) {
+        VayouSheetTitle(text = stringResource(R.string.country))
         val locale = ConfigurationCompat.getLocales(LocalConfiguration.current)[0]
         val everywhere = stringResource(UiR.string.iptv_international)
         LazyColumn(modifier = Modifier.heightIn(max = VayouSheetDefaults.ListMaxHeight)) {
@@ -261,8 +261,8 @@ internal fun GroupFilterButton(groups: List<String>, selected: String?, onSelect
         )
     }
     if (isOpen) {
-        VayouBottomSheet(onDismissRequest = { isOpen = false }) {
-            VayouBottomSheetTitle(text = stringResource(R.string.filter_by_group))
+        VayouSheet(onDismissRequest = { isOpen = false }) {
+            VayouSheetTitle(text = stringResource(R.string.filter_by_group))
             LazyColumn(modifier = Modifier.heightIn(max = VayouSheetDefaults.ListMaxHeight)) {
                 item {
                     FilterSheetRow(

@@ -40,11 +40,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import dev.vayou.core.player.ui.MediaTrack
 import dev.vayou.core.ui.designsystem.VayouIcons
-import dev.vayou.core.ui.designsystem.components.VayouBottomSheet
-import dev.vayou.core.ui.designsystem.components.VayouBottomSheetTitle
+import dev.vayou.core.ui.designsystem.components.VayouSheet
 import dev.vayou.core.ui.designsystem.components.VayouSheetDefaults
 import dev.vayou.core.ui.designsystem.components.VayouSheetRow
 import dev.vayou.core.ui.designsystem.components.VayouSheetRowIcon
+import dev.vayou.core.ui.designsystem.components.VayouSheetTitle
 import dev.vayou.core.ui.designsystem.components.VayouSwitch
 import dev.vayou.core.ui.theme.VayouTheme
 import java.util.Locale
@@ -79,8 +79,8 @@ fun SubtitleSheet(
     onDelayChange: (Long) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    VayouBottomSheet(onDismissRequest = onDismiss) {
-        VayouBottomSheetTitle(text = stringResource(R.string.subtitles))
+    VayouSheet(onDismissRequest = onDismiss) {
+        VayouSheetTitle(text = stringResource(R.string.subtitles))
 
         Column(
             modifier = Modifier

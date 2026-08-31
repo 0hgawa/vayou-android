@@ -29,12 +29,12 @@ import dev.vayou.core.model.AudioEffectType
 import dev.vayou.core.model.EqPreset
 import dev.vayou.core.player.R as PlayerR
 import dev.vayou.core.ui.designsystem.VayouIcons
-import dev.vayou.core.ui.designsystem.components.VayouBottomSheet
-import dev.vayou.core.ui.designsystem.components.VayouBottomSheetTitle
 import dev.vayou.core.ui.designsystem.components.VayouIconButton
 import dev.vayou.core.ui.designsystem.components.VayouSelectableTile
 import dev.vayou.core.ui.designsystem.components.VayouSelectableTileSpacing
+import dev.vayou.core.ui.designsystem.components.VayouSheet
 import dev.vayou.core.ui.designsystem.components.VayouSheetDefaults
+import dev.vayou.core.ui.designsystem.components.VayouSheetTitle
 import dev.vayou.core.ui.designsystem.components.VayouSlider
 import dev.vayou.core.ui.designsystem.components.VayouSwitch
 import dev.vayou.core.ui.designsystem.components.VayouVerticalSlider
@@ -52,14 +52,14 @@ import dev.vayou.core.ui.theme.VayouTheme
  */
 @Composable
 fun EqualizerSheet(state: EqualizerState, onDismiss: () -> Unit) {
-    VayouBottomSheet(onDismissRequest = onDismiss) {
+    VayouSheet(onDismissRequest = onDismiss) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(end = TrailingInset),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            VayouBottomSheetTitle(text = stringResource(R.string.equalizer), modifier = Modifier.weight(1f))
+            VayouSheetTitle(text = stringResource(R.string.equalizer), modifier = Modifier.weight(1f))
             // Only when there is something to undo: on an untouched equalizer this is a control
             // that does nothing, in the corner the eye checks first.
             if (!state.isDefault) {

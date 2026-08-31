@@ -7,9 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import dev.vayou.core.player.PlaybackCommands
-import dev.vayou.core.ui.designsystem.components.VayouBottomSheet
-import dev.vayou.core.ui.designsystem.components.VayouBottomSheetTitle
+import dev.vayou.core.ui.designsystem.components.VayouSheet
 import dev.vayou.core.ui.designsystem.components.VayouSheetDefaults
+import dev.vayou.core.ui.designsystem.components.VayouSheetTitle
 
 /**
  * How long to keep playing before stopping on its own.
@@ -20,8 +20,8 @@ import dev.vayou.core.ui.designsystem.components.VayouSheetDefaults
  */
 @Composable
 fun SleepTimerSheet(state: SleepTimerState, onDismiss: () -> Unit) {
-    VayouBottomSheet(onDismissRequest = onDismiss) {
-        VayouBottomSheetTitle(text = stringResource(R.string.sleep_timer))
+    VayouSheet(onDismissRequest = onDismiss) {
+        VayouSheetTitle(text = stringResource(R.string.sleep_timer))
 
         if (state.isArmed) {
             CheckedRow(

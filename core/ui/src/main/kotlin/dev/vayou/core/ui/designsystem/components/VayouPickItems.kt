@@ -79,13 +79,13 @@ fun VayouPickItemsSheet(
 ) {
     var picked by remember { mutableStateOf(emptySet<String>()) }
 
-    VayouBottomSheet(onDismissRequest = onDismiss) {
-        VayouBottomSheetTitle(text = title)
+    VayouSheet(onDismissRequest = onDismiss) {
+        VayouSheetTitle(text = title)
 
         if (items.isEmpty()) {
             VayouEmptyState(emptyIcon, emptyTitle)
             Spacer(modifier = Modifier.height(VayouSheetDefaults.BottomPadding))
-            return@VayouBottomSheet
+            return@VayouSheet
         }
 
         LazyColumn(modifier = Modifier.heightIn(max = VayouSheetDefaults.ListMaxHeight)) {

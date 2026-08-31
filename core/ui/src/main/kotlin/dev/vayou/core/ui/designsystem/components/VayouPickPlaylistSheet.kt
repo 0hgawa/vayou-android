@@ -28,8 +28,8 @@ fun VayouPickPlaylistSheet(
     onNew: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    VayouBottomSheet(onDismissRequest = onDismiss) {
-        VayouBottomSheetTitle(text = stringResource(R.string.add_to_playlist))
+    VayouSheet(onDismissRequest = onDismiss) {
+        VayouSheetTitle(text = stringResource(R.string.add_to_playlist))
         VayouActionSheetItem(text = stringResource(R.string.new_playlist), icon = VayouIcons.Add, onClick = onNew)
 
         LazyColumn(modifier = Modifier.heightIn(max = VayouSheetDefaults.ListMaxHeight)) {

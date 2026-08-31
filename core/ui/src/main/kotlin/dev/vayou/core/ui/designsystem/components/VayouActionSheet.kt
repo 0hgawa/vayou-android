@@ -30,7 +30,7 @@ fun VayouActionSheet(
     leading: (@Composable () -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    VayouBottomSheet(onDismissRequest = onDismiss) {
+    VayouSheet(onDismissRequest = onDismiss) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

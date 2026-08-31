@@ -29,8 +29,8 @@ fun <T> VayouChoiceSheet(
     onDismiss: () -> Unit,
     description: (@Composable (T) -> String?)? = null,
 ) {
-    VayouBottomSheet(onDismissRequest = onDismiss) {
-        VayouBottomSheetTitle(text = title)
+    VayouSheet(onDismissRequest = onDismiss) {
+        VayouSheetTitle(text = title)
         LazyColumn(
             modifier = Modifier
                 .heightIn(max = VayouSheetDefaults.ListMaxHeight)

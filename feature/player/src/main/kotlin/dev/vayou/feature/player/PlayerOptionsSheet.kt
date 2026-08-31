@@ -9,9 +9,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
-import dev.vayou.core.ui.designsystem.components.VayouBottomSheet
-import dev.vayou.core.ui.designsystem.components.VayouBottomSheetTitle
+import dev.vayou.core.ui.designsystem.components.VayouSheet
 import dev.vayou.core.ui.designsystem.components.VayouSheetDefaults
+import dev.vayou.core.ui.designsystem.components.VayouSheetTitle
 
 /** One row of a [PlayerOptionsSheet]. */
 @Immutable
@@ -39,8 +39,8 @@ fun PlayerOptionsSheet(
      */
     footer: (@Composable () -> Unit)? = null,
 ) {
-    VayouBottomSheet(onDismissRequest = onDismiss) {
-        VayouBottomSheetTitle(text = title)
+    VayouSheet(onDismissRequest = onDismiss) {
+        VayouSheetTitle(text = title)
         OptionRows(options = options, onDismiss = onDismiss)
         footer?.let {
             Divider()

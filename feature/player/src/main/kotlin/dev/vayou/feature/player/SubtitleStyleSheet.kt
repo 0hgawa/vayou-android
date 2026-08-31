@@ -39,13 +39,13 @@ import dev.vayou.core.player.ui.SubtitleSizePreset
 import dev.vayou.core.player.ui.isDefaultSubtitleStyle
 import dev.vayou.core.player.ui.withDefaultSubtitleStyle
 import dev.vayou.core.ui.designsystem.VayouIcons
-import dev.vayou.core.ui.designsystem.components.VayouBottomSheet
-import dev.vayou.core.ui.designsystem.components.VayouBottomSheetTitle
 import dev.vayou.core.ui.designsystem.components.VayouIconButton
 import dev.vayou.core.ui.designsystem.components.VayouSegmentedButtons
 import dev.vayou.core.ui.designsystem.components.VayouSelectableTile
 import dev.vayou.core.ui.designsystem.components.VayouSelectableTileSpacing
+import dev.vayou.core.ui.designsystem.components.VayouSheet
 import dev.vayou.core.ui.designsystem.components.VayouSheetDefaults
+import dev.vayou.core.ui.designsystem.components.VayouSheetTitle
 import dev.vayou.core.ui.designsystem.components.VayouSlider
 import dev.vayou.core.ui.designsystem.components.VayouSwitch
 import dev.vayou.core.ui.theme.VayouTheme
@@ -63,14 +63,14 @@ import kotlin.math.roundToInt
  */
 @Composable
 fun SubtitleStyleSheet(style: PlayerPreferences, onChange: (PlayerPreferences) -> Unit, onDismiss: () -> Unit) {
-    VayouBottomSheet(onDismissRequest = onDismiss) {
+    VayouSheet(onDismissRequest = onDismiss) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(end = VayouTheme.spacing.lg),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            VayouBottomSheetTitle(text = stringResource(R.string.subtitle_style), modifier = Modifier.weight(1f))
+            VayouSheetTitle(text = stringResource(R.string.subtitle_style), modifier = Modifier.weight(1f))
             // Only when there is something to undo: on an untouched style this is a control that
             // does nothing, in the corner the eye checks first.
             if (!style.isDefaultSubtitleStyle) {

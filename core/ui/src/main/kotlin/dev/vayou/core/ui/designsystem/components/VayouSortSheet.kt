@@ -30,8 +30,8 @@ fun VayouSortSheet(
     onSelect: (Int) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    VayouBottomSheet(onDismissRequest = onDismiss) {
-        VayouBottomSheetTitle(text = title)
+    VayouSheet(onDismissRequest = onDismiss) {
+        VayouSheetTitle(text = title)
         options.forEachIndexed { index, option ->
             val isSelected = index == selectedIndex
             VayouSheetRow(

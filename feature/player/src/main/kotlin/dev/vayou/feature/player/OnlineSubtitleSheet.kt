@@ -34,11 +34,11 @@ import dev.vayou.core.data.models.OnlineSubtitleState
 import dev.vayou.core.data.models.OpenSubtitleResult
 import dev.vayou.core.data.models.SubtitleLanguages
 import dev.vayou.core.ui.designsystem.VayouIcons
-import dev.vayou.core.ui.designsystem.components.VayouBottomSheet
-import dev.vayou.core.ui.designsystem.components.VayouBottomSheetTitle
 import dev.vayou.core.ui.designsystem.components.VayouCircularProgress
 import dev.vayou.core.ui.designsystem.components.VayouIconButton
+import dev.vayou.core.ui.designsystem.components.VayouSheet
 import dev.vayou.core.ui.designsystem.components.VayouSheetDefaults
+import dev.vayou.core.ui.designsystem.components.VayouSheetTitle
 import dev.vayou.core.ui.designsystem.components.VayouTextField
 import dev.vayou.core.ui.theme.VayouTheme
 
@@ -62,8 +62,8 @@ fun OnlineSubtitleSheet(
 
     val submit = { onSearch(query.trim().takeIf(String::isNotEmpty), languageId) }
 
-    VayouBottomSheet(onDismissRequest = onDismiss) {
-        VayouBottomSheetTitle(text = stringResource(R.string.online_subtitles))
+    VayouSheet(onDismissRequest = onDismiss) {
+        VayouSheetTitle(text = stringResource(R.string.online_subtitles))
 
         SearchField(
             query = query,
