@@ -9,9 +9,9 @@ Two media players from one codebase: a **phone and tablet** app, and an **Androi
 ![minSdk](https://img.shields.io/badge/minSdk-23-3DDC84)
 ![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Android%20TV-lightgrey)
 
-| Phone | Television |
-|---|---|
-| ![Video library](docs/screenshots/library.png) | ![Android TV home](docs/screenshots/tv-home.png) |
+<p align="center">
+  <img src="docs/screenshots/hero.png" width="880" alt="Vayou on a television, with the phone app beside it">
+</p>
 
 ---
 
@@ -103,45 +103,54 @@ They are separate listings on the store and separate installs — a phone is not
 
 ### Phone
 
-| Library | Player | Music |
-|---|---|---|
-| ![Library](docs/screenshots/library.png) | ![Player](docs/screenshots/player.png) | ![Music player](docs/screenshots/music-player.png) |
-| Folders, sizes and how far in you got | Controls that hide themselves, gestures on the picture | The cover tints the screen it sits on |
+<table>
+<tr>
+<td align="center"><img src="docs/screenshots/library.png" width="230"><br><sub><b>Library</b><br>Folders, sizes, and how far in you got</sub></td>
+<td align="center"><img src="docs/screenshots/player.png" width="230"><br><sub><b>Player</b><br>Controls that hide themselves</sub></td>
+<td align="center"><img src="docs/screenshots/music-player.png" width="230"><br><sub><b>Music</b><br>The cover tints the screen it sits on</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="docs/screenshots/music-library.png" width="230"><br><sub><b>Songs</b><br>A music library of its own</sub></td>
+<td align="center"><img src="docs/screenshots/network.png" width="230"><br><sub><b>Network</b><br>Shares and channel lists</sub></td>
+<td align="center"><img src="docs/screenshots/settings.png" width="230"><br><sub><b>Settings</b><br>Nine sections, each explained in a sentence</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="docs/screenshots/library-dark.png" width="230"><br><sub><b>Dark</b><br>Follow the system, light, dark, or black</sub></td>
+<td align="center"><img src="docs/screenshots/appearance.png" width="230"><br><sub><b>Appearance</b><br>The accent taken from your wallpaper</sub></td>
+</tr>
+</table>
 
-| Songs | Mini player | Network |
-|---|---|---|
-| ![Songs](docs/screenshots/music-library.png) | ![Mini player](docs/screenshots/mini-player.png) | ![Network](docs/screenshots/network.png) |
-| A music library of its own | What is playing, above the library | Shares and channel lists |
+<p align="center">
+  <img src="docs/screenshots/mini-player.png" width="560"><br>
+  <sub><b>The mini player</b> — what is playing, above the library, wherever you are in it</sub>
+</p>
 
-| Channels | Settings | Appearance |
-|---|---|---|
-| ![Channels](docs/screenshots/channels.png) | ![Settings](docs/screenshots/settings.png) | ![Appearance](docs/screenshots/appearance.png) |
-| Channel lists by country and group | Nine sections, each explained in a sentence | Theme, and the accent from your wallpaper |
+<p align="center">
+  <img src="docs/screenshots/subtitles.png" width="720"><br>
+  <sub><b>Subtitles</b> — size, position, colour, outline and background, changed over the film while it plays</sub>
+</p>
 
-| Subtitles, in landscape |
-|---|
-| ![Subtitle settings](docs/screenshots/subtitles.png) |
-| Size, position, colour, outline, background — over the film, changed while it plays |
-
-| Dark | Tablet |
-|---|---|
-| ![Dark library](docs/screenshots/library-dark.png) | ![Tablet](docs/screenshots/tablet.png) |
+<p align="center">
+  <img src="docs/screenshots/tablet.png" width="620"><br>
+  <sub><b>Tablet</b> — the same library, given the width to spread out</sub>
+</p>
 
 ### Android TV
 
-| Home | Videos |
-|---|---|
-| ![TV home](docs/screenshots/tv-home.png) | ![TV videos](docs/screenshots/tv-videos.png) |
-| Continue watching, then the library, then the shares | A grid a remote can cross in a few presses |
-
-| Player | Options |
-|---|---|
-| ![TV player](docs/screenshots/tv-player.png) | ![TV player options](docs/screenshots/tv-options.png) |
-| | Audio, subtitles, speed, fit, repeat, sleep timer, night mode |
-
-| Music | Channels |
-|---|---|
-| ![TV music](docs/screenshots/tv-music.png) | ![TV channels](docs/screenshots/tv-channels.png) |
+<table>
+<tr>
+<td align="center"><img src="docs/screenshots/tv-home.png" width="400"><br><sub><b>Home</b><br>Continue watching, then the library, then the shares</sub></td>
+<td align="center"><img src="docs/screenshots/tv-videos.png" width="400"><br><sub><b>Videos</b><br>A grid a remote can cross in a few presses</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="docs/screenshots/tv-player.png" width="400"><br><sub><b>Player</b><br>Built for a remote, not a thumb</sub></td>
+<td align="center"><img src="docs/screenshots/tv-options.png" width="400"><br><sub><b>Options</b><br>Audio, subtitles, speed, fit, repeat, sleep timer, night mode</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="docs/screenshots/tv-music.png" width="400"><br><sub><b>Music</b><br>The sleeve, at three metres</sub></td>
+<td align="center"><img src="docs/screenshots/tv-channels.png" width="400"><br><sub><b>Channels</b><br>Channel lists, by country and group</sub></td>
+</tr>
+</table>
 
 ---
 
