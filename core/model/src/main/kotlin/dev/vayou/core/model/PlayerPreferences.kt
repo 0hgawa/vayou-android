@@ -35,6 +35,11 @@ data class PlayerPreferences(
      *
      * The discs are what keep a white glyph legible over a bright scene without a scrim over the
      * whole picture. Off is the quieter look, for a viewer who would rather see the film.
+     *
+     * The film only. The music player's controls sit on a ground taken from the cover, and that
+     * ground's lightness is imposed rather than read -- see `DefaultLightness`, which pins it dark
+     * whatever the cover is. A white glyph there is legible by construction, so a disc under it
+     * would be a shape that solves nothing.
      */
     val useMaterialYouControls: Boolean = true,
     /**
