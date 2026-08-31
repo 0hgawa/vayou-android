@@ -1,0 +1,58 @@
+== NOME DO APP (max 30) ==
+Vayou Player
+
+== BREVE DESCRICAO (max 80) ==
+Ücretsiz video ve müzik oynatıcı. Reklamsız, hesapsız, takipsiz.
+
+== DESCRICAO COMPLETA (max 4000) ==
+Vayou zaten sizin olanı oynatır. Onu bu telefondaki videolara ve müziğe, bilgisayarınızdan paylaşılan bir klasöre ya da kendi getirdiğiniz bir kanal listesine yöneltin; oynatır — hiçbir yere kaydolmanızı istemeden.
+
+REKLAM YOK. HESAP YOK. TAKİP YOK.
+Ne bir afiş, ne bir kesinti, hiçbiri. Kaydolunacak bir yer yok, kullanım analizi ve çökme raporu yok, ne oynattığınıza bakan üçüncü bir taraf yok. Kitaplığınız, kaldığınız yerler ve sunucu kimlik bilgileriniz telefondan hiç çıkmaz.
+
+NELERİ OYNATIR
+• Telefonda ya da hafıza kartında duran video ve müzik
+• Ağınızdaki dosyalar: Windows ve NAS paylaşımlarına SMB ile göz atın ve önceden hiçbir şey kopyalamadan doğrudan oynatın
+• Kendi eklediğiniz M3U listelerinden canlı kanallar
+• Donanımın reddettiği biçimler, birlikte gelen FFmpeg çözücüsüyle
+
+FİLM OYNARKEN
+• Bıraktığınız yerden ya da hep baştan — seçim sizin
+• Klasördeki sıradaki dosyayı kendiliğinden oynatır
+• A–B tekrarı, oynatma hızı ve uyku zamanlayıcısı, "bu bitince" dahil
+• Pencere içinde pencere: çıktığınızda film bir köşeye küçülür
+• Ekran kapalıyken sesi sürdürür
+• Sığdır, uzat, kırp ya da %100; parlaklık filmler arasında hatırlanır
+• Denetimleri kilitleyin, avuç ekrana değince bir şey olmasın
+
+ALT YAZILAR
+• Gömülü izler ve dış dosyalar
+• OpenSubtitles'ta dosyaya ya da ada göre arama
+• Ekrandaki alt yazının anlık çevirisi
+• Gecikme, yazı tipi, boyut, konum, renk, kenarlık, gölge ve arka plan
+
+MÜZİK
+• Kendine ait bir kitaplık: şarkılar, listeler, klasörler, albümler, sanatçılar
+• Ön ayarlarıyla beş bantlı ekolayzer; biri konuşma için yapılmış
+• Bir satırı basılı tutarak yeniden sıraladığınız kuyruk
+• Etiketleri düzenleyin ve kapağı uygulamanın içinden değiştirin
+• Ekran rengini kapaktan alır
+
+KİTAPLIĞINIZ
+• Klasörler, her şeyin düz bir listesi ve çalma listeleri
+• Izgara ya da liste; ada, tarihe, süreye, boyuta ya da konuma göre sıralı
+• Sık kullanılanlar ve parmak izinizin arkasında kalan özel bir raf
+• Son oynatılanlar ve her küçük resmin altında ne kadar ilerlediğinizi gösteren bir çubuk
+• Videolar ve klasörler arasında arama
+
+TELEVİZYONA GÖNDERİN
+Bir filmi Chromecast'e gönderin; dosyayı kendi ağınız üzerinden telefondan alır — hiçbir yere yükleme yapılmaz. Alt yazılar da onunla gider.
+
+PARMAKLA
+Filmde ilerlemek için yana kaydırın, parlaklık ve ses için yukarı aşağı, ekranı doldurmak için parmakları açın, atlamak için çift dokunun. Her hareket kapatılabilir.
+
+ON BİR DİL
+English, Português, Español, Français, Deutsch, Русский, العربية, हिन्दी, Türkçe, Tiếng Việt ve Bahasa Indonesia; sağdan sola yazı gerektiği gibi dizilmiş.
+
+İÇERİK HAKKINDA
+Vayou bir oynatıcıdır. Hiçbir film, dizi ya da televizyon kanalı sağlamaz, barındırmaz ve sunmaz. Gördüğünüz şey, onu neye yönelttiğinizdir: kendi dosyalarınız, kendi ağ paylaşımlarınız ve eklemeyi seçtiğiniz kanal listeleri. Oynattığınız şeye erişme hakkına sahip olmak sizin sorumluluğunuzdadır.

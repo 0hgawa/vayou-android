@@ -1,0 +1,58 @@
+== NOME DO APP (max 30) ==
+Vayou Player
+
+== BREVE DESCRICAO (max 80) ==
+Pemutar video dan musik gratis. Tanpa iklan, tanpa akun, tanpa pelacakan.
+
+== DESCRICAO COMPLETA (max 4000) ==
+Vayou memutar apa yang memang sudah milik Anda. Arahkan ke video dan musik di ponsel ini, ke folder yang dibagikan dari komputer Anda, atau ke daftar saluran yang Anda bawa sendiri — dan ia memutarnya, tanpa meminta Anda mendaftar apa pun.
+
+TANPA IKLAN. TANPA AKUN. TANPA PELACAKAN.
+Tidak ada spanduk, tidak ada jeda, satu pun tidak. Tidak ada yang perlu didaftarkan, tidak ada analitik maupun laporan kerusakan, dan tidak ada pihak ketiga yang mengintip apa yang Anda putar. Pustaka Anda, posisi terakhir Anda, dan kredensial server Anda tidak pernah keluar dari ponsel.
+
+APA YANG DIPUTAR
+• Video dan musik yang tersimpan di ponsel atau kartu memori
+• Berkas di jaringan Anda: telusuri folder berbagi Windows dan NAS lewat SMB lalu putar langsung, tanpa menyalin apa pun lebih dulu
+• Saluran langsung dari daftar M3U yang Anda tambahkan sendiri
+• Format yang ditolak perangkat keras, lewat dekoder FFmpeg bawaan
+
+SELAGI FILM BERJALAN
+• Melanjutkan dari tempat Anda berhenti, atau selalu dari awal — Anda yang memilih
+• Memutar berkas berikutnya dalam folder dengan sendirinya
+• Ulang A–B, kecepatan pemutaran, dan pengatur waktu tidur, termasuk "saat yang ini selesai"
+• Gambar dalam gambar: film mengecil ke sudut saat Anda beranjak
+• Suara tetap jalan dengan layar mati
+• Paskan, regangkan, pangkas, atau 100%, dan kecerahan diingat antar film
+• Kunci kendali, supaya telapak tangan di layar tidak melakukan apa-apa
+
+TAKARIR
+• Trek tertanam dan berkas eksternal
+• Pencarian di OpenSubtitles berdasarkan berkas atau nama
+• Terjemahan langsung takarir yang sedang berjalan
+• Jeda, huruf, ukuran, posisi, warna, garis tepi, bayangan, dan latar
+
+MUSIK
+• Pustaka tersendiri: lagu, daftar putar, folder, album, artis
+• Ekualiser lima pita dengan prasetel, termasuk satu yang dibuat untuk suara bicara
+• Antrean yang Anda susun ulang dengan menahan satu baris
+• Sunting tag dan ganti sampul dari dalam aplikasi
+• Layar mengambil warnanya dari sampul
+
+PUSTAKA ANDA
+• Folder, satu daftar lurus berisi semuanya, dan daftar putar
+• Kisi atau daftar, diurutkan menurut nama, tanggal, durasi, ukuran, atau lokasi
+• Favorit, dan rak pribadi yang tetap di balik sidik jari Anda
+• Baru diputar, dan sebuah bilah di bawah tiap gambar kecil yang menunjukkan sampai mana Anda menonton
+• Pencarian di video dan folder
+
+KIRIM KE TELEVISI
+Kirim film ke Chromecast dan ia mengambil berkasnya dari ponsel lewat jaringan Anda sendiri — tidak ada yang diunggah ke mana pun. Takarir ikut serta.
+
+DENGAN JARI
+Geser ke samping untuk berpindah dalam film, ke atas dan ke bawah untuk kecerahan dan volume, cubit untuk memenuhi layar, ketuk dua kali untuk melompat. Setiap gerakan bisa dimatikan.
+
+SEBELAS BAHASA
+English, Português, Español, Français, Deutsch, Русский, العربية, हिन्दी, Türkçe, Tiếng Việt, dan Bahasa Indonesia, dengan tulisan kanan-ke-kiri yang ditata semestinya.
+
+TENTANG KONTEN
+Vayou adalah pemutar. Ia tidak menyediakan, tidak meng-host, dan tidak memasok film, serial, atau saluran televisi apa pun. Yang Anda lihat adalah apa yang Anda arahkan kepadanya: berkas Anda sendiri, folder berbagi Anda sendiri, dan daftar saluran yang Anda pilih untuk ditambahkan. Anda bertanggung jawab memiliki hak untuk mengakses apa yang Anda putar.

@@ -1,0 +1,58 @@
+== NOME DO APP (max 30) ==
+Vayou Player
+
+== BREVE DESCRICAO (max 80) ==
+Player de vídeo e música grátis. Sem anúncios, sem conta, sem rastreamento.
+
+== DESCRICAO COMPLETA (max 4000) ==
+O Vayou reproduz o que já é seu. Aponte-o para os vídeos e as músicas deste aparelho, para uma pasta compartilhada do seu computador ou para uma lista de canais que você forneça, e ele toca — sem pedir cadastro nenhum.
+
+SEM ANÚNCIOS. SEM CONTA. SEM RASTREAMENTO.
+Nenhum banner, nenhuma interrupção, nenhuma. Não há nada para se cadastrar, não há análise de uso nem relatório de falhas, e nenhum terceiro observando o que você reproduz. Sua biblioteca, suas posições de reprodução e as credenciais dos seus servidores nunca saem do aparelho.
+
+O QUE ELE REPRODUZ
+• Vídeo e música guardados no aparelho ou no cartão de memória
+• Arquivos na sua rede: navegue por compartilhamentos do Windows e de NAS por SMB e reproduza direto, sem copiar nada antes
+• Canais ao vivo de listas M3U que você mesmo adiciona
+• Formatos que o hardware recusa, por um decodificador FFmpeg embutido
+
+ENQUANTO O FILME TOCA
+• Retoma de onde você parou, ou sempre do início — você escolhe
+• Toca sozinho o próximo arquivo da pasta
+• Repetição A–B, velocidade e temporizador, inclusive "quando este terminar"
+• Picture in picture: o filme encolhe num canto quando você sai
+• Mantém o som com a tela apagada
+• Ajustar, esticar, cortar ou 100%, e o brilho é lembrado entre filmes
+• Trave os controles, para a palma da mão na tela não fazer nada
+
+LEGENDAS
+• Faixas embutidas e arquivos externos
+• Busca no OpenSubtitles por arquivo ou por nome
+• Tradução ao vivo da legenda em exibição
+• Atraso, fonte, tamanho, posição, cor, contorno, sombra e fundo
+
+MÚSICA
+• Uma biblioteca própria: músicas, playlists, pastas, álbuns, artistas
+• Equalizador de cinco bandas com predefinições, incluindo uma feita para voz
+• Uma fila que você reordena segurando a linha
+• Edite etiquetas e troque a capa dentro do aplicativo
+• A tela toma a cor da capa
+
+SUA BIBLIOTECA
+• Pastas, uma lista corrida de tudo, e playlists
+• Grade ou lista, ordenada por nome, data, duração, tamanho ou local
+• Favoritos, e uma prateleira privada que fica atrás da sua digital
+• Reproduzidos recentemente, e uma barra sob cada miniatura mostrando onde você parou
+• Busca em vídeos e pastas
+
+TRANSMITA PARA A TELEVISÃO
+Envie um filme para um Chromecast e ele busca o arquivo no aparelho pela sua própria rede — nada é enviado para lugar nenhum. As legendas vão junto.
+
+PELO TOQUE
+Deslize para os lados para avançar no filme, para cima e para baixo para brilho e volume, pince para preencher a tela, toque duas vezes para pular. Todo gesto pode ser desligado.
+
+ONZE IDIOMAS
+English, Português, Español, Français, Deutsch, Русский, العربية, हिन्दी, Türkçe, Tiếng Việt e Bahasa Indonesia, com a escrita da direita para a esquerda tratada como deve ser.
+
+SOBRE O CONTEÚDO
+O Vayou é um reprodutor. Ele não fornece, não hospeda e não disponibiliza filmes, séries ou canais de televisão. O que você vê é aquilo para onde você o aponta: seus próprios arquivos, seus próprios compartilhamentos de rede e as listas de canais que você escolher adicionar. Você é responsável por ter o direito de acessar o que reproduz.

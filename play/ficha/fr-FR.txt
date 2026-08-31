@@ -1,0 +1,58 @@
+== NOME DO APP (max 30) ==
+Vayou Player
+
+== BREVE DESCRICAO (max 80) ==
+Lecteur vidéo et musique gratuit. Sans pub, sans compte, sans suivi.
+
+== DESCRICAO COMPLETA (max 4000) ==
+Vayou lit ce qui vous appartient déjà. Pointez-le vers les vidéos et la musique de ce téléphone, vers un dossier partagé depuis votre ordinateur ou vers une liste de chaînes que vous fournissez, et il les lit — sans vous demander de vous inscrire à quoi que ce soit.
+
+PAS DE PUBLICITÉ. PAS DE COMPTE. PAS DE SUIVI.
+Pas une bannière, pas une coupure, aucune. Il n'y a rien à créer comme compte, aucune analyse d'usage ni rapport de plantage, et aucun tiers qui regarde ce que vous lisez. Votre bibliothèque, vos positions de lecture et les identifiants de vos serveurs ne quittent jamais le téléphone.
+
+CE QU'IL LIT
+• Vidéo et musique stockées sur le téléphone ou la carte mémoire
+• Fichiers de votre réseau : parcourez les partages Windows et NAS en SMB et lisez-les directement, sans rien copier au préalable
+• Chaînes en direct depuis des listes M3U que vous ajoutez vous-même
+• Les formats que le matériel refuse, grâce à un décodeur FFmpeg intégré
+
+PENDANT LA LECTURE
+• Reprend où vous vous êtes arrêté, ou toujours depuis le début — à vous de choisir
+• Enchaîne tout seul le fichier suivant du dossier
+• Répétition A–B, vitesse et minuterie, y compris « à la fin de celui-ci »
+• Picture in picture : la vidéo se réduit dans un coin quand vous sortez
+• Garde le son écran éteint
+• Ajuster, étirer, rogner ou 100 %, et la luminosité est retenue d'un film à l'autre
+• Verrouillez les commandes, pour qu'une paume sur l'écran ne fasse rien
+
+SOUS-TITRES
+• Pistes intégrées et fichiers externes
+• Recherche OpenSubtitles par fichier ou par titre
+• Traduction en direct du sous-titre affiché
+• Décalage, police, taille, position, couleur, contour, ombre et fond
+
+MUSIQUE
+• Une bibliothèque à part : titres, listes, dossiers, albums, artistes
+• Égaliseur cinq bandes avec préréglages, dont un fait pour la voix
+• Une file d'attente que vous réordonnez en maintenant une ligne
+• Modifiez les étiquettes et changez une pochette depuis l'application
+• L'écran prend la couleur de la pochette
+
+VOTRE BIBLIOTHÈQUE
+• Dossiers, une liste continue de tout, et des listes de lecture
+• Grille ou liste, triée par nom, date, durée, taille ou emplacement
+• Favoris, et une étagère privée qui reste derrière votre empreinte
+• Lus récemment, et une barre sous chaque vignette indiquant où vous en êtes
+• Recherche parmi les vidéos et les dossiers
+
+DIFFUSER SUR LA TÉLÉVISION
+Envoyez un film vers un Chromecast : il va chercher le fichier sur le téléphone par votre propre réseau — rien n'est téléversé nulle part. Les sous-titres suivent.
+
+AU DOIGT
+Glissez latéralement pour avancer, de haut en bas pour la luminosité et le volume, pincez pour remplir l'écran, touchez deux fois pour sauter. Chaque geste peut être désactivé.
+
+ONZE LANGUES
+English, Português, Español, Français, Deutsch, Русский, العربية, हिन्दी, Türkçe, Tiếng Việt et Bahasa Indonesia, avec l'écriture de droite à gauche traitée comme il se doit.
+
+À PROPOS DU CONTENU
+Vayou est un lecteur. Il ne fournit, n'héberge et ne propose aucun film, aucune série ni aucune chaîne de télévision. Ce que vous voyez est ce vers quoi vous le pointez : vos propres fichiers, vos propres partages réseau et les listes de chaînes que vous choisissez d'ajouter. Il vous appartient d'avoir le droit d'accéder à ce que vous lisez.

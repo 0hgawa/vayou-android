@@ -1,0 +1,58 @@
+== NOME DO APP (max 30) ==
+Vayou Player
+
+== BREVE DESCRICAO (max 80) ==
+Kostenloser Video- und Musikplayer. Keine Werbung, kein Konto, kein Tracking.
+
+== DESCRICAO COMPLETA (max 4000) ==
+Vayou spielt, was Ihnen schon gehört. Richten Sie ihn auf die Videos und die Musik auf diesem Telefon, auf einen vom Rechner freigegebenen Ordner oder auf eine Senderliste, die Sie selbst mitbringen — und er spielt sie ab, ohne dass Sie sich irgendwo anmelden müssen.
+
+KEINE WERBUNG. KEIN KONTO. KEIN TRACKING.
+Kein Banner, keine Unterbrechung, keine einzige. Es gibt nichts zu registrieren, keine Nutzungsanalyse und keine Absturzberichte, und keinen Dritten, der zusieht, was Sie abspielen. Ihre Bibliothek, Ihre Wiedergabepositionen und Ihre Server-Zugangsdaten verlassen das Telefon nie.
+
+WAS ER ABSPIELT
+• Video und Musik auf dem Telefon oder der Speicherkarte
+• Dateien in Ihrem Netzwerk: Windows- und NAS-Freigaben über SMB durchsuchen und direkt abspielen, ohne vorher etwas zu kopieren
+• Live-Kanäle aus M3U-Listen, die Sie selbst hinzufügen
+• Formate, die die Hardware verweigert, über einen mitgelieferten FFmpeg-Decoder
+
+WÄHREND DER FILM LÄUFT
+• Setzt fort, wo Sie aufgehört haben, oder immer von vorn — Sie entscheiden
+• Spielt die nächste Datei im Ordner von allein
+• A–B-Wiederholung, Geschwindigkeit und Sleeptimer, auch „wenn dieser endet"
+• Bild im Bild: der Film schrumpft in eine Ecke, wenn Sie gehen
+• Hält den Ton bei ausgeschaltetem Bildschirm
+• Anpassen, strecken, beschneiden oder 100 %, und die Helligkeit bleibt von Film zu Film erhalten
+• Sperren Sie die Bedienung, damit eine Handfläche auf dem Bildschirm nichts auslöst
+
+UNTERTITEL
+• Eingebettete Spuren und externe Dateien
+• Suche bei OpenSubtitles nach Datei oder nach Titel
+• Live-Übersetzung des laufenden Untertitels
+• Versatz, Schrift, Größe, Position, Farbe, Kontur, Schatten und Hintergrund
+
+MUSIK
+• Eine eigene Bibliothek: Titel, Wiedergabelisten, Ordner, Alben, Interpreten
+• Fünfband-Equalizer mit Voreinstellungen, darunter eine für Sprache
+• Eine Warteschlange, die Sie durch Halten einer Zeile umsortieren
+• Bearbeiten Sie Tags und tauschen Sie ein Cover in der App
+• Der Bildschirm nimmt die Farbe des Covers an
+
+IHRE BIBLIOTHEK
+• Ordner, eine durchgehende Liste von allem, und Wiedergabelisten
+• Raster oder Liste, sortiert nach Name, Datum, Länge, Größe oder Ort
+• Favoriten und ein privates Regal, das hinter Ihrem Fingerabdruck bleibt
+• Zuletzt gespielt, und ein Balken unter jedem Vorschaubild, der zeigt, wie weit Sie sind
+• Suche über Videos und Ordner
+
+AUF DEN FERNSEHER ÜBERTRAGEN
+Schicken Sie einen Film an einen Chromecast: er holt die Datei über Ihr eigenes Netzwerk vom Telefon — nichts wird irgendwohin hochgeladen. Die Untertitel gehen mit.
+
+MIT DEM FINGER
+Seitwärts wischen, um im Film zu springen, auf und ab für Helligkeit und Lautstärke, aufziehen, um den Bildschirm zu füllen, doppelt tippen zum Überspringen. Jede Geste lässt sich abschalten.
+
+ELF SPRACHEN
+English, Português, Español, Français, Deutsch, Русский, العربية, हिन्दी, Türkçe, Tiếng Việt und Bahasa Indonesia, mit ordentlich gesetzter Rechts-nach-links-Schrift.
+
+ZUM INHALT
+Vayou ist ein Player. Er stellt keine Filme, Serien oder Fernsehkanäle bereit, hostet sie nicht und liefert sie nicht aus. Was Sie sehen, ist das, worauf Sie ihn richten: Ihre eigenen Dateien, Ihre eigenen Netzwerkfreigaben und die Senderlisten, die Sie hinzufügen. Sie sind dafür verantwortlich, zum Abspielen berechtigt zu sein.

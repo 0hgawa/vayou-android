@@ -1,0 +1,58 @@
+== NOME DO APP (max 30) ==
+Vayou Player
+
+== BREVE DESCRICAO (max 80) ==
+Trình phát video và nhạc miễn phí. Không quảng cáo, không tài khoản.
+
+== DESCRICAO COMPLETA (max 4000) ==
+Vayou phát những gì vốn đã là của bạn. Hãy hướng nó tới video và nhạc trong điện thoại này, tới một thư mục chia sẻ từ máy tính của bạn, hoặc tới một danh sách kênh do bạn cung cấp — và nó phát, mà không đòi bạn đăng ký bất cứ thứ gì.
+
+KHÔNG QUẢNG CÁO. KHÔNG TÀI KHOẢN. KHÔNG THEO DÕI.
+Không một biểu ngữ, không một lần ngắt quãng, không hề. Chẳng có gì để đăng ký, không phân tích sử dụng và không báo cáo sự cố, và không bên thứ ba nào nhìn xem bạn phát gì. Thư viện, vị trí đang xem dở và thông tin đăng nhập máy chủ của bạn không bao giờ rời khỏi điện thoại.
+
+NÓ PHÁT NHỮNG GÌ
+• Video và nhạc lưu trong điện thoại hoặc thẻ nhớ
+• Tệp trong mạng của bạn: duyệt thư mục chia sẻ Windows và NAS qua SMB rồi phát thẳng, không phải sao chép trước
+• Kênh trực tiếp từ danh sách M3U do chính bạn thêm vào
+• Những định dạng phần cứng từ chối, nhờ bộ giải mã FFmpeg đi kèm
+
+TRONG LÚC PHIM CHẠY
+• Tiếp tục từ chỗ bạn dừng, hoặc luôn từ đầu — bạn chọn
+• Tự phát tệp kế tiếp trong thư mục
+• Lặp A–B, tốc độ phát và hẹn giờ ngủ, kể cả "khi phim này kết thúc"
+• Hình trong hình: phim thu nhỏ vào một góc khi bạn rời đi
+• Giữ tiếng khi màn hình đã tắt
+• Vừa khung, kéo giãn, cắt hoặc 100%, và độ sáng được nhớ giữa các phim
+• Khoá các nút, để lòng bàn tay chạm màn hình không làm gì cả
+
+PHỤ ĐỀ
+• Rãnh nhúng sẵn và tệp bên ngoài
+• Tìm trên OpenSubtitles theo tệp hoặc theo tên
+• Dịch trực tiếp dòng phụ đề đang chạy
+• Độ trễ, phông chữ, cỡ, vị trí, màu, viền, bóng và nền
+
+NHẠC
+• Một thư viện riêng: bài hát, danh sách phát, thư mục, album, nghệ sĩ
+• Bộ chỉnh âm năm dải với các thiết lập sẵn, trong đó một cái làm riêng cho giọng nói
+• Hàng chờ mà bạn sắp lại bằng cách giữ một dòng
+• Sửa thẻ và đổi ảnh bìa ngay trong ứng dụng
+• Màn hình lấy màu từ ảnh bìa
+
+THƯ VIỆN CỦA BẠN
+• Thư mục, một danh sách liền mạch mọi thứ, và danh sách phát
+• Lưới hoặc danh sách, sắp theo tên, ngày, thời lượng, kích thước hoặc vị trí
+• Yêu thích, và một ngăn riêng tư nằm sau vân tay của bạn
+• Vừa phát gần đây, và một vạch dưới mỗi ảnh thu nhỏ cho biết bạn đã xem tới đâu
+• Tìm kiếm trong video và thư mục
+
+TRUYỀN LÊN TIVI
+Gửi một phim tới Chromecast và nó lấy tệp từ điện thoại qua chính mạng của bạn — không có gì được tải lên đâu cả. Phụ đề đi cùng.
+
+BẰNG NGÓN TAY
+Vuốt ngang để tua, lên xuống cho độ sáng và âm lượng, chụm để lấp đầy màn hình, chạm hai lần để nhảy. Mọi cử chỉ đều có thể tắt.
+
+MƯỜI MỘT NGÔN NGỮ
+English, Português, Español, Français, Deutsch, Русский, العربية, हिन्दी, Türkçe, Tiếng Việt và Bahasa Indonesia, với chữ viết phải-sang-trái được dàn đúng cách.
+
+VỀ NỘI DUNG
+Vayou là một trình phát. Nó không cung cấp, không lưu trữ và không phân phối bất kỳ phim, loạt phim hay kênh truyền hình nào. Bạn thấy gì là do bạn hướng nó tới đâu: tệp của chính bạn, thư mục chia sẻ của chính bạn, và những danh sách kênh bạn chọn thêm vào. Bạn chịu trách nhiệm về quyền truy cập những gì mình phát.

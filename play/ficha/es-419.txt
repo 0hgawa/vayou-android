@@ -1,0 +1,58 @@
+== NOME DO APP (max 30) ==
+Vayou Player
+
+== BREVE DESCRICAO (max 80) ==
+Reproductor de video y música gratis. Sin anuncios, sin cuenta, sin rastreo.
+
+== DESCRICAO COMPLETA (max 4000) ==
+Vayou reproduce lo que ya es tuyo. Apúntalo a los videos y la música de este teléfono, a una carpeta compartida desde tu computadora o a una lista de canales que tú entregues, y los reproduce, sin pedirte registro alguno.
+
+SIN ANUNCIOS. SIN CUENTA. SIN RASTREO.
+Ni un banner, ni una interrupción, ninguna. No hay nada que registrar, no hay analíticas ni informes de fallos, y ningún tercero mirando lo que reproduces. Tu biblioteca, tus posiciones de reproducción y las credenciales de tus servidores nunca salen del teléfono.
+
+QUÉ REPRODUCE
+• Video y música guardados en el teléfono o en la tarjeta de memoria
+• Archivos de tu red: explora carpetas compartidas de Windows y NAS por SMB y reprodúcelas directamente, sin copiar nada antes
+• Canales en directo desde listas M3U que tú mismo agregas
+• Formatos que el hardware rechaza, mediante un decodificador FFmpeg incluido
+
+MIENTRAS SE REPRODUCE
+• Continúa donde lo dejaste, o siempre desde el principio: tú eliges
+• Reproduce solo el siguiente archivo de la carpeta
+• Repetición A–B, velocidad y temporizador, incluido "cuando termine este"
+• Picture in picture: el video se encoge en una esquina cuando sales
+• Mantiene el sonido con la pantalla apagada
+• Ajustar, estirar, recortar o 100%, y el brillo se recuerda entre videos
+• Bloquea los controles, para que la palma en la pantalla no haga nada
+
+SUBTÍTULOS
+• Pistas incrustadas y archivos externos
+• Búsqueda en OpenSubtitles por archivo o por nombre
+• Traducción en vivo del subtítulo en pantalla
+• Retardo, tipografía, tamaño, posición, color, contorno, sombra y fondo
+
+MÚSICA
+• Una biblioteca propia: canciones, listas, carpetas, álbumes, artistas
+• Ecualizador de cinco bandas con ajustes, incluido uno hecho para la voz
+• Una cola que reordenas manteniendo pulsada una fila
+• Edita etiquetas y cambia una carátula desde la app
+• La pantalla toma el color de la carátula
+
+TU BIBLIOTECA
+• Carpetas, una lista corrida de todo, y listas de reproducción
+• Cuadrícula o lista, ordenada por nombre, fecha, duración, tamaño o ubicación
+• Favoritos, y un estante privado que queda tras tu huella
+• Reproducidos recientemente, y una barra bajo cada miniatura con lo que ya viste
+• Búsqueda en videos y carpetas
+
+ENVÍA A LA TELEVISIÓN
+Manda un video a un Chromecast y él busca el archivo en el teléfono por tu propia red: nada se sube a ningún lado. Los subtítulos viajan con él.
+
+CON EL DEDO
+Desliza a los lados para avanzar, arriba y abajo para brillo y volumen, pellizca para llenar la pantalla, toca dos veces para saltar. Cada gesto se puede desactivar.
+
+ONCE IDIOMAS
+English, Português, Español, Français, Deutsch, Русский, العربية, हिन्दी, Türkçe, Tiếng Việt y Bahasa Indonesia, con la escritura de derecha a izquierda tratada como corresponde.
+
+SOBRE EL CONTENIDO
+Vayou es un reproductor. No provee, no aloja ni suministra películas, series ni canales de televisión. Lo que ves es aquello a lo que tú lo apuntas: tus propios archivos, tus propias carpetas compartidas y las listas de canales que decidas agregar. Eres responsable de tener derecho a acceder a lo que reproduces.

@@ -1,0 +1,58 @@
+== NOME DO APP (max 30) ==
+Vayou Player
+
+== BREVE DESCRICAO (max 80) ==
+Free video and music player for your files. No ads, no account, no tracking.
+
+== DESCRICAO COMPLETA (max 4000) ==
+Vayou plays what is already yours. Point it at the videos and music on this phone, at a folder shared from your computer, or at a channel list you supply, and it plays them — without asking you to sign up for anything.
+
+NO ADS. NO ACCOUNT. NO TRACKING.
+Not a banner, not a break, not one. There is nothing to register for, no analytics and no crash reporting, and no third party watching what you play. Your library, your playback positions and your server credentials never leave the phone.
+
+WHAT IT PLAYS
+• Video and music stored on the phone or the memory card
+• Files on your network: browse Windows and NAS shares over SMB and play straight from them, with nothing to copy first
+• Live channels from M3U playlists that you add yourself
+• Formats the hardware refuses, through a bundled FFmpeg decoder
+
+WHILE A FILM IS PLAYING
+• Picks up where you left off, or always from the start — your choice
+• Plays the next file in the folder on its own
+• A–B repeat, playback speed and a sleep timer, including "when this one ends"
+• Picture in picture: the film shrinks into a corner when you leave
+• Keeps the sound going with the screen off
+• Fit, stretch, crop or 100%, and the brightness is remembered between films
+• Lock the controls, so a palm on the screen does nothing
+
+SUBTITLES
+• Embedded tracks and external files
+• Search OpenSubtitles by file or by name
+• Live translation of the running subtitle
+• Delay, font, size, position, colour, outline, shadow and background plate
+
+MUSIC
+• A library of its own: songs, playlists, folders, albums, artists
+• Five-band equaliser with presets, including one made for speech
+• A queue you reorder by holding a row
+• Edit tags and change a cover from inside the app
+• The screen takes its colour from the sleeve
+
+YOUR LIBRARY
+• Folders, a flat list of everything, and playlists
+• Grid or list, sorted by name, date, length, size or location
+• Favourites, and a private shelf that stays behind your fingerprint
+• Recently played, and a bar under each thumbnail showing how far in you got
+• Search across videos and folders
+
+CAST TO THE TELEVISION
+Send a film to a Chromecast and it fetches the file from the phone over your own network — nothing is uploaded anywhere. Subtitles travel with it.
+
+BY TOUCH
+Swipe sideways to move through a film, up and down for brightness and volume, pinch to fill the screen, double tap to skip. Every gesture can be turned off.
+
+ELEVEN LANGUAGES
+English, Português, Español, Français, Deutsch, Русский, العربية, हिन्दी, Türkçe, Tiếng Việt and Bahasa Indonesia, with right-to-left laid out properly.
+
+ABOUT CONTENT
+Vayou is a player. It does not provide, host or supply any films, series or television channels. What you see is what you point it at: your own files, your own network shares, and channel lists you choose to add. You are responsible for having the right to access what you play.
