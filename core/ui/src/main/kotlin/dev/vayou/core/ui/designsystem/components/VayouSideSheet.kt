@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -123,9 +125,17 @@ internal fun VayouSideSheet(
                                 if (pushed > enough) shown.targetState = false else pushed = 0f
                             },
                         )
-                        // The bars are the window's, not the panel's: the colour runs to the edge
-                        // of the screen and only what is read stops short of them.
-                        .windowInsetsPadding(WindowInsets.safeDrawing),
+                        // Only the edges this panel actually touches. Asked for all four, the
+                        // start edge is padded too -- and that edge is in the middle of the screen,
+                        // against nothing. It costs nothing in a tall window, where the system's
+                        // insets are top and bottom; turned on its side they become left and right,
+                        // and the panel pays for them twice out of the one dimension it is short of.
+                        //
+                        // The colour still runs to the edge of the screen: this insets what is read,
+                        // not the surface behind it.
+                        .windowInsetsPadding(
+                            WindowInsets.safeDrawing.only(WindowInsetsSides.Vertical + WindowInsetsSides.End),
+                        ),
                     content = content,
                 )
             }
@@ -136,10 +146,14 @@ internal fun VayouSideSheet(
 /**
  * How wide the panel stands.
  *
- * Material asks for between 256 and 400; the fraction decides within that. A share of the window
- * rather than a number, because the same 400dp is a third of a tablet and two thirds of a small
- * phone turned on its side, and a panel that takes two thirds of the picture has not solved the
- * problem it was made for.
+ * A share of the window rather than a number, because the same number is a third of a tablet and
+ * most of a small phone turned on its side.
+ *
+ * Half, and up to 480. Material names 256 to 400 for a side sheet, and 400 was tried first: on a
+ * phone held sideways it left the equalizer's five sliders and their labels fighting for room,
+ * narrower than the same sheet gets standing up. The range Material names is for a sheet beside a
+ * layout that keeps working -- a tablet's list, a desktop's page. Here it is over a film, and the
+ * film needs no width to go on being a film.
  */
 @Composable
 private fun sheetWidth() = (LocalConfiguration.current.screenWidthDp * WidthShare).dp
@@ -147,11 +161,11 @@ private fun sheetWidth() = (LocalConfiguration.current.screenWidthDp * WidthShar
 
 private const val ScrimAlpha = 0.32f
 
-private const val WidthShare = 0.42f
+private const val WidthShare = 0.5f
 
-private val MinWidth = 280.dp
+private val MinWidth = 320.dp
 
-private val MaxWidth = 400.dp
+private val MaxWidth = 480.dp
 
 /** Far enough that a panel is not lost to the flick that was meant to scroll it. */
 private val DismissDistance = 96.dp
