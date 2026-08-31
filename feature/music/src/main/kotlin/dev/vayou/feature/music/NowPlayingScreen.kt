@@ -11,7 +11,6 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -63,6 +62,7 @@ import dev.vayou.core.ui.designsystem.components.VayouArtworkRole
 import dev.vayou.core.ui.designsystem.components.VayouIconButton
 import dev.vayou.core.ui.designsystem.components.VayouSeekBar
 import dev.vayou.core.ui.designsystem.components.VayouWaiting
+import dev.vayou.core.ui.designsystem.isWindowWide
 import dev.vayou.core.ui.graphics.rememberArtworkTint
 import dev.vayou.core.ui.theme.VayouTheme
 import dev.vayou.feature.player.EqualizerSheet
@@ -100,6 +100,13 @@ fun NowPlayingScreen(
     val surface = VayouTheme.colors.surface
     val tint = rememberArtworkTint(model = artwork, fallback = surface)
 
+    // Split by the shape of the window rather than by the orientation flag: a tall window on a
+    // foldable or in split screen wants the stacked layout even when the device calls itself
+    // landscape. Asked here rather than further down because the answer decides whether the keys
+    // below take a bar of their own -- and a bar measured inside the space it shrinks is a
+    // question answering itself.
+    val isWide = isWindowWide()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -115,24 +122,19 @@ fun NowPlayingScreen(
             .statusBarsPadding()
             .navigationBarsPadding(),
     ) {
-        Row(
-            // The same inset the film player's bar takes below the status bar. Without it the keys
-            // sat against the clock here and a finger's width lower there, and the two players read
-            // as two apps at the moment you leave one for the other.
-            modifier = Modifier.padding(horizontal = ButtonRowPadding, vertical = VayouTheme.spacing.lg),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            // A chevron down, not an arrow back: this screen came up from the bottom, and it goes
-            // back down. The arrow is what leaves a place you navigated into.
-            VayouIconButton(onClick = onBack) {
-                Icon(
-                    imageVector = VayouIcons.ChevronDown,
-                    contentDescription = stringResource(R.string.back),
-                    tint = VayouTheme.colors.onSurface,
-                )
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            menu()
+        // Across the top only where there is height to spare. In a wide window they move into the
+        // column beside the cover, and the row below gets the whole screen to centre itself on.
+        // While the session is still connecting there is no column yet, so they stay up here --
+        // otherwise the waiting screen would be the one place with no way out of it.
+        if (!isWide || player == null) {
+            TopKeys(
+                onBack = onBack,
+                menu = menu,
+                // The same inset the film player's bar takes below the status bar. Without it the
+                // keys sat against the clock here and a finger's width lower there, and the two
+                // players read as two apps at the moment you leave one for the other.
+                modifier = Modifier.padding(horizontal = ButtonRowPadding, vertical = VayouTheme.spacing.lg),
+            )
         }
 
         if (player == null) {
@@ -147,6 +149,9 @@ fun NowPlayingScreen(
             onArtworkChange = { artwork = it },
             favourite = favourite,
             lyrics = lyrics,
+            onBack = onBack,
+            menu = menu,
+            isWide = isWide,
         )
     }
 }
@@ -159,6 +164,10 @@ private fun NowPlaying(
     onArtworkChange: (Any?) -> Unit,
     favourite: @Composable () -> Unit,
     lyrics: Lyrics?,
+    onBack: () -> Unit,
+    menu: @Composable () -> Unit,
+    /** Whether the window is wider than it is tall, decided once by the caller. */
+    isWide: Boolean,
 ) {
     var isPlaying by remember { mutableStateOf(player.isPlaying) }
     var isShuffled by remember { mutableStateOf(player.shuffleModeEnabled) }
@@ -264,92 +273,104 @@ private fun NowPlaying(
         isDragging = false
     }
 
-    // Split by the shape of the space, not by the orientation flag: a tall window on a foldable or
-    // in split screen wants the stacked layout even when the device calls itself landscape.
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        if (maxWidth > maxHeight) {
-            Row(
+    // What the player can open rather than what it does to the track playing. Written once and
+    // used by both shapes: it was in the tall branch alone, and a phone turned on its side lost
+    // the equalizer, the queue and the words along with the height.
+    val actions: @Composable () -> Unit = {
+        SecondaryActions(
+            onEqualizer = { isEqualizerOpen = true },
+            // False where the device has no equalizer at all, which is the same as off.
+            isEqualizerOn = equalizer?.isEnabled == true,
+            onQueue = { isQueueOpen = true },
+            onLyrics = lyrics?.let { { isLyricsOpen = !isLyricsOpen } },
+        )
+    }
+
+    if (isWide) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = ContentPadding)
+                // Even top and bottom. Uneven, the square centres on what is left over rather than
+                // on the window, which is the same fault the bar above it used to cause and half
+                // as visible for being half the size.
+                .padding(vertical = VayouTheme.spacing.lg),
+            horizontalArrangement = Arrangement.spacedBy(WideGap),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (shownLyrics != null) {
+                LyricsPanel(
+                    lyrics = shownLyrics,
+                    positionMs = shownMs.toLong(),
+                    modifier = Modifier.fillMaxHeight().weight(1f),
+                )
+            } else {
+                // Bounded by the short side, not the long one: sized from the width, the square
+                // would be taller than the window and lose its bottom.
+                Cover(face.cover, Modifier.fillMaxHeight())
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                // The keys that run across the top of a tall window, at the head of this column
+                // instead. A bar above the row would be a fifth of the height of a window this
+                // shape, and everything under it -- the cover included -- would sit that far
+                // below the middle.
+                TopKeys(onBack = onBack, menu = menu)
+                TrackLine(face, favourite)
+                // Stripped to what a glance needs. The two times are dropped rather than
+                // squeezed -- a wide window is short, and the handle already says where the
+                // track is.
+                Progress(shownMs, durationMs, showTimes = false, onSeek = {
+                    isDragging = true
+                    draggedMs = it
+                }, onSeekFinished = onSeekFinished)
+                Transport(player, isPlaying, isShuffled, sleepTimer.isArmed) {
+                    isSleepTimerOpen = true
+                }
+                actions()
+            }
+        }
+    } else {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = ContentPadding)
-                    .padding(bottom = VayouTheme.spacing.lg),
-                horizontalArrangement = Arrangement.spacedBy(WideGap),
-                verticalAlignment = Alignment.CenterVertically,
+                    .weight(1f)
+                    .padding(horizontal = ContentPadding),
             ) {
+                // Off the top of the screen, and by a share of what is spare rather than a
+                // fixed gap: pinned under the chevron the square sat against the bar on a tall
+                // phone and in the middle of a short one. A third above and two thirds below
+                // keeps it high enough to be the subject and low enough not to touch the bar.
+                // With the words open the name goes above them, where it names what is being
+                // read; with the cover it stays under the square, where it names what is being
+                // looked at. Either way the seek bar below does not move.
                 if (shownLyrics != null) {
+                    TrackLine(face, favourite)
                     LyricsPanel(
                         lyrics = shownLyrics,
                         positionMs = shownMs.toLong(),
-                        modifier = Modifier.fillMaxHeight().weight(1f),
+                        modifier = Modifier.weight(1f),
                     )
                 } else {
-                    // Bounded by the short side, not the long one: sized from the width, the square
-                    // would be taller than the window and lose its bottom.
-                    Cover(face.cover, Modifier.fillMaxHeight())
-                }
-                Column(modifier = Modifier.weight(1f)) {
+                    Spacer(modifier = Modifier.weight(CoverHeadroom))
+                    // Just inside the full width, and centred on it. Edge to edge the square is
+                    // the tallest thing on the screen by a distance, and a margin of its own
+                    // parts it from the text that starts on the column's.
+                    Cover(
+                        artwork = face.cover,
+                        modifier = Modifier
+                            .fillMaxWidth(CoverWidthFraction)
+                            .align(Alignment.CenterHorizontally),
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
                     TrackLine(face, favourite)
-                    // Stripped to what a glance needs. The two times are dropped rather than
-                    // squeezed -- a wide window is short, and the handle already says where the
-                    // track is.
-                    Progress(shownMs, durationMs, showTimes = false, onSeek = {
-                        isDragging = true
-                        draggedMs = it
-                    }, onSeekFinished = onSeekFinished)
-                    Transport(player, isPlaying, isShuffled, sleepTimer.isArmed) {
-                        isSleepTimerOpen = true
-                    }
                 }
+                Progress(shownMs, durationMs, showTimes = true, onSeek = {
+                    isDragging = true
+                    draggedMs = it
+                }, onSeekFinished = onSeekFinished)
             }
-        } else {
-            Column(modifier = Modifier.fillMaxSize()) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = ContentPadding),
-                ) {
-                    // Off the top of the screen, and by a share of what is spare rather than a
-                    // fixed gap: pinned under the chevron the square sat against the bar on a tall
-                    // phone and in the middle of a short one. A third above and two thirds below
-                    // keeps it high enough to be the subject and low enough not to touch the bar.
-                    // With the words open the name goes above them, where it names what is being
-                    // read; with the cover it stays under the square, where it names what is being
-                    // looked at. Either way the seek bar below does not move.
-                    if (shownLyrics != null) {
-                        TrackLine(face, favourite)
-                        LyricsPanel(
-                            lyrics = shownLyrics,
-                            positionMs = shownMs.toLong(),
-                            modifier = Modifier.weight(1f),
-                        )
-                    } else {
-                        Spacer(modifier = Modifier.weight(CoverHeadroom))
-                        // Just inside the full width, and centred on it. Edge to edge the square is
-                        // the tallest thing on the screen by a distance, and a margin of its own
-                        // parts it from the text that starts on the column's.
-                        Cover(
-                            artwork = face.cover,
-                            modifier = Modifier
-                                .fillMaxWidth(CoverWidthFraction)
-                                .align(Alignment.CenterHorizontally),
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        TrackLine(face, favourite)
-                    }
-                    Progress(shownMs, durationMs, showTimes = true, onSeek = {
-                        isDragging = true
-                        draggedMs = it
-                    }, onSeekFinished = onSeekFinished)
-                }
-                Transport(player, isPlaying, isShuffled, sleepTimer.isArmed) { isSleepTimerOpen = true }
-                SecondaryActions(
-                    onEqualizer = { isEqualizerOpen = true },
-                    // False where the device has no equalizer at all, which is the same as off.
-                    isEqualizerOn = equalizer?.isEnabled == true,
-                    onQueue = { isQueueOpen = true },
-                    onLyrics = lyrics?.let { { isLyricsOpen = !isLyricsOpen } },
-                )
-            }
+            Transport(player, isPlaying, isShuffled, sleepTimer.isArmed) { isSleepTimerOpen = true }
+            actions()
         }
     }
 
@@ -647,6 +668,30 @@ private fun Transport(
                 }
             }
         }
+    }
+}
+
+/**
+ * The chevron that puts this screen away, and the key that opens what can be done to the track.
+ *
+ * Where they sit is the caller's business, and it changes with the shape of the window, so the
+ * padding comes in rather than being written here: across the top of a tall one, and at the head
+ * of the column beside the cover in a wide one.
+ */
+@Composable
+private fun TopKeys(onBack: () -> Unit, menu: @Composable () -> Unit, modifier: Modifier = Modifier) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        // A chevron down, not an arrow back: this screen came up from the bottom, and it goes
+        // back down. The arrow is what leaves a place you navigated into.
+        VayouIconButton(onClick = onBack) {
+            Icon(
+                imageVector = VayouIcons.ChevronDown,
+                contentDescription = stringResource(R.string.back),
+                tint = VayouTheme.colors.onSurface,
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        menu()
     }
 }
 

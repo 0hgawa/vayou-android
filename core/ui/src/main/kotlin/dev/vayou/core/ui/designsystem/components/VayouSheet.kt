@@ -19,6 +19,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindowProvider
+import dev.vayou.core.ui.designsystem.isWindowWide
 import dev.vayou.core.ui.designsystem.windowSize
 import dev.vayou.core.ui.theme.VayouTheme
 
@@ -42,8 +43,7 @@ fun VayouSheet(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val window = windowSize()
-    if (window.width > window.height) {
+    if (isWindowWide()) {
         CompositionLocalProvider(LocalSheetFillsHeight provides true) {
             VayouSideSheet(onDismissRequest, modifier, content)
         }

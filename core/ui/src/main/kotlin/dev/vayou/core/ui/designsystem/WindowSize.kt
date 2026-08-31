@@ -25,3 +25,15 @@ import androidx.compose.ui.unit.DpSize
 fun windowSize(): DpSize = with(LocalDensity.current) {
     LocalWindowInfo.current.containerSize.let { DpSize(it.width.toDp(), it.height.toDp()) }
 }
+
+/**
+ * Whether the window is wider than it is tall.
+ *
+ * The one question two different layouts ask of the same number: a sheet decides which edge to
+ * come in from, and the music player decides whether its keys can afford a bar across the top.
+ * Written here so both read the same shape the same way, and so the answer is a fact about the
+ * window rather than each caller's own idea of one.
+ */
+@Composable
+@ReadOnlyComposable
+fun isWindowWide(): Boolean = with(windowSize()) { width > height }
