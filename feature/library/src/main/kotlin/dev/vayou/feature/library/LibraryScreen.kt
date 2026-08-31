@@ -60,7 +60,6 @@ import dev.vayou.core.ui.designsystem.components.VayouSelectionTopBar
 import dev.vayou.core.ui.designsystem.components.VayouSortOption
 import dev.vayou.core.ui.designsystem.components.VayouSortSheet
 import dev.vayou.core.ui.designsystem.components.VayouTopAppBar
-import dev.vayou.core.ui.designsystem.components.VayouWaiting
 import dev.vayou.feature.player.CastButton
 
 @Composable
@@ -323,9 +322,11 @@ private fun LibraryContent(
         }
 
         when (uiState) {
-            // The same wait the audio tab draws, for the same moment: the library has not
-            // answered, and nothing it could be told yet would be true.
-            LibraryUiState.Loading -> VayouWaiting()
+            // Nothing, on purpose. The library has not answered, and the one thing that must
+            // not happen here is the screen answering for it -- an empty list drawn now reads
+            // as a phone with no films on it. Only ever seen on a first run, before the table
+            // has been filled once.
+            LibraryUiState.Loading -> Unit
             is LibraryUiState.Ready -> Column(modifier = Modifier.fillMaxSize()) {
                 // Hidden once a list is open: that screen belongs to the list, and the pills would
                 // offer to switch out from under it.

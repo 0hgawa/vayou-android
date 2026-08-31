@@ -65,8 +65,8 @@ fun VayouCircularProgress(
  * A screen with nothing on it yet, because what goes there has not arrived.
  *
  * The counterpart to [VayouEmptyState], and the distinction between them is the whole point: one
- * says there is nothing, the other says not yet. Four screens were drawing this by hand and a
- * fifth was about to.
+ * says there is nothing, the other says not yet. Three copies of it were drawn by hand across
+ * the music and network screens before this existed.
  */
 @Composable
 fun VayouWaiting(modifier: Modifier = Modifier) {
