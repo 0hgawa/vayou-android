@@ -10,15 +10,16 @@ android {
     defaultConfig {
         applicationId = "dev.vayou"
         // Carried over, not restarted: a rewrite that ships as version 1 is a different app to
-        // every phone that already has this one. 58 is what the store hands out, and 59, 60 and 61
-        // are gone: the store spends a number when a bundle is uploaded, not when one is released,
-        // and discarding the draft does not hand it back. 61 went into review and was replaced
-        // before it was let out, which spends it the same way.
-        versionCode = 62
-        // Still 0.2.0, because nobody has seen one yet: 61 carried this name into review and was
-        // withdrawn there, so the first 0.2.0 anyone installs is this one. A number the public
-        // never saw is not a number to move past.
-        versionName = "0.2.0"
+        // every phone that already has this one. 58 is what the store hands out; 59, 60 and 61 are
+        // gone, because the store spends a number when a bundle is uploaded and not when one is
+        // released, and neither discarding a draft nor withdrawing one from review hands it back.
+        // 62 is the first that got out.
+        versionCode = 63
+        // 0.2.1, because 0.2.0 is now on phones. It went out through the store on 30/08 and was
+        // installed the same evening, which is what the note here used to be waiting for: while it
+        // existed only inside a review, moving past it would have marked a correction over
+        // something nobody had. It is no longer that, so what follows it is a correction.
+        versionName = "0.2.1"
     }
 
     buildTypes {
